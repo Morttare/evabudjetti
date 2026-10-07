@@ -249,7 +249,9 @@ const RealTransactionModal = ({
 				<XStack justifyContent="space-between" marginTop={20}>
 					<Button
 						borderRadius={28}
-						backgroundColor="$caution"
+						borderColor="$primary200"
+						backgroundColor="transparent"
+						size="$buttons.lg"
 						style={styles.button}
 						onPress={onClose}
 					>
