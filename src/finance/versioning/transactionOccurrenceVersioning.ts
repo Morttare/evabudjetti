@@ -42,6 +42,7 @@ export interface TransactionOccurrenceVersioning {
 		endYear: number,
 		endMonth: number,
 	) => Map<string, number>;
+	invalidateTrackedMonths: () => void;
 
 	onPlannedTransactionCreated: (created: PlannedTransaction) => void;
 	onPlannedTransactionUpdated: (
@@ -115,6 +116,18 @@ export const useTransactionOccurrenceVersioning =
 			}
 
 			return versions;
+		},
+		invalidateTrackedMonths: () => {
+			set((state) => {
+				if (state.versionsByMonthKey.size === 0) return {};
+
+				const versionsByMonthKey = new Map(state.versionsByMonthKey);
+				for (const [monthKey, version] of versionsByMonthKey) {
+					versionsByMonthKey.set(monthKey, version + 1);
+				}
+
+				return { versionsByMonthKey };
+			});
 		},
 
 		onPlannedTransactionCreated: (created: PlannedTransaction) => {

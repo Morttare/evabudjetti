@@ -9,6 +9,7 @@ import BudgetWizardItem from '@/src/components/BudgetWizardItem';
 import type { Persisted, PlannedTransaction } from '@/src/dataModel';
 import { useAddPlannedTransaction } from '@/src/finance/hook/useAddPlannedTransaction';
 import { useDeletePlannedTransaction } from '@/src/finance/hook/useDeletePlannedTransaction';
+import { useInvalidateFinanceCaches } from '@/src/finance/hook/useInvalidateFinanceCaches';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { useUpdatePlannedTransaction } from '@/src/finance/hook/useUpdatePlannedTransaction';
 import AddItemPopup from '../src/components/AddItemPopup';
@@ -24,6 +25,7 @@ export default function BudgetWizard() {
 	const addPlannedTransaction = useAddPlannedTransaction();
 	const updatePlannedTransaction = useUpdatePlannedTransaction();
 	const deletePlannedTransactionHook = useDeletePlannedTransaction();
+	const invalidateFinanceCaches = useInvalidateFinanceCaches();
 
 	const [stepIndex, setStepIndex] = useState(0);
 	const [wizardData, setWizardData] =
@@ -54,8 +56,11 @@ export default function BudgetWizard() {
 		await addPlannedTransaction(newItem);
 	}
 
-	async function editItem(edited: Persisted<PlannedTransaction>) {
-		await updatePlannedTransaction(edited, edited);
+	async function editItem(
+		original: Persisted<PlannedTransaction>,
+		edited: Persisted<PlannedTransaction>,
+	) {
+		await updatePlannedTransaction(original, edited);
 	}
 
 	async function deleteItem() {
@@ -68,6 +73,11 @@ export default function BudgetWizard() {
 	const closePopUp = () => {
 		setSelectedItem(null);
 		setPopupVisible(false);
+	};
+
+	const handleFinish = () => {
+		invalidateFinanceCaches();
+		router.push('/');
 	};
 
 	return (
@@ -84,7 +94,11 @@ export default function BudgetWizard() {
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)
-								: (item) => editItem(item)
+								: (item) =>
+										editItem(
+											selectedItem.item as Persisted<PlannedTransaction>,
+											item as Persisted<PlannedTransaction>,
+										)
 						}
 						onDelete={() => deleteItem()}
 						onClose={() => closePopUp()}
@@ -169,7 +183,7 @@ export default function BudgetWizard() {
 							borderRadius={28}
 							style={styles.footerButton}
 							backgroundColor="$primary200"
-							onPress={() => router.push('/')}
+							onPress={handleFinish}
 						>
 							<SizableText color="$white" size="$title1">
 								{t('Finish')}

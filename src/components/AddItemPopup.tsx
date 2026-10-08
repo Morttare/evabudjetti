@@ -28,8 +28,8 @@ import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
 	item: Persisted<PlannedTransaction> | PlannedTransaction | null;
-	onSave: (item: PlannedTransaction) => void;
-	onDelete: () => void;
+	onSave: (item: PlannedTransaction) => Promise<unknown>;
+	onDelete: () => Promise<void>;
 	onClose: () => void;
 };
 
@@ -71,8 +71,8 @@ const AddItemPopup = ({
 		reoccurenceInterval <= 0;
 	const hasEndDate = endDate !== null;
 	const hasReocurrence = reoccurence !== null;
-	const handleAdd = () => {
-		onSave({
+	const handleAdd = async () => {
+		await onSave({
 			...(item !== null && 'id' in item ? { id: item.id } : {}),
 			accountId: DEFAULT_ACCOUNT_ID,
 			categoryId: 0,
@@ -86,8 +86,8 @@ const AddItemPopup = ({
 
 		onClose();
 	};
-	const handleDelete = () => {
-		if (item !== null) onDelete();
+	const handleDelete = async () => {
+		if (item !== null) await onDelete();
 		onClose();
 	};
 	return (
