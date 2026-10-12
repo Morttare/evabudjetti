@@ -357,7 +357,7 @@ export default function DailyBalanceView({
 						<Text
 							color="$primary100"
 							fontSize="$body"
-							onPress={handleFutureLoadMorePress}
+							onPress={handlePastLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
 							cursor={'pointer'}
 						>
@@ -365,8 +365,8 @@ export default function DailyBalanceView({
 						</Text>
 					</YStack>
 
-					{/* --- Render all loaded months in reverse order (latest first) ---*/}
-					{occurrencesAndBalances.toReversed().map((month) => (
+					{/* --- Render all loaded months in order (oldest first) ---*/}
+					{occurrencesAndBalances.map((month) => (
 						<DailyEventList
 							transactions={month.transactionOccurrences}
 							monthKey={month.monthKey}
@@ -383,7 +383,7 @@ export default function DailyBalanceView({
 						<Text
 							color="$primary100"
 							fontSize="$body"
-							onPress={handlePastLoadMorePress}
+							onPress={handleFutureLoadMorePress}
 							pressStyle={{ color: '$primary300' }}
 							cursor={'pointer'}
 						>
