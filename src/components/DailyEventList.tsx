@@ -60,57 +60,40 @@ const DailyEventList: React.FC<Props> = ({
 		return { ...t, date: parsedDate };
 	});
 
-	// Sort all transactions by date descending (Newest first)
-	const sortedTxns = [...normalizedTxns].sort(
-		(a, b) => b.date.getTime() - a.date.getTime(),
-	);
+	// Placeholder empty transaction for the selected date
+    const emptyTxn: TransactionOccurrence = {
+        name: '',
+        categoryId: -1,
+        amount: 0,
+        date: selectedDate,
+        type: 'income',
+    };
 
-	// Grouping all transactions by date (Newest first)
-	const txnsByDate: TransactionOccurrence[][] = [];
+    // Group transactions by day using a Map
+    const txnsByDateMap = new Map<number, TransactionOccurrence[]>();
+    for (const txn of normalizedTxns) {
+        const day = txn.date.getDate();
+        if (!txnsByDateMap.has(day)) {
+            txnsByDateMap.set(day, []);
+        }
+        txnsByDateMap.get(day)!.push(txn);
+    }
 
-	// Placeholder empty transaction (used to show selected day in the item list even if it doesn't have transactions)
-	const emptyTxn: TransactionOccurrence = {
-		name: '',
-		categoryId: -1,
-		amount: 0,
-		date: selectedDate,
-		type: 'income',
-	};
+    // If it's the selected month, ensure the selected date's day exists in the map
+    if (isSelectedMonth) {
+        const selectedDay = selectedDate.getDate();
+        if (!txnsByDateMap.has(selectedDay)) {
+            txnsByDateMap.set(selectedDay, [emptyTxn]);
+        }
+    }
 
-	let prevDate = 0;
-	for (const txn of sortedTxns) {
-		const newDate = txn.date.getDate();
-		if (newDate === prevDate) {
-			txnsByDate[txnsByDate.length - 1].push(txn);
-		} else {
-			if (
-				isSelectedMonth &&
-				prevDate > selectedDate.getDate() &&
-				newDate < selectedDate.getDate()
-			) {
-				txnsByDate.push([emptyTxn]);
-			}
+    // Convert map values to an array of daily groups
+    const txnsByDate: TransactionOccurrence[][] = Array.from(
+        txnsByDateMap.values(),
+    );
 
-			txnsByDate.push([txn]);
-			prevDate = newDate;
-		}
-	}
-
-	/* 
-	Push empty transaction to selected date even if the month has no transactions, 
-	or when the selected day is before/after all days with transactions 
-	*/
-	if (isSelectedMonth) {
-		if (
-			txnsByDate.length === 0 ||
-			txnsByDate[txnsByDate.length - 1][0].date.getDate() >
-				selectedDate.getDate()
-		) {
-			txnsByDate.push([emptyTxn]);
-		} else if (txnsByDate[0][0].date.getDate() < selectedDate.getDate()) {
-			txnsByDate.unshift([emptyTxn]);
-		}
-	}
+    // Sort all day groups chronologically ascending (Oldest day at top, newest at bottom)
+    txnsByDate.sort((a, b) => a[0].date.getTime() - b[0].date.getTime());
 
 	txnsByDate.push;
 	/* 
