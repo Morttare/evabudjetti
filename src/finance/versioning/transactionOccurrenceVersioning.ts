@@ -57,6 +57,7 @@ export interface TransactionOccurrenceVersioning {
 		updated: RealTransaction,
 	) => void;
 	onRealTransactionDeleted: (deleted: RealTransaction) => void;
+	onPlannedOccurrenceChanged: (occurrenceDate: Date) => void;
 }
 
 export const useTransactionOccurrenceVersioning =
@@ -298,6 +299,19 @@ export const useTransactionOccurrenceVersioning =
 				);
 
 				return { versionsByMonthKey: newVersions };
+			});
+		},
+
+		onPlannedOccurrenceChanged: (occurrenceDate: Date) => {
+			set((state) => {
+				const monthKey = dateToMonthKey(occurrenceDate);
+				// Refresh the month containing the scheduled date, even when it was not cached yet.
+				const versionsByMonthKey = new Map(state.versionsByMonthKey);
+				versionsByMonthKey.set(
+					monthKey,
+					(versionsByMonthKey.get(monthKey) ?? 0) + 1,
+				);
+				return { versionsByMonthKey };
 			});
 		},
 	}));

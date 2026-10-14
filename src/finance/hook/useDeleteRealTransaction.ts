@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
 import type { Persisted, RealTransaction } from '@/src/dataModel';
-import { deleteRealTransaction as deleteRealTransactionFromDb } from '../query/realTransactionMutations';
+import {
+	deleteRealTransaction as deleteRealTransactionFromDb,
+	excludePlannedTransactionOccurrence,
+} from '../query/realTransactionMutations';
 import { useBalanceVersioning } from '../versioning/balanceVersioning';
 import { useTransactionOccurrenceVersioning } from '../versioning/transactionOccurrenceVersioning';
 
@@ -12,9 +15,21 @@ export function useDeleteRealTransaction() {
 		useTransactionOccurrenceVersioning(
 			(state) => state.onRealTransactionDeleted,
 		);
+	const onPlannedOccurrenceChanged = useTransactionOccurrenceVersioning(
+		(state) => state.onPlannedOccurrenceChanged,
+	);
 
 	return useCallback(
 		async (transaction: Persisted<RealTransaction>): Promise<void> => {
+			const plannedOccurrenceDate =
+				transaction.plannedOccurrenceDate ?? transaction.date;
+			// Save the skip before deleting the linked row, or its planned occurrence would return.
+			if (transaction.plannedTransactionId != null) {
+				await excludePlannedTransactionOccurrence(
+					transaction.plannedTransactionId,
+					plannedOccurrenceDate,
+				);
+			}
 			await deleteRealTransactionFromDb(transaction.id);
 
 			// Normalize date: Drizzle expo-sqlite stores timestamps as seconds,
@@ -32,11 +47,20 @@ export function useDeleteRealTransaction() {
 				date,
 				type: transaction.type,
 				plannedTransactionId: transaction.plannedTransactionId ?? null,
+				plannedOccurrenceDate:
+					transaction.plannedOccurrenceDate ?? null,
 			};
 
 			onBalanceRealTransactionDeleted(deleted);
 			onOccurrenceRealTransactionDeleted(deleted);
+			if (deleted.plannedTransactionId != null) {
+				onPlannedOccurrenceChanged(plannedOccurrenceDate);
+			}
 		},
-		[onBalanceRealTransactionDeleted, onOccurrenceRealTransactionDeleted],
+		[
+			onBalanceRealTransactionDeleted,
+			onOccurrenceRealTransactionDeleted,
+			onPlannedOccurrenceChanged,
+		],
 	);
 }

@@ -5,7 +5,13 @@
  * pnpm drizzle-kit generate --name=your_migration_name
  */
 
-import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {
+	integer,
+	real,
+	sqliteTable,
+	text,
+	uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 
 export const budgets = sqliteTable('budgets', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
@@ -61,7 +67,29 @@ export const realTransactions = sqliteTable('real_transactions', {
 	date: integer('date', { mode: 'timestamp' }).notNull(),
 	type: text('type').$type<'income' | 'expense'>().notNull(),
 	plannedTransactionId: integer('planned_transaction_id'),
+	// Keep the scheduled date when a linked real transaction moves elsewhere.
+	plannedOccurrenceDate: integer('planned_occurrence_date', {
+		mode: 'timestamp',
+	}),
 });
+
+export const plannedTransactionOccurrenceExceptions = sqliteTable(
+	'planned_transaction_occurrence_exceptions',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		plannedTransactionId: integer('planned_transaction_id').notNull(),
+		occurrenceDate: integer('occurrence_date', {
+			mode: 'timestamp',
+		}).notNull(),
+	},
+	// A unique scheduled date can be excluded without changing other recurrences.
+	(table) => ({
+		plannedOccurrenceUnique: uniqueIndex('planned_occurrence_unique').on(
+			table.plannedTransactionId,
+			table.occurrenceDate,
+		),
+	}),
+);
 
 export const categories = sqliteTable('categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
