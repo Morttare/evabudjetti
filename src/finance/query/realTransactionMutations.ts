@@ -11,6 +11,7 @@ export async function insertRealTransaction(
 		.values({
 			...transaction,
 			plannedTransactionId: transaction.plannedTransactionId ?? null,
+			plannedOccurrenceDate: transaction.plannedOccurrenceDate ?? null,
 		})
 		.returning();
 
@@ -29,6 +30,7 @@ export async function updateRealTransaction(
 			type: transaction.type,
 			categoryId: transaction.categoryId,
 			plannedTransactionId: transaction.plannedTransactionId ?? null,
+			plannedOccurrenceDate: transaction.plannedOccurrenceDate ?? null,
 		})
 		.where(eq(schema.realTransactions.id, transaction.id))
 		.returning();
@@ -40,4 +42,15 @@ export async function deleteRealTransaction(id: number): Promise<void> {
 	await db
 		.delete(schema.realTransactions)
 		.where(eq(schema.realTransactions.id, id));
+}
+
+export async function excludePlannedTransactionOccurrence(
+	plannedTransactionId: number,
+	occurrenceDate: Date,
+): Promise<void> {
+	// The unique key makes repeated saves of the same occurrence exclusion harmless.
+	await db
+		.insert(schema.plannedTransactionOccurrenceExceptions)
+		.values({ plannedTransactionId, occurrenceDate })
+		.onConflictDoNothing();
 }

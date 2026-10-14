@@ -2,6 +2,8 @@
 
 import m0000 from './0000_init.sql';
 import m0001 from './0001_improve_data_model.sql';
+// Registers per-occurrence exclusions and moved-occurrence source dates.
+import m0002 from './0002_planned_occurrence_exceptions.sql';
 import journal from './meta/_journal.json';
 
 export default {
@@ -9,5 +11,6 @@ export default {
 	migrations: {
 		m0000,
 		m0001,
+		m0002,
 	},
 };

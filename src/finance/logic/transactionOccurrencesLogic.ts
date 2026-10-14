@@ -8,6 +8,7 @@ import { add } from 'date-fns/add';
 import type {
 	Persisted,
 	PlannedTransaction,
+	PlannedTransactionOccurrenceException,
 	RealTransaction,
 	RecurrenceBase,
 	TransactionOccurrence,
@@ -31,14 +32,24 @@ export function generateTransactionOccurrences(
 	endMonth: number,
 	relevantPlannedTransactions: Persisted<PlannedTransaction>[],
 	relevantRealTransactions: Persisted<RealTransaction>[],
+	excludedPlannedOccurrences: PlannedTransactionOccurrenceException[] = [],
 ): TransactionOccurrence[] {
 	const overriddenOccurrenceDates: Map<number, Set<string>> = new Map();
+	// Exceptions suppress deleted dates; linked real transactions also suppress their source and current dates.
+	for (const exception of excludedPlannedOccurrences) {
+		const dateSet =
+			overriddenOccurrenceDates.get(exception.plannedTransactionId) ??
+			new Set();
+		dateSet.add(dateToDateKey(exception.occurrenceDate));
+		overriddenOccurrenceDates.set(exception.plannedTransactionId, dateSet);
+	}
 
 	for (const real of relevantRealTransactions) {
 		if (real.plannedTransactionId) {
 			const dateSet =
 				overriddenOccurrenceDates.get(real.plannedTransactionId) ??
 				new Set();
+			dateSet.add(dateToDateKey(real.plannedOccurrenceDate ?? real.date));
 			dateSet.add(dateToDateKey(real.date));
 			overriddenOccurrenceDates.set(real.plannedTransactionId, dateSet);
 		}
