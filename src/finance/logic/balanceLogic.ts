@@ -76,40 +76,38 @@ export function calculateBalanceDatasForMonths(
 		}
 
 		// The occurrences should be sorted by date
-		for (const occurrence of occurrencesData?.transactionOccurrences ??
-			[]) {
-			if (occurrence.date.getDate() < day) {
-				// In the start month, occurrences before the first known day are already reflected in startBalance.
-				continue;
-			}
+		const occurrences = occurrencesData?.transactionOccurrences ?? [];
+		let occurrenceIndex = 0;
 
-			// Fill in the days until the next occurrence with the current balance
-			const occurrenceDay = occurrence.date.getDate();
-			while (day < occurrenceDay) {
-				const reconciliationForDay = reconciliationsByDateKey.get(
-					createDateKey(year, month, day),
-				);
-				if (reconciliationForDay) {
-					currentBalance = reconciliationForDay.amount;
-				}
-
-				dailyBalances.push({
-					balance: currentBalance,
-					isReconciled: reconciliationForDay !== undefined,
-				});
-				day++;
-			}
-
-			currentBalance += getSignedOccurrenceAmount(occurrence);
+		// In the start month, occurrences before the first known day are already reflected in startBalance.
+		while (
+			occurrenceIndex < occurrences.length &&
+			occurrences[occurrenceIndex].date.getDate() < day
+		) {
+			occurrenceIndex++;
 		}
 
-		// Fill in the remaining days of the month
 		while (day <= monthDays) {
 			const reconciliationForDay = reconciliationsByDateKey.get(
 				createDateKey(year, month, day),
 			);
 			if (reconciliationForDay) {
 				currentBalance = reconciliationForDay.amount;
+			}
+
+			while (
+				occurrenceIndex < occurrences.length &&
+				occurrences[occurrenceIndex].date.getDate() <= day
+			) {
+				const occurrence = occurrences[occurrenceIndex];
+				// Occurrences at or before the reconciliation time are already included in the reconciled amount
+				if (
+					reconciliationForDay === undefined ||
+					occurrence.date > reconciliationForDay.date
+				) {
+					currentBalance += getSignedOccurrenceAmount(occurrence);
+				}
+				occurrenceIndex++;
 			}
 
 			dailyBalances.push({

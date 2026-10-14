@@ -1,3 +1,4 @@
+import { startOfMonth } from 'date-fns';
 import type {
 	MonthInstance,
 	PlannedTransaction,
@@ -98,11 +99,14 @@ export function plannedTransactionIsActiveInMonth(
 		);
 	}
 
+	// Compare by month, so that a transaction starting mid-month is active in its start month
+	const startMonth = startOfMonth(transaction.startDate);
+
 	if (transaction.endDate == null) {
-		return transaction.startDate <= month;
+		return startMonth <= month;
 	}
 
-	return transaction.startDate <= month && transaction.endDate >= month;
+	return startMonth <= month && transaction.endDate >= month;
 }
 
 export function getSignedOccurrenceAmount(
