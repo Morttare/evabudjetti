@@ -61,39 +61,39 @@ const DailyEventList: React.FC<Props> = ({
 	});
 
 	// Placeholder empty transaction for the selected date
-    const emptyTxn: TransactionOccurrence = {
-        name: '',
-        categoryId: -1,
-        amount: 0,
-        date: selectedDate,
-        type: 'income',
-    };
+	const emptyTxn: TransactionOccurrence = {
+		name: '',
+		categoryId: -1,
+		amount: 0,
+		date: selectedDate,
+		type: 'income',
+	};
 
-    // Group transactions by day using a Map
-    const txnsByDateMap = new Map<number, TransactionOccurrence[]>();
-    for (const txn of normalizedTxns) {
-        const day = txn.date.getDate();
-        if (!txnsByDateMap.has(day)) {
-            txnsByDateMap.set(day, []);
-        }
-        txnsByDateMap.get(day)!.push(txn);
-    }
+	// Group transactions by day using a Map
+	const txnsByDateMap = new Map<number, TransactionOccurrence[]>();
+	for (const txn of normalizedTxns) {
+		const day = txn.date.getDate();
+		if (!txnsByDateMap.has(day)) {
+			txnsByDateMap.set(day, []);
+		}
+		txnsByDateMap.get(day)!.push(txn);
+	}
 
-    // If it's the selected month, ensure the selected date's day exists in the map
-    if (isSelectedMonth) {
-        const selectedDay = selectedDate.getDate();
-        if (!txnsByDateMap.has(selectedDay)) {
-            txnsByDateMap.set(selectedDay, [emptyTxn]);
-        }
-    }
+	// If it's the selected month, ensure the selected date's day exists in the map
+	if (isSelectedMonth) {
+		const selectedDay = selectedDate.getDate();
+		if (!txnsByDateMap.has(selectedDay)) {
+			txnsByDateMap.set(selectedDay, [emptyTxn]);
+		}
+	}
 
-    // Convert map values to an array of daily groups
-    const txnsByDate: TransactionOccurrence[][] = Array.from(
-        txnsByDateMap.values(),
-    );
+	// Convert map values to an array of daily groups
+	const txnsByDate: TransactionOccurrence[][] = Array.from(
+		txnsByDateMap.values(),
+	);
 
-    // Sort all day groups chronologically ascending (Oldest day at top, newest at bottom)
-    txnsByDate.sort((a, b) => a[0].date.getTime() - b[0].date.getTime());
+	// Sort all day groups chronologically ascending (Oldest day at top, newest at bottom)
+	txnsByDate.sort((a, b) => a[0].date.getTime() - b[0].date.getTime());
 
 	txnsByDate.push;
 	/* 
