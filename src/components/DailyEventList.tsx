@@ -76,7 +76,7 @@ const DailyEventList: React.FC<Props> = ({
 		if (!txnsByDateMap.has(day)) {
 			txnsByDateMap.set(day, []);
 		}
-		txnsByDateMap.get(day)!.push(txn);
+		txnsByDateMap.get(day)?.push(txn);
 	}
 
 	// If it's the selected month, ensure the selected date's day exists in the map
