@@ -251,7 +251,6 @@ const RealTransactionModal = ({
 						borderRadius={28}
 						borderColor="$primary200"
 						backgroundColor="transparent"
-						size="$buttons.lg"
 						style={styles.button}
 						onPress={onClose}
 					>
@@ -319,14 +318,14 @@ const RealTransactionModal = ({
 								onPress={() => setCategoryModalVisible(false)}
 								borderColor="$primary200"
 								backgroundColor="transparent"
-								size="$buttons.lg"
+								borderRadius={28}
 								padding={22}
 								alignSelf="center"
 								fontSize={'$title3'}
 							>
 								<SizableText
 									size={'$title3'}
-									color={'$primary200'}
+									color={'$primary100'}
 								>
 									{t('Cancel')}
 								</SizableText>
@@ -336,6 +335,7 @@ const RealTransactionModal = ({
 								backgroundColor={'$primary200'}
 								size={42}
 								padding={22}
+								borderRadius={28}
 								alignSelf="center"
 								fontSize={'$title3'}
 							>

@@ -113,9 +113,9 @@ export default function FixBalanceModal() {
 							<Button
 								height={40}
 								f={1}
+								borderRadius={28}
 								borderColor="$primary200"
 								backgroundColor="transparent"
-								borderRadius={28}
 
 								onPress={() => {
 									setOpen(false);
@@ -130,6 +130,7 @@ export default function FixBalanceModal() {
 							<Button
 								height={40}
 								f={1}
+								borderRadius={28}
 								backgroundColor="$primary200"
 								color="white"
 								disabled={
@@ -174,9 +175,9 @@ export default function FixBalanceModal() {
 								<Button
 									f={1}
 									height={40}
+									borderRadius={28}
 									borderColor="$primary200"
 									backgroundColor="transparent"
-									borderRadius={28}
 								>
 									<SizableText color="$primary100" size="$title3">
 										{t('Cancel')}
@@ -187,6 +188,7 @@ export default function FixBalanceModal() {
 								<Button
 									f={1}
 									height={40}
+									borderRadius={28}
 									backgroundColor="$primary200"
 									color="white"
 									onPress={handleConfirmSave}

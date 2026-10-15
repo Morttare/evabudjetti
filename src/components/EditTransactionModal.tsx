@@ -213,7 +213,6 @@ const EditTransactionModal = ({
 						style={styles.button}
 						borderColor="$primary200"
 						backgroundColor="transparent"
-						size="$buttons.lg"
 						onPress={onClose}
 						disabled={saving}
 					>
