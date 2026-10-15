@@ -210,8 +210,10 @@ const EditTransactionModal = ({
 				<XStack justifyContent="space-between" marginTop={20}>
 					<Button
 						borderRadius={28}
-						backgroundColor="$caution"
 						style={styles.button}
+						borderColor="$primary200"
+						backgroundColor="transparent"
+						size="$buttons.lg"
 						onPress={onClose}
 						disabled={saving}
 					>
@@ -259,7 +261,8 @@ const EditTransactionModal = ({
 						</SizableText>
 						<XStack justifyContent="space-between">
 							<Button
-								backgroundColor="$caution"
+								borderColor="$primary200"
+								backgroundColor="transparent"
 								borderRadius={28}
 								style={styles.button}
 								onPress={() => setDeleteConfirmVisible(false)}

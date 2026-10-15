@@ -317,10 +317,11 @@ const RealTransactionModal = ({
 						<XStack justifyContent="space-between">
 							<Button
 								onPress={() => setCategoryModalVisible(false)}
-								borderColor={'$primary200'}
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								size="$buttons.lg"
 								padding={22}
 								alignSelf="center"
-								size={42}
 								fontSize={'$title3'}
 							>
 								<SizableText

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { LayoutChangeEvent } from 'react-native';
 import {
 	AlertDialog,
+	SizableText,
 	Button,
 	Dialog,
 	Input,
@@ -112,12 +113,18 @@ export default function FixBalanceModal() {
 							<Button
 								height={40}
 								f={1}
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								borderRadius={28}
+
 								onPress={() => {
 									setOpen(false);
 									setInputValue('');
 								}}
 							>
-								{t('Cancel')}
+								<SizableText color="$primary100" size="$title3">
+									{t('Cancel')}
+								</SizableText>
 							</Button>
 
 							<Button
@@ -131,7 +138,9 @@ export default function FixBalanceModal() {
 								}
 								onPress={() => setConfirmOpen(true)}
 							>
-								{t('Save')}
+								<SizableText color="$white" size="$title3">
+									{t('Save')}
+								</SizableText>
 							</Button>
 						</XStack>
 					</YStack>
@@ -162,8 +171,16 @@ export default function FixBalanceModal() {
 							alignItems="center"
 						>
 							<AlertDialog.Cancel asChild>
-								<Button f={1} height={40}>
-									{t('Cancel')}
+								<Button
+									f={1}
+									height={40}
+									borderColor="$primary200"
+									backgroundColor="transparent"
+									borderRadius={28}
+								>
+									<SizableText color="$primary100" size="$title3">
+										{t('Cancel')}
+									</SizableText>
 								</Button>
 							</AlertDialog.Cancel>
 							<AlertDialog.Action asChild>

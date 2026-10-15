@@ -323,10 +323,11 @@ export default function Settings() {
 								onPress={handleCancelButtonPressed}
 								borderColor="$primary200"
 								backgroundColor="transparent"
+								borderRadius={28} 
 								size="$buttons.lg"
 								alignItems="center"
 							>
-								<SizableText size="$title3" color="$primary200">
+								<SizableText size="$title3" color="$primary100">
 									{t('Cancel')}
 								</SizableText>
 							</Button>
