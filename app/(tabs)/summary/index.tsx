@@ -11,7 +11,9 @@ export default function YearsScreen() {
 
 	const availableYears = useMemo(() => {
 		const currentYear = new Date().getFullYear();
-		return Array.from({ length: 6 }, (_, i) => String(currentYear - i));
+		return Array.from({ length: 6 }, (_, i) =>
+			String(currentYear - i),
+		).reverse();
 	}, []);
 
 	return (

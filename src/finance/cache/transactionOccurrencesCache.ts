@@ -6,6 +6,7 @@ import type {
 } from '@/src/dataModel';
 import { generateTransactionOccurrences } from '../logic/transactionOccurrencesLogic';
 import { createMonthKey, dateToMonthKey, monthsInRange } from '../logic/util';
+import { fetchPlannedTransactionOccurrenceExceptionsByDateRange } from '../query/plannedTransactionOccurrenceExceptionQueries';
 import { fetchPlannedTransactionsInRange as fetchPlannedTransactionsActiveInRange } from '../query/plannedTransactionQueries';
 import { fetchRealTransactionsByDateRange } from '../query/realTransactionQueries';
 
@@ -162,6 +163,12 @@ async function updateTransactionOccurrencesCacheForMonths(
 		firstMonthToUpdate,
 		lastMonthToUpdate,
 	);
+	// Exceptions are queried by scheduled date, which may differ from a moved transaction's current date.
+	const excludedPlannedOccurrences =
+		await fetchPlannedTransactionOccurrenceExceptionsByDateRange(
+			firstMonthToUpdate,
+			lastMonthToUpdate,
+		);
 
 	const generatedOccurrences = generateTransactionOccurrences(
 		firstMonthToUpdate.year,
@@ -170,6 +177,7 @@ async function updateTransactionOccurrencesCacheForMonths(
 		lastMonthToUpdate.month,
 		relevantPlannedTransactions,
 		relevantRealTransactions,
+		excludedPlannedOccurrences,
 	);
 
 	const generatedOccurrencesByMonthKey: Map<string, TransactionOccurrence[]> =

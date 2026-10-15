@@ -77,6 +77,14 @@ export interface RealTransaction {
 	date: Date;
 	type: TransactionType;
 	plannedTransactionId: number | null;
+	/** Original scheduled date; differs from date when this occurrence is moved. */
+	plannedOccurrenceDate?: Date | null;
+}
+
+/** A skipped scheduled date for one planned transaction, leaving its recurrence intact. */
+export interface PlannedTransactionOccurrenceException {
+	plannedTransactionId: number;
+	occurrenceDate: Date;
 }
 
 /**

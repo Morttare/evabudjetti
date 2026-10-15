@@ -42,6 +42,7 @@ export interface TransactionOccurrenceVersioning {
 		endYear: number,
 		endMonth: number,
 	) => Map<string, number>;
+	invalidateTrackedMonths: () => void;
 
 	onPlannedTransactionCreated: (created: PlannedTransaction) => void;
 	onPlannedTransactionUpdated: (
@@ -56,6 +57,7 @@ export interface TransactionOccurrenceVersioning {
 		updated: RealTransaction,
 	) => void;
 	onRealTransactionDeleted: (deleted: RealTransaction) => void;
+	onPlannedOccurrenceChanged: (occurrenceDate: Date) => void;
 }
 
 export const useTransactionOccurrenceVersioning =
@@ -115,6 +117,18 @@ export const useTransactionOccurrenceVersioning =
 			}
 
 			return versions;
+		},
+		invalidateTrackedMonths: () => {
+			set((state) => {
+				if (state.versionsByMonthKey.size === 0) return {};
+
+				const versionsByMonthKey = new Map(state.versionsByMonthKey);
+				for (const [monthKey, version] of versionsByMonthKey) {
+					versionsByMonthKey.set(monthKey, version + 1);
+				}
+
+				return { versionsByMonthKey };
+			});
 		},
 
 		onPlannedTransactionCreated: (created: PlannedTransaction) => {
@@ -285,6 +299,19 @@ export const useTransactionOccurrenceVersioning =
 				);
 
 				return { versionsByMonthKey: newVersions };
+			});
+		},
+
+		onPlannedOccurrenceChanged: (occurrenceDate: Date) => {
+			set((state) => {
+				const monthKey = dateToMonthKey(occurrenceDate);
+				// Refresh the month containing the scheduled date, even when it was not cached yet.
+				const versionsByMonthKey = new Map(state.versionsByMonthKey);
+				versionsByMonthKey.set(
+					monthKey,
+					(versionsByMonthKey.get(monthKey) ?? 0) + 1,
+				);
+				return { versionsByMonthKey };
 			});
 		},
 	}));

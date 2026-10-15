@@ -106,6 +106,10 @@ const PlannedTransactionConfirmModal = ({
 					categoryId: selectedCategory,
 					plannedTransactionId:
 						occurrence.plannedTransaction?.id ?? null,
+					// Preserve the scheduled date separately if the user moves this occurrence.
+					plannedOccurrenceDate: occurrence.plannedTransaction
+						? occurrence.date
+						: null,
 				});
 			}
 			onConfirmed();
