@@ -10,7 +10,9 @@ import {
 	XStack,
 	YStack,
 } from 'tamagui';
+import { DEFAULT_ACCOUNT_ID } from '@/src/dataModel';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
+import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
 import { useBalances } from '@/src/finance/hook/useBalances';
 
 export default function FixBalanceModal() {
@@ -20,6 +22,7 @@ export default function FixBalanceModal() {
 	const [inputValue, setInputValue] = useState('');
 
 	const saveBalanceReconciliation = useAddBalanceReconciliation();
+	const addRealTransaction = useAddRealTransaction();
 
 	const today = new Date();
 	const currentMonthBalances = useBalances(
@@ -42,6 +45,17 @@ export default function FixBalanceModal() {
 	const handleConfirmSave = async () => {
 		if (!Number.isNaN(numericInput)) {
 			await saveBalanceReconciliation(numericInput);
+			if (difference !== 0) {
+				await addRealTransaction({
+					accountId: DEFAULT_ACCOUNT_ID,
+					name: t('Balance correction'),
+					categoryId: 0,
+					amount: Math.abs(difference),
+					date: today,
+					type: difference > 0 ? 'income' : 'expense',
+					plannedTransactionId: null,
+				});
+			}
 			setConfirmOpen(false);
 			setOpen(false);
 			setInputValue('');
