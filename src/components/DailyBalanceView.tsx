@@ -190,7 +190,7 @@ export default function DailyBalanceView({
 				marginBottom="0"
 			>
 				{/* Date Header with Navigation */}
-				<Text fontSize="$3" fontWeight="600">
+				<Text fontSize="$4" fontWeight="600">
 					{' '}
 					{t('Daily situation')}{' '}
 				</Text>
@@ -291,7 +291,7 @@ export default function DailyBalanceView({
 						</Text>
 					</Button>
 				</XStack>
-				<Text color="$black" fontSize="$2" fontWeight="600">
+				<Text color="$black" fontSize="$3" fontWeight="600">
 					{t('Usable funds timeframe')}:{' '}
 					{`${formatDate(selectedDate)} - ${formatDate(currentTimeframeEnd)}`}
 				</Text>

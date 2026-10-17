@@ -106,7 +106,7 @@ const EditTransactionModal = ({
 					alignItems="center"
 					marginBottom={8}
 				>
-					<SizableText color="$primary100" size="$title2">
+					<SizableText color="$primary100" size="$title1">
 						{t('Edit transaction')}
 					</SizableText>
 					<Button
@@ -123,7 +123,7 @@ const EditTransactionModal = ({
 					<YStack gap={20} paddingVertical={20}>
 						{/* Name */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Name')}
 							</SizableText>
 							<Input
@@ -141,7 +141,7 @@ const EditTransactionModal = ({
 
 						{/* Amount */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Amount')}
 							</SizableText>
 							<Input
@@ -160,7 +160,7 @@ const EditTransactionModal = ({
 
 						{/* Date */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Date')}
 							</SizableText>
 							<MultiPlatformDatePicker
@@ -173,7 +173,7 @@ const EditTransactionModal = ({
 						{/* Category */}
 						{filteredCategories.length > 0 && (
 							<YStack gap={8}>
-								<SizableText color="$primary100" size="$title3">
+								<SizableText color="$primary100" size="$title2">
 									{t('Category')}
 								</SizableText>
 								<XStack flexWrap="wrap">
