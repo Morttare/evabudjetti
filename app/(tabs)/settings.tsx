@@ -1,12 +1,6 @@
 import { Check, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
-import {
-	type Dispatch,
-	type PropsWithChildren,
-	type SetStateAction,
-	useMemo,
-	useState,
-} from 'react';
+import { type PropsWithChildren, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -41,7 +35,6 @@ export default function Settings() {
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
 	const [timeframeLengthInput, setTimeframeLengthInput] = useState('1');
-	const [tempTimeframeLength, setTempTimeframeLength] = useState(1);
 	const [selectOpen, setSelectOpen] = useState(false);
 	const [timeframeOption, setTimeframeOption] =
 		useState<LengthOptions>('months');
@@ -49,6 +42,7 @@ export default function Settings() {
 		timeframeStartYear,
 		timeframeStartMonth,
 		timeframeStartDay,
+		timeframeLength,
 		setStartDate,
 		setLength,
 	} = useTimeframeStore();
@@ -89,21 +83,37 @@ export default function Settings() {
 		setLanguageDialogOpen(false);
 	};
 
-	const checkText = () => {
+	const getTimeframeLength = (): number => {
 		const length = Number(timeframeLengthInput);
 		if (!Number.isNaN(length) && length > 0) {
-			setTempTimeframeLength(length);
+			return length;
 		}
-		// Default to 1 if unaccepted input
-		else {
-			setTempTimeframeLength(1);
-			setTimeframeLengthInput('1');
+
+		setTimeframeLengthInput('1');
+		return 1;
+	};
+
+	const checkText = () => {
+		getTimeframeLength();
+	};
+
+	const resetTimeframeDraft = () => {
+		setTempStartDate(defaultStartDate);
+		setTimeframeLengthInput(String(timeframeLength.length));
+		setTimeframeOption(timeframeLength.type);
+		setSelectOpen(false);
+	};
+
+	const handleTimeframeDialogOpenChange = (open: boolean) => {
+		if (open) {
+			resetTimeframeDraft();
 		}
+		setTimeframeDialogOpen(open);
 	};
 
 	const changeTimeframe = () => {
 		setStartDate(tempStartDate);
-		setLength(tempTimeframeLength, timeframeOption);
+		setLength(getTimeframeLength(), timeframeOption);
 		setTimeframeDialogOpen(false);
 
 		// close select
@@ -111,15 +121,7 @@ export default function Settings() {
 	};
 
 	const handleCancelButtonPressed = () => {
-		// reset to saved date
-		setTempStartDate(defaultStartDate);
-		setTimeframeLengthInput('1');
-		setTempTimeframeLength(1);
-		setTimeframeOption('months');
-
-		// close select
-		setSelectOpen(false);
-
+		resetTimeframeDraft();
 		setTimeframeDialogOpen(false);
 	};
 
@@ -168,7 +170,7 @@ export default function Settings() {
 				<SettingsPopup
 					title={t('Timeframe')}
 					open={timeframeDialogOpen}
-					onOpenChange={setTimeframeDialogOpen}
+					onOpenChange={handleTimeframeDialogOpenChange}
 					closeKeyboard
 					onKeyboardClose={checkText}
 				>
@@ -411,7 +413,7 @@ export default function Settings() {
 interface CommonProps extends PropsWithChildren {
 	title: string;
 	open: boolean;
-	onOpenChange: Dispatch<SetStateAction<boolean>>;
+	onOpenChange: (open: boolean) => void;
 }
 
 // Require onKeyboardClose prop if closeKeyboard exists

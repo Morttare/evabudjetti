@@ -138,7 +138,7 @@ const RealTransactionModal = ({
 	return (
 		<View style={styles.container}>
 			<YStack backgroundColor="$background" style={styles.card}>
-				<SizableText color="$primary100" size="$title2">
+				<SizableText color="$primary100" size="$title1">
 					{t(
 						`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`,
 					)}
@@ -148,18 +148,18 @@ const RealTransactionModal = ({
 					<YStack gap={20} paddingVertical={20}>
 						{/* Name Input */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Name')}
 							</SizableText>
 							<Input
 								color="$primary100"
-								placeholder={t('Enter transaction name')}
+								placeholder={t(' Enter transaction name')}
 								value={name}
 								onChangeText={setName}
 								height={40}
 								borderRadius={6}
 								px="10px"
-								fontSize={'$title3'}
+								fontSize={'$title2'}
 								focusStyle={{
 									outlineColor: 'transparent',
 								}}
@@ -168,19 +168,19 @@ const RealTransactionModal = ({
 
 						{/* Amount Input */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Amount')}
 							</SizableText>
 							<Input
 								color="$primary100"
-								placeholder={t('Enter amount (€)')}
+								placeholder={t(' Enter amount (€)')}
 								value={amount}
 								onChangeText={handleAmountChange}
 								keyboardType="decimal-pad"
 								height={40}
 								borderRadius={6}
 								px="10px"
-								fontSize={'$title3'}
+								fontSize={'$title2'}
 								focusStyle={{
 									outlineColor: 'transparent',
 								}}
@@ -189,7 +189,7 @@ const RealTransactionModal = ({
 
 						{/* Category Selection */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Category')}
 							</SizableText>
 							<XStack flexWrap="wrap">
@@ -233,7 +233,7 @@ const RealTransactionModal = ({
 
 						{/* Date Picker */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Date')}
 							</SizableText>
 							<MultiPlatformDatePicker
@@ -322,6 +322,7 @@ const RealTransactionModal = ({
 								padding={22}
 								alignSelf="center"
 								fontSize={'$title3'}
+								size={42}
 							>
 								<SizableText
 									size={'$title3'}
@@ -337,9 +338,8 @@ const RealTransactionModal = ({
 								padding={22}
 								borderRadius={28}
 								alignSelf="center"
-								fontSize={'$title3'}
 							>
-								<SizableText size={'$title3'} color={'$white'}>
+								<SizableText size={'$title2'} color={'$white'}>
 									{t('Save')}
 								</SizableText>
 							</Button>

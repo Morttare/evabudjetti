@@ -131,7 +131,7 @@ const PlannedTransactionConfirmModal = ({
 					alignItems="center"
 					marginBottom={8}
 				>
-					<SizableText color="$primary100" size="$title2">
+					<SizableText color="$primary100" size="$title1">
 						{isEdit
 							? t('Edit confirmed transaction')
 							: t('Confirm budgeted transaction')}
@@ -139,7 +139,7 @@ const PlannedTransactionConfirmModal = ({
 				</XStack>
 
 				{/* Budgeted amount reference */}
-				<SizableText color="$gray700" size="$2" marginBottom={8}>
+				<SizableText color="$gray700" size="$5" marginBottom={8}>
 					{t('Budgeted amount line', { amount: occurrence.amount })}
 				</SizableText>
 
@@ -153,7 +153,7 @@ const PlannedTransactionConfirmModal = ({
 					<YStack gap={20} paddingVertical={20}>
 						{/* Name */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Name')}
 							</SizableText>
 							<Input
@@ -171,7 +171,7 @@ const PlannedTransactionConfirmModal = ({
 
 						{/* Amount */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Amount')}
 							</SizableText>
 							<Input
@@ -190,7 +190,7 @@ const PlannedTransactionConfirmModal = ({
 
 						{/* Date */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Date')}
 							</SizableText>
 							<MultiPlatformDatePicker
