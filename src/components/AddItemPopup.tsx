@@ -414,6 +414,18 @@ const AddItemPopup = ({
 					<View style={styles.buttonRow}>
 						<Button
 							borderRadius={28}
+							borderColor="$primary200"
+							backgroundColor="transparent"
+							size="$buttons.lg"
+							style={styles.button}
+							onPress={onClose}
+						>
+							<SizableText color="$primary100" size="$title3">
+								{t('Cancel')}
+							</SizableText>
+						</Button>
+						<Button
+							borderRadius={28}
 							backgroundColor={
 								isDisabled ? '$primary300' : '$primary200'
 							}
@@ -423,18 +435,6 @@ const AddItemPopup = ({
 						>
 							<SizableText color="$white" size="$title3">
 								{item !== null ? t('Save') : t('Add')}
-							</SizableText>
-						</Button>
-						<Button
-							borderRadius={28}
-							borderColor="$primary200"
-							backgroundColor="transparent"
-							size="$buttons.lg"
-							style={styles.button}
-							onPress={onClose}
-						>
-							<SizableText color="$primary100" size="$title3">
-								{t('Cancel')}
 							</SizableText>
 						</Button>
 					</View>
