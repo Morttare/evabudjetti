@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import type { LayoutChangeEvent } from 'react-native';
 import {
 	AlertDialog,
-	SizableText,
 	Button,
 	Dialog,
 	Input,
+	SizableText,
 	Text,
 	XStack,
 	YStack,
@@ -116,7 +116,6 @@ export default function FixBalanceModal() {
 								borderRadius={28}
 								borderColor="$primary200"
 								backgroundColor="transparent"
-
 								onPress={() => {
 									setOpen(false);
 									setInputValue('');
@@ -179,7 +178,10 @@ export default function FixBalanceModal() {
 									borderColor="$primary200"
 									backgroundColor="transparent"
 								>
-									<SizableText color="$primary100" size="$title3">
+									<SizableText
+										color="$primary100"
+										size="$title3"
+									>
 										{t('Cancel')}
 									</SizableText>
 								</Button>

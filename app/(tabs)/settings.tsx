@@ -324,7 +324,7 @@ export default function Settings() {
 								borderColor="$primary200"
 								backgroundColor="transparent"
 								size="$buttons.lg"
-								borderRadius={28} 
+								borderRadius={28}
 								alignItems="center"
 							>
 								<SizableText size="$title3" color="$primary100">
@@ -336,7 +336,7 @@ export default function Settings() {
 								onPress={changeTimeframe}
 								backgroundColor="$primary200"
 								size="$buttons.lg"
-								borderRadius={28} 
+								borderRadius={28}
 								alignItems="center"
 							>
 								<SizableText size="$title3" color="$white">
