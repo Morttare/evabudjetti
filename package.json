@@ -74,6 +74,7 @@
 		"@tamagui/metro-plugin": "^1.144.3",
 		"@testing-library/react-native": "^13.3.3",
 		"@types/jest": "^29.5.14",
+		"@types/node": "^26.6.5",
 		"@types/react": "~19.2.18",
 		"autoprefixer": "^10.4.23",
 		"babel-plugin-inline-import": "^3.0.0",
