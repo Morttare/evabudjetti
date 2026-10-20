@@ -207,7 +207,11 @@ const EditTransactionModal = ({
 				</ScrollView>
 
 				{/* Action buttons */}
-				<XStack justifyContent="space-between" marginTop={20}>
+				<XStack
+					width="100%"
+					justifyContent="space-between"
+					marginTop={20}
+				>
 					<Button
 						borderRadius={28}
 						style={styles.button}
@@ -258,7 +262,7 @@ const EditTransactionModal = ({
 								'Are you sure you want to delete this transaction?',
 							)}
 						</SizableText>
-						<XStack justifyContent="space-between">
+						<XStack width="100%" justifyContent="space-between">
 							<Button
 								borderColor="$primary200"
 								backgroundColor="transparent"

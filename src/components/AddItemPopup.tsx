@@ -416,7 +416,6 @@ const AddItemPopup = ({
 							borderRadius={28}
 							borderColor="$primary200"
 							backgroundColor="transparent"
-							size="$buttons.lg"
 							style={styles.button}
 							onPress={onClose}
 						>
@@ -474,7 +473,8 @@ const styles = StyleSheet.create({
 	buttonRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		height: '10%',
+		width: '100%',
+		height: 50,
 	},
 	inputsContainer: {
 		gap: 30,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		width: '45%',
-		height: '100%',
+		height: 50,
 	},
 	calendarIcon: {
 		width: '10%',

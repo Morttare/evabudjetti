@@ -120,13 +120,13 @@ export default function FixBalanceModal() {
 						</Text>
 
 						<XStack
-							gap="$3"
+							width="100%"
 							marginTop="$2"
 							justifyContent="space-between"
 						>
 							<Button
-								height={40}
-								f={1}
+								width="45%"
+								height={50}
 								borderRadius={28}
 								borderColor="$primary200"
 								backgroundColor="transparent"
@@ -141,8 +141,8 @@ export default function FixBalanceModal() {
 							</Button>
 
 							<Button
-								height={40}
-								f={1}
+								width="45%"
+								height={50}
 								borderRadius={28}
 								backgroundColor="$primary200"
 								color="white"
@@ -180,14 +180,14 @@ export default function FixBalanceModal() {
 						</AlertDialog.Description>
 
 						<XStack
-							gap="$3"
+							width="100%"
 							justifyContent="space-between"
 							alignItems="center"
 						>
 							<AlertDialog.Cancel asChild>
 								<Button
-									f={1}
-									height={40}
+									width="45%"
+									height={50}
 									borderRadius={28}
 									borderColor="$primary200"
 									backgroundColor="transparent"
@@ -202,8 +202,8 @@ export default function FixBalanceModal() {
 							</AlertDialog.Cancel>
 							<AlertDialog.Action asChild>
 								<Button
-									f={1}
-									height={40}
+									width="45%"
+									height={50}
 									borderRadius={28}
 									backgroundColor="$primary200"
 									color="white"
