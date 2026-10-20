@@ -414,6 +414,17 @@ const AddItemPopup = ({
 					<View style={styles.buttonRow}>
 						<Button
 							borderRadius={28}
+							borderColor="$primary200"
+							backgroundColor="transparent"
+							style={styles.button}
+							onPress={onClose}
+						>
+							<SizableText color="$primary100" size="$title3">
+								{t('Cancel')}
+							</SizableText>
+						</Button>
+						<Button
+							borderRadius={28}
 							backgroundColor={
 								isDisabled ? '$primary300' : '$primary200'
 							}
@@ -423,16 +434,6 @@ const AddItemPopup = ({
 						>
 							<SizableText color="$white" size="$title3">
 								{item !== null ? t('Save') : t('Add')}
-							</SizableText>
-						</Button>
-						<Button
-							borderRadius={28}
-							backgroundColor="$caution"
-							style={styles.button}
-							onPress={onClose}
-						>
-							<SizableText color="$primary100" size="$title3">
-								{t('Cancel')}
 							</SizableText>
 						</Button>
 					</View>
@@ -472,7 +473,8 @@ const styles = StyleSheet.create({
 	buttonRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		height: '10%',
+		width: '100%',
+		height: 50,
 	},
 	inputsContainer: {
 		gap: 30,
@@ -481,7 +483,7 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		width: '45%',
-		height: '100%',
+		height: 50,
 	},
 	calendarIcon: {
 		width: '10%',

@@ -236,10 +236,15 @@ const PlannedTransactionConfirmModal = ({
 					</YStack>
 				</ScrollView>
 
-				<XStack justifyContent="space-between" marginTop={20}>
+				<XStack
+					width="100%"
+					justifyContent="space-between"
+					marginTop={20}
+				>
 					<Button
 						borderRadius={28}
-						backgroundColor="$caution"
+						borderColor="$primary200"
+						backgroundColor="transparent"
 						style={styles.button}
 						onPress={onClose}
 					>

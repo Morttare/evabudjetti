@@ -6,6 +6,7 @@ import {
 	Button,
 	Dialog,
 	Input,
+	SizableText,
 	Text,
 	XStack,
 	YStack,
@@ -119,24 +120,30 @@ export default function FixBalanceModal() {
 						</Text>
 
 						<XStack
-							gap="$3"
+							width="100%"
 							marginTop="$2"
 							justifyContent="space-between"
 						>
 							<Button
-								height={40}
-								f={1}
+								width="45%"
+								height={50}
+								borderRadius={28}
+								borderColor="$primary200"
+								backgroundColor="transparent"
 								onPress={() => {
 									setOpen(false);
 									setInputValue('');
 								}}
 							>
-								{t('Cancel')}
+								<SizableText color="$primary100" size="$title3">
+									{t('Cancel')}
+								</SizableText>
 							</Button>
 
 							<Button
-								height={40}
-								f={1}
+								width="45%"
+								height={50}
+								borderRadius={28}
 								backgroundColor="$primary200"
 								color="white"
 								disabled={
@@ -145,7 +152,9 @@ export default function FixBalanceModal() {
 								}
 								onPress={() => setConfirmOpen(true)}
 							>
-								{t('Save')}
+								<SizableText color="$white" size="$title3">
+									{t('Save')}
+								</SizableText>
 							</Button>
 						</XStack>
 					</YStack>
@@ -171,19 +180,31 @@ export default function FixBalanceModal() {
 						</AlertDialog.Description>
 
 						<XStack
-							gap="$3"
+							width="100%"
 							justifyContent="space-between"
 							alignItems="center"
 						>
 							<AlertDialog.Cancel asChild>
-								<Button f={1} height={40}>
-									{t('Cancel')}
+								<Button
+									width="45%"
+									height={50}
+									borderRadius={28}
+									borderColor="$primary200"
+									backgroundColor="transparent"
+								>
+									<SizableText
+										color="$primary100"
+										size="$title3"
+									>
+										{t('Cancel')}
+									</SizableText>
 								</Button>
 							</AlertDialog.Cancel>
 							<AlertDialog.Action asChild>
 								<Button
-									f={1}
-									height={40}
+									width="45%"
+									height={50}
+									borderRadius={28}
 									backgroundColor="$primary200"
 									color="white"
 									onPress={handleConfirmSave}

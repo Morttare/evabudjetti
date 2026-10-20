@@ -246,10 +246,15 @@ const RealTransactionModal = ({
 				</ScrollView>
 
 				{/* Buttons */}
-				<XStack justifyContent="space-between" marginTop={20}>
+				<XStack
+					width="100%"
+					justifyContent="space-between"
+					marginTop={20}
+				>
 					<Button
 						borderRadius={28}
-						backgroundColor="$caution"
+						borderColor="$primary200"
+						backgroundColor="transparent"
 						style={styles.button}
 						onPress={onClose}
 					>
@@ -312,17 +317,17 @@ const RealTransactionModal = ({
 							px="10px"
 							fontSize={'$title3'}
 						/>
-						<XStack justifyContent="space-between">
+						<XStack width="100%" justifyContent="space-between">
 							<Button
 								onPress={() => setCategoryModalVisible(false)}
-								borderColor={'$primary200'}
-								padding={22}
-								alignSelf="center"
-								size={42}
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								borderRadius={28}
+								style={styles.button}
 							>
 								<SizableText
 									size={'$title3'}
-									color={'$primary200'}
+									color={'$primary100'}
 								>
 									{t('Cancel')}
 								</SizableText>
@@ -330,9 +335,8 @@ const RealTransactionModal = ({
 							<Button
 								onPress={handleAddCategory}
 								backgroundColor={'$primary200'}
-								size={42}
-								padding={22}
-								alignSelf="center"
+								borderRadius={28}
+								style={styles.button}
 							>
 								<SizableText size={'$title2'} color={'$white'}>
 									{t('Save')}

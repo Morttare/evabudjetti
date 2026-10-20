@@ -320,15 +320,17 @@ export default function Settings() {
 							</XStack>
 						</YStack>
 
-						<XStack alignSelf="flex-end" gap={10}>
+						<XStack width="100%" justifyContent="space-between">
 							<Button
 								onPress={handleCancelButtonPressed}
 								borderColor="$primary200"
 								backgroundColor="transparent"
-								size="$buttons.lg"
+								width="45%"
+								height={50}
+								borderRadius={28}
 								alignItems="center"
 							>
-								<SizableText size="$title3" color="$primary200">
+								<SizableText size="$title3" color="$primary100">
 									{t('Cancel')}
 								</SizableText>
 							</Button>
@@ -336,7 +338,9 @@ export default function Settings() {
 							<Button
 								onPress={changeTimeframe}
 								backgroundColor="$primary200"
-								size="$buttons.lg"
+								width="45%"
+								height={50}
+								borderRadius={28}
 								alignItems="center"
 							>
 								<SizableText size="$title3" color="$white">
