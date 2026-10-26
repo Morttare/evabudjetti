@@ -30,15 +30,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
-
-      - name: Format with Biome
-        run: biome format .
+        run: pnpm install --frozen-lockfile
 
       - name: Run Biome
-        run: biome ci . --error-on-warnings
+        run: pnpm run lint
