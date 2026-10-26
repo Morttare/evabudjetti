@@ -13,8 +13,9 @@ import {
 } from 'tamagui';
 import { DEFAULT_ACCOUNT_ID } from '@/src/dataModel';
 import { useAddBalanceReconciliation } from '@/src/finance/hook/useAddBalanceReconciliation';
-import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
 import { useBalances } from '@/src/finance/hook/useBalances';
+import { useUpsertDailyBalanceCorrection } from '@/src/finance/hook/useUpsertDailyBalanceCorrection';
+import { BALANCE_CORRECTION_CATEGORY_ID } from '@/src/finance/logic/balanceCorrection';
 
 export default function FixBalanceModal() {
 	const { t } = useTranslation();
@@ -23,7 +24,7 @@ export default function FixBalanceModal() {
 	const [inputValue, setInputValue] = useState('');
 
 	const saveBalanceReconciliation = useAddBalanceReconciliation();
-	const addRealTransaction = useAddRealTransaction();
+	const saveBalanceCorrection = useUpsertDailyBalanceCorrection();
 
 	const today = new Date();
 	const currentMonthBalances = useBalances(
@@ -46,11 +47,12 @@ export default function FixBalanceModal() {
 	const handleConfirmSave = async () => {
 		if (!Number.isNaN(numericInput)) {
 			await saveBalanceReconciliation(numericInput);
+			// The reconciliation is the latest balance; this event records its delta.
 			if (difference !== 0) {
-				await addRealTransaction({
+				await saveBalanceCorrection({
 					accountId: DEFAULT_ACCOUNT_ID,
 					name: t('Balance correction'),
-					categoryId: 0,
+					categoryId: BALANCE_CORRECTION_CATEGORY_ID,
 					amount: Math.abs(difference),
 					date: today,
 					type: difference > 0 ? 'income' : 'expense',
