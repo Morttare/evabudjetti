@@ -154,7 +154,7 @@ export default function BudgetDetailedMonthScreen() {
 							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
-									{totalExpenses.toFixed(2)} €
+									{`${totalExpenses.toFixed(2)} €`}
 								</SizableText>
 								{expensesExpanded ? (
 									<ChevronUp size={20} />
@@ -200,7 +200,7 @@ export default function BudgetDetailedMonthScreen() {
 														{cat.categoryName}
 													</SizableText>
 													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
+														{`${cat.total.toFixed(2)} €`}
 													</SizableText>
 												</XStack>
 
@@ -221,10 +221,7 @@ export default function BudgetDetailedMonthScreen() {
 															size="$3"
 															color="$color11"
 														>
-															{Math.abs(
-																item.totalAmount,
-															).toFixed(2)}{' '}
-															€
+															{`${Math.abs(item.totalAmount).toFixed(2)} €`}
 														</SizableText>
 													</XStack>
 												))}
@@ -238,27 +235,27 @@ export default function BudgetDetailedMonthScreen() {
 
 					<YStack gap="$2">
 						<Button
-							height={60}
-							justifyContent="space-between"
-							onPress={() => setIncomeExpanded(!incomeExpanded)}
-							backgroundColor="white"
-							borderWidth={1}
-							borderColor="$borderColor"
-						>
+						height={60}
+						justifyContent="space-between"
+						onPress={() => setIncomeExpanded(!incomeExpanded)}
+						backgroundColor="white"
+						borderWidth={1}
+						borderColor="$borderColor"
+					>
+						<SizableText fontWeight="bold">
+							{t('Planned Incomes')}
+						</SizableText>
+						<XStack gap="$2" alignItems="center">
 							<SizableText fontWeight="bold">
-								{t('Planned Incomes')}
+								{`${totalIncomes.toFixed(2)} €`}
 							</SizableText>
-							<XStack gap="$2" alignItems="center">
-								<SizableText fontWeight="bold">
-									{totalIncomes.toFixed(2)} €
-								</SizableText>
-								{incomeExpanded ? (
-									<ChevronUp size={20} />
-								) : (
-									<ChevronDown size={20} />
-								)}
-							</XStack>
-						</Button>
+							{incomeExpanded ? (
+								<ChevronUp size={20} />
+							) : (
+								<ChevronDown size={20} />
+							)}
+						</XStack>
+					</Button>
 
 						{incomeExpanded && (
 							<Card
@@ -296,7 +293,7 @@ export default function BudgetDetailedMonthScreen() {
 														{cat.categoryName}
 													</SizableText>
 													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
+														{`${cat.total.toFixed(2)} €`}
 													</SizableText>
 												</XStack>
 
@@ -317,10 +314,7 @@ export default function BudgetDetailedMonthScreen() {
 															size="$3"
 															color="$color11"
 														>
-															{Math.abs(
-																item.totalAmount,
-															).toFixed(2)}{' '}
-															€
+															{`${Math.abs(item.totalAmount).toFixed(2)} €`}
 														</SizableText>
 													</XStack>
 												))}

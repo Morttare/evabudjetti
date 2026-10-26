@@ -177,7 +177,7 @@ export default function Settings() {
 					<YStack gap={10} paddingHorizontal={10} paddingTop={20}>
 						<XStack gap={5}>
 							<SizableText size="$title3" color="$black">
-								{t('Start date')} *
+								{`${t('Start date')} *`}
 							</SizableText>
 
 							<MultiPlatformDatePicker
@@ -245,9 +245,7 @@ export default function Settings() {
 												<Select.Group>
 													<View
 														height={
-															selectOpen
-																? 'auto'
-																: 0
+															selectOpen ? 'auto' : 0
 														}
 														overflow="hidden"
 													>
@@ -256,56 +254,41 @@ export default function Settings() {
 																<Select.Item
 																	index={i}
 																	key={option}
-																	value={
-																		option
-																	}
+																	value={option}
 																	onTouchEnd={() => {
 																		setTimeframeOption(
 																			option,
 																		);
-																		setSelectOpen(
-																			false,
-																		);
+																		setSelectOpen(false);
 																	}}
 																	borderColor="$black"
-																	borderWidth={
-																		1
-																	}
-																	borderTopWidth={
-																		0
-																	}
+																	borderWidth={1}
+																	borderTopWidth={0}
 																	borderBottomWidth={
 																		i ===
-																		timeframeOptions.length -
-																			1
+																		timeframeOptions.length - 1
 																			? 1
 																			: 0
 																	}
 																	borderBottomLeftRadius={
 																		i ===
-																		timeframeOptions.length -
-																			1
+																		timeframeOptions.length - 1
 																			? 15
 																			: 0
 																	}
 																	borderBottomRightRadius={
 																		i ===
-																		timeframeOptions.length -
-																			1
+																		timeframeOptions.length - 1
 																			? 15
 																			: 0
 																	}
 																>
 																	<Select.ItemText>
-																		{t(
-																			option,
-																		)}
+																		{t(option)}
 																	</Select.ItemText>
 																	<Select.ItemIndicator marginLeft="auto">
 																		<Check
-																			size={
-																				16
-																			}
+																			size={16}
 																		/>
 																	</Select.ItemIndicator>
 																</Select.Item>
@@ -368,10 +351,10 @@ export default function Settings() {
 					>
 						<YStack>
 							<SizableText color="$black" size="$title2">
-								Financial debug / test view
+								{'Financial debug / test view'}
 							</SizableText>
 							<SizableText size="$2" color="$black">
-								Temporary
+								{'Temporary'}
 							</SizableText>
 						</YStack>
 						<ChevronRight size="$icons.sm" color="$black" />
@@ -397,10 +380,10 @@ export default function Settings() {
 					>
 						<YStack>
 							<SizableText color="$black" size="$title2">
-								Show introduction page
+								{'Show introduction page'}
 							</SizableText>
 							<SizableText size="$2" color="$black">
-								Temporary
+								{'Temporary'}
 							</SizableText>
 						</YStack>
 						<ChevronRight size="$icons.sm" color="$black" />

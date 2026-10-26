@@ -96,9 +96,7 @@ const AddItemPopup = ({
 				<YStack backgroundColor="$background" style={styles.card}>
 					<XStack justifyContent="space-between">
 						<SizableText color="$primary100" size="$title2">
-							{item !== null
-								? t('Edit item')
-								: t('Add a new item')}
+							{item !== null ? t('Edit item') : t('Add a new item')}
 						</SizableText>
 						{item !== null && (
 							<Button
@@ -148,7 +146,7 @@ const AddItemPopup = ({
 						</View>
 						<View style={styles.singleItemContainer}>
 							<SizableText color="$primary100" size="$title3">
-								{t('Start Date')}:
+								{`${t('Start Date')}:`}
 							</SizableText>
 							<MultiPlatformDatePicker
 								value={startDate}
@@ -166,7 +164,7 @@ const AddItemPopup = ({
 								}}
 							>
 								<SizableText color="$primary100" size="$title3">
-									{t('Reoccurrence')}:
+									{`${t('Reoccurrence')}:`}
 								</SizableText>
 								<Checkbox
 									checked={hasReocurrence}
@@ -211,9 +209,7 @@ const AddItemPopup = ({
 												height: '100%',
 											}}
 											defaultValue={String(
-												item
-													? item.recurrenceInterval
-													: 1,
+												item ? item.recurrenceInterval : 1,
 											)}
 											keyboardType="numeric"
 											onChangeText={(text: string) => {
@@ -231,18 +227,13 @@ const AddItemPopup = ({
 												disablePreventBodyScroll
 												native="web"
 												defaultValue={
-													reoccurence
-														? reoccurence
-														: 'month'
+													reoccurence ? reoccurence : 'month'
 												}
 											>
 												<Select.Trigger
 													borderColor={'$primary100'}
 													height={'45'}
-													/* Border style changes when selection is active */
-													borderWidth={
-														recSelect ? 2 : 1
-													}
+													borderWidth={recSelect ? 2 : 1}
 													borderBottomLeftRadius={
 														recSelect ? 0 : 15
 													}
@@ -252,12 +243,8 @@ const AddItemPopup = ({
 													iconAfter={ChevronDown}
 													onPressOut={() =>
 														recSelect
-															? toggleRecSelect(
-																	false,
-																)
-															: toggleRecSelect(
-																	true,
-																)
+															? toggleRecSelect(false)
+															: toggleRecSelect(true)
 													}
 												>
 													<Select.Value
@@ -271,76 +258,36 @@ const AddItemPopup = ({
 															{REOCCURENCE_OPTIONS.map(
 																(opt, i) => (
 																	<Select.Item
-																		/* Manually hide and disable the dropdown menu when necessary.
-																	This is not optimal and should probably be changed at some point*/
-																		opacity={
-																			recSelect
-																				? 100
-																				: 0
-																		}
-																		disabled={
-																			!recSelect
-																		}
-																		zIndex={
-																			recSelect
-																				? 2000
-																				: 0
-																		}
-																		borderColor={
-																			'$primary100'
-																		}
-																		borderWidth={
-																			2
-																		}
-																		borderTopWidth={
-																			0
-																		}
+																		opacity={recSelect ? 100 : 0}
+																		disabled={!recSelect}
+																		zIndex={recSelect ? 2000 : 0}
+																		borderColor={'$primary100'}
+																		borderWidth={2}
+																		borderTopWidth={0}
 																		borderBottomWidth={
 																			i ===
-																			REOCCURENCE_OPTIONS.length -
-																				1
-																				? 2
-																				: 0
+																			reoccurenceOptions.length - 1
+																			? 2
+																			: 0
 																		}
 																		alignSelf="center"
-																		marginTop={
-																			-0.5
-																		}
-																		index={
-																			i
-																		}
-																		key={
-																			opt
-																		}
-																		value={
-																			opt
-																		}
+																		marginTop={-0.5}
+																		index={i}
+																		key={opt}
+																		value={opt}
 																		onTouchEnd={() => {
-																			setReoccurence(
-																				opt,
-																			);
-																			toggleRecSelect(
-																				false,
-																			);
+																			setReoccurence(opt);
+																			toggleRecSelect(false);
 																		}}
 																	>
 																		<Select.ItemText
-																			color={
-																				'$primary100'
-																			}
+																			color={'$primary100'}
 																			alignContent="center"
 																		>
-																			{t(
-																				'Rec_' +
-																					opt,
-																			)}
+																			{t('Rec_' + opt)}
 																		</Select.ItemText>
 																		<Select.ItemIndicator marginLeft="10">
-																			<Check
-																				size={
-																					16
-																				}
-																			/>
+																			<Check size={16} />
 																		</Select.ItemIndicator>
 																	</Select.Item>
 																),
@@ -376,7 +323,7 @@ const AddItemPopup = ({
 											color="$primary100"
 											size="$title3"
 										>
-											{t('End Date')}:
+											{`${t('End Date')}:`}
 										</SizableText>
 										<Checkbox
 											checked={hasEndDate}
@@ -392,7 +339,6 @@ const AddItemPopup = ({
 																	),
 														)
 											}
-											// Default end date should change based on interval?
 											size="$10"
 										>
 											<Checkbox.Indicator>

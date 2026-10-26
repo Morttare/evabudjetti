@@ -27,7 +27,7 @@ export default function Err() {
 					marginBottom={-80}
 					color={'$primary100'}
 				/>
-				<SizableText size={'$title2'}>404</SizableText>
+				<SizableText size={'$title2'}>{'404'}</SizableText>
 				<SizableText size={'$title2'} marginBottom={16}>
 					{'Something went wrong.'}
 				</SizableText>
@@ -43,7 +43,7 @@ export default function Err() {
 				color="$white"
 				onPress={() => router.push('/')}
 			>
-				{'Back to home'}
+				<SizableText color="$white">{'Back to home'}</SizableText>
 			</Button>
 			<YStack height={48} />
 		</YStack>

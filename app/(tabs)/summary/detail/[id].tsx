@@ -222,7 +222,7 @@ export default function DetailedMonthScreen() {
 							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
-									{totalExpenses.toFixed(2)} €
+									{`${totalExpenses.toFixed(2)} €`}
 								</SizableText>
 								{expensesExpanded ? (
 									<ChevronUp size={20} />
@@ -268,7 +268,7 @@ export default function DetailedMonthScreen() {
 														{cat.categoryName}
 													</SizableText>
 													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
+														{`${cat.total.toFixed(2)} €`}
 													</SizableText>
 												</XStack>
 
@@ -295,20 +295,13 @@ export default function DetailedMonthScreen() {
 																	size="$3"
 																	color="$color11"
 																>
-																	{
-																		displayName
-																	}
+																	{displayName}
 																</SizableText>
 																<SizableText
 																	size="$3"
 																	color="$color11"
 																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
+																	{`${Math.abs(item.amount).toFixed(2)} €`}
 																</SizableText>
 															</XStack>
 														);
@@ -336,7 +329,7 @@ export default function DetailedMonthScreen() {
 							</SizableText>
 							<XStack gap="$2" alignItems="center">
 								<SizableText fontWeight="bold">
-									{totalIncomes.toFixed(2)} €
+									{`${totalIncomes.toFixed(2)} €`}
 								</SizableText>
 								{incomeExpanded ? (
 									<ChevronUp size={20} />
@@ -382,7 +375,7 @@ export default function DetailedMonthScreen() {
 														{cat.categoryName}
 													</SizableText>
 													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
+														{`${cat.total.toFixed(2)} €`}
 													</SizableText>
 												</XStack>
 
@@ -408,20 +401,13 @@ export default function DetailedMonthScreen() {
 																	size="$3"
 																	color="$color11"
 																>
-																	{
-																		displayName
-																	}
+																	{displayName}
 																</SizableText>
 																<SizableText
 																	size="$3"
 																	color="$color11"
 																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
+																	{`${Math.abs(item.amount).toFixed(2)} €`}
 																</SizableText>
 															</XStack>
 														);

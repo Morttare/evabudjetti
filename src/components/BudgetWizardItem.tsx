@@ -89,12 +89,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 								paddingTop="5"
 								textAlign="left"
 							>
-								{t(
-									item.recurrenceBase === null
-										? 'Date'
-										: 'Starts',
-								)}
-								: {formatDate(item.startDate)}
+								{`${t(item.recurrenceBase === null ? 'Date' : 'Starts')}: ${formatDate(item.startDate)}`}
 							</SizableText>
 							{item.endDate !== null && (
 								<SizableText
@@ -103,7 +98,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 									paddingTop="5"
 									textAlign="right"
 								>
-									{t('Ends')}: {formatDate(item.endDate)}
+									{`${t('Ends')}: ${formatDate(item.endDate)}`}
 								</SizableText>
 							)}
 						</XStack>
@@ -114,9 +109,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 								paddingTop="5"
 								textAlign="left"
 							>
-								{t('Reoccurs')}: {item.recurrenceInterval}{' '}
-								{t(`Rec_${item.recurrenceBase}`)}{' '}
-								{t('Interval')}
+								{`${t('Reoccurs')}: ${item.recurrenceInterval} ${t('Interval')}`}
 							</SizableText>
 						)}
 					</YStack>

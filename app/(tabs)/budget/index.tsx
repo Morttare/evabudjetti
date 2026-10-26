@@ -52,7 +52,7 @@ export default function YearsScreen() {
 										<Calendar size={20} color="#0277bd" />
 									</View>
 									<SizableText fontWeight="bold" size="$6">
-										{t('Year')} {year}
+										{`${t('Year')} ${year}`}
 									</SizableText>
 								</XStack>
 								<ChevronRight size={20} color="$color10" />
