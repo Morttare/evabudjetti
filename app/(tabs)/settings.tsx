@@ -474,6 +474,7 @@ function SettingsPopup({
 					bordered
 					elevate
 					width="90%"
+					borderColor="$primary100"
 					padding={24}
 					gap={10}
 				>

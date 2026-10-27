@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		borderRadius: 16,
 		borderWidth: 2,
-		borderColor: '$black',
+		borderColor: '$primary100',
 	},
 	scrollContainer: {
 		flexGrow: 1,

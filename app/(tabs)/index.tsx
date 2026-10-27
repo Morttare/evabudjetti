@@ -246,7 +246,7 @@ export default function Landing() {
 						>
 							<YStack
 								backgroundColor="$white"
-								borderColor="$black"
+								borderColor="$primary100"
 								borderWidth={2}
 								borderRadius={10}
 								width={'70%'}

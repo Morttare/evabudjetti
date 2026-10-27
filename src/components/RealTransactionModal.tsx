@@ -137,7 +137,13 @@ const RealTransactionModal = ({
 
 	return (
 		<View style={styles.container}>
-			<YStack backgroundColor="$background" style={styles.card}>
+			<YStack
+				backgroundColor="$background"
+				borderColor="$primary100"
+				borderWidth={2}
+				borderRadius={16}
+				style={styles.card}
+			>
 				<SizableText color="$primary100" size="$title1">
 					{t(
 						`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`,
@@ -293,7 +299,7 @@ const RealTransactionModal = ({
 				>
 					<YStack
 						backgroundColor="$white"
-						borderColor={'$black'}
+						borderColor="$primary100"
 						borderWidth={2}
 						opacity={1}
 						borderRadius={16}
@@ -361,9 +367,6 @@ const styles = StyleSheet.create({
 		width: '90%',
 		maxHeight: '80%',
 		padding: 20,
-		borderRadius: 16,
-		borderWidth: 2,
-		borderColor: '$black',
 	},
 	scrollContainer: {
 		flexGrow: 1,

@@ -619,6 +619,7 @@ export default function AddTransaction() {
 								width="55%"
 								padding={24}
 								borderRadius={16}
+								borderColor="$primary100"
 							>
 								<SizableText size="$title1">
 									{t('Saved')}

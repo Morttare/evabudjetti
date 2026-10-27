@@ -93,7 +93,13 @@ const AddItemPopup = ({
 	return (
 		<View style={styles.container}>
 			<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-				<YStack backgroundColor="$background" style={styles.card}>
+				<YStack
+					backgroundColor="$background"
+					borderColor="$primary100"
+					borderWidth={2}
+					borderRadius={16}
+					style={styles.card}
+				>
 					<XStack justifyContent="space-between">
 						<SizableText color="$primary100" size="$title2">
 							{item !== null
