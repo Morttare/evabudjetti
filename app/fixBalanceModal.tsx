@@ -80,7 +80,7 @@ export default function FixBalanceModal() {
 			<Dialog.Portal>
 				<Dialog.Overlay
 					key="overlay"
-					opacity={0.5}
+					backgroundColor="rgba(0,0,0,0.4)"
 					onPress={() => {
 						setOpen(false);
 						setInputValue('');
@@ -169,7 +169,10 @@ export default function FixBalanceModal() {
 
 			<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AlertDialog.Portal>
-					<AlertDialog.Overlay key="overlay" opacity={0.5} />
+					<AlertDialog.Overlay 
+						key="overlay" 
+						opacity={0.5} 
+						backgroundColor="rgba(0,0,0,0.4)"/>
 					<AlertDialog.Content
 						key="content"
 						width="90%"

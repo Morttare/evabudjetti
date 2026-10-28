@@ -468,7 +468,9 @@ function SettingsPopup({
 			<Separator />
 
 			<Dialog.Portal>
-				<Dialog.Overlay key="overlay" opacity={0.5} />
+				<Dialog.Overlay 
+					key="overlay" 
+					backgroundColor="rgba(0,0,0,0.4)"/>
 				<Dialog.Content
 					key="content"
 					bordered

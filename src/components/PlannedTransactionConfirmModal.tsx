@@ -125,7 +125,11 @@ const PlannedTransactionConfirmModal = ({
 
 	return (
 		<View style={styles.container}>
-			<YStack backgroundColor="$background" style={styles.card}>
+			<YStack 
+				backgroundColor="$background" 
+				style={styles.card}
+    			borderWidth={2}
+    			borderColor="$primary100">
 				<XStack
 					justifyContent="space-between"
 					alignItems="center"
@@ -285,8 +289,6 @@ const styles = StyleSheet.create({
 		maxHeight: '80%',
 		padding: 20,
 		borderRadius: 16,
-		borderWidth: 2,
-		borderColor: '$primary100',
 	},
 	scrollContainer: {
 		flexGrow: 1,
