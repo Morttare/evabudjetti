@@ -131,7 +131,7 @@ const DailyEventListItem: React.FC<Props> = ({
 											txn.plannedTransaction &&
 											!txn.realTransaction && (
 												<Button
-													size="$buttons.sm"
+													size="$buttons.md"
 													circular
 													backgroundColor="transparent"
 													icon={Pencil}
