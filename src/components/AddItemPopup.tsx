@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Keyboard,
+	Pressable,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
@@ -92,6 +93,7 @@ const AddItemPopup = ({
 	};
 	return (
 		<View style={styles.container}>
+			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 			<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 				<YStack
 					backgroundColor="$background"
@@ -451,7 +453,7 @@ const AddItemPopup = ({
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		...StyleSheet.absoluteFill,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',

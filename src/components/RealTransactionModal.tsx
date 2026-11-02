@@ -1,7 +1,7 @@
 import { Plus } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import {
 	Button,
 	Input,
@@ -137,152 +137,156 @@ const RealTransactionModal = ({
 
 	return (
 		<View style={styles.container}>
-			<YStack
-				backgroundColor="$background"
-				borderColor="$primary100"
-				borderWidth={2}
-				borderRadius={16}
-				style={styles.card}
-			>
-				<SizableText color="$primary100" size="$title1">
-					{t(
-						`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`,
-					)}
-				</SizableText>
-
-				<ScrollView style={styles.scrollContainer}>
-					<YStack gap={20} paddingVertical={20}>
-						{/* Name Input */}
-						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title2">
-								{t('Name')}
-							</SizableText>
-							<Input
-								color="$primary100"
-								placeholder={t(' Enter transaction name')}
-								value={name}
-								onChangeText={setName}
-								height={40}
-								borderRadius={6}
-								px="10px"
-								fontSize={'$title2'}
-								focusStyle={{
-									outlineColor: 'transparent',
-								}}
-							/>
-						</YStack>
-
-						{/* Amount Input */}
-						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title2">
-								{t('Amount')}
-							</SizableText>
-							<Input
-								color="$primary100"
-								placeholder={t(' Enter amount (€)')}
-								value={amount}
-								onChangeText={handleAmountChange}
-								keyboardType="decimal-pad"
-								height={40}
-								borderRadius={6}
-								px="10px"
-								fontSize={'$title2'}
-								focusStyle={{
-									outlineColor: 'transparent',
-								}}
-							/>
-						</YStack>
-
-						{/* Category Selection */}
-						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title2">
-								{t('Category')}
-							</SizableText>
-							<XStack flexWrap="wrap">
-								<Button
-									onPress={() =>
-										setCategoryModalVisible(true)
-									}
-									icon={Plus}
-									size={26}
-									padding={14}
-									marginRight={8}
-									marginBottom={8}
-								/>
-
-								{displayCategories.map(({ key, label }) => {
-									const selected = key === selectedCategory;
-									return (
-										<Button
-											key={key}
-											onPress={() =>
-												setSelectedCategory(key)
-											}
-											size={28}
-											padding={14}
-											marginRight={8}
-											marginBottom={8}
-											backgroundColor={
-												selected
-													? '$primary200'
-													: '$white'
-											}
-										>
-											<SizableText size={'$title3'}>
-												{label}
-											</SizableText>
-										</Button>
-									);
-								})}
-							</XStack>
-						</YStack>
-
-						{/* Date Picker */}
-						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title2">
-								{t('Date')}
-							</SizableText>
-							<MultiPlatformDatePicker
-								value={date}
-								color="primary100"
-								onChange={setDate}
-							/>
-						</YStack>
-					</YStack>
-				</ScrollView>
-
-				{/* Buttons */}
-				<XStack
-					width="100%"
-					justifyContent="space-between"
-					marginTop={20}
+			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+			<View pointerEvents="box-none" style={styles.cardContainer}>
+				<YStack
+					backgroundColor="$background"
+					borderColor="$primary100"
+					borderWidth={2}
+					borderRadius={16}
+					style={styles.card}
 				>
-					<Button
-						borderRadius={28}
-						borderColor="$primary200"
-						backgroundColor="transparent"
-						style={styles.button}
-						onPress={onClose}
+					<SizableText color="$primary100" size="$title1">
+						{t(
+							`Add ${transactionType === 'income' ? 'Income' : 'Expense'}`,
+						)}
+					</SizableText>
+
+					<ScrollView style={styles.scrollContainer}>
+						<YStack gap={20} paddingVertical={20}>
+							{/* Name Input */}
+							<YStack gap={8}>
+								<SizableText color="$primary100" size="$title2">
+									{t('Name')}
+								</SizableText>
+								<Input
+									color="$primary100"
+									placeholder={t(' Enter transaction name')}
+									value={name}
+									onChangeText={setName}
+									height={40}
+									borderRadius={6}
+									px="10px"
+									fontSize={'$title2'}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+								/>
+							</YStack>
+
+							{/* Amount Input */}
+							<YStack gap={8}>
+								<SizableText color="$primary100" size="$title2">
+									{t('Amount')}
+								</SizableText>
+								<Input
+									color="$primary100"
+									placeholder={t(' Enter amount (€)')}
+									value={amount}
+									onChangeText={handleAmountChange}
+									keyboardType="decimal-pad"
+									height={40}
+									borderRadius={6}
+									px="10px"
+									fontSize={'$title2'}
+									focusStyle={{
+										outlineColor: 'transparent',
+									}}
+								/>
+							</YStack>
+
+							{/* Category Selection */}
+							<YStack gap={8}>
+								<SizableText color="$primary100" size="$title2">
+									{t('Category')}
+								</SizableText>
+								<XStack flexWrap="wrap">
+									<Button
+										onPress={() =>
+											setCategoryModalVisible(true)
+										}
+										icon={Plus}
+										size={26}
+										padding={14}
+										marginRight={8}
+										marginBottom={8}
+									/>
+
+									{displayCategories.map(({ key, label }) => {
+										const selected =
+											key === selectedCategory;
+										return (
+											<Button
+												key={key}
+												onPress={() =>
+													setSelectedCategory(key)
+												}
+												size={28}
+												padding={14}
+												marginRight={8}
+												marginBottom={8}
+												backgroundColor={
+													selected
+														? '$primary200'
+														: '$white'
+												}
+											>
+												<SizableText size={'$title3'}>
+													{label}
+												</SizableText>
+											</Button>
+										);
+									})}
+								</XStack>
+							</YStack>
+
+							{/* Date Picker */}
+							<YStack gap={8}>
+								<SizableText color="$primary100" size="$title2">
+									{t('Date')}
+								</SizableText>
+								<MultiPlatformDatePicker
+									value={date}
+									color="primary100"
+									onChange={setDate}
+								/>
+							</YStack>
+						</YStack>
+					</ScrollView>
+
+					{/* Buttons */}
+					<XStack
+						width="100%"
+						justifyContent="space-between"
+						marginTop={20}
 					>
-						<SizableText color="$primary100" size="$title3">
-							{t('Cancel')}
-						</SizableText>
-					</Button>
-					<Button
-						borderRadius={28}
-						backgroundColor={
-							isDisabled ? '$primary300' : '$primary200'
-						}
-						style={styles.button}
-						onPress={handleAdd}
-						disabled={isDisabled}
-					>
-						<SizableText color="$white" size="$title3">
-							{t('Add')}
-						</SizableText>
-					</Button>
-				</XStack>
-			</YStack>
+						<Button
+							borderRadius={28}
+							borderColor="$primary200"
+							backgroundColor="transparent"
+							style={styles.button}
+							onPress={onClose}
+						>
+							<SizableText color="$primary100" size="$title3">
+								{t('Cancel')}
+							</SizableText>
+						</Button>
+						<Button
+							borderRadius={28}
+							backgroundColor={
+								isDisabled ? '$primary300' : '$primary200'
+							}
+							style={styles.button}
+							onPress={handleAdd}
+							disabled={isDisabled}
+						>
+							<SizableText color="$white" size="$title3">
+								{t('Add')}
+							</SizableText>
+						</Button>
+					</XStack>
+				</YStack>
+			</View>
 
 			{/* Add Category Modal */}
 			{categoryModalVisible && (
@@ -362,6 +366,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',
+	},
+	cardContainer: {
+		...StyleSheet.absoluteFill,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	card: {
 		width: '90%',
