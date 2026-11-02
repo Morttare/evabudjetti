@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Keyboard,
+	Pressable,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
@@ -92,8 +93,15 @@ const AddItemPopup = ({
 	};
 	return (
 		<View style={styles.container}>
+			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 			<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-				<YStack backgroundColor="$background" style={styles.card}>
+				<YStack
+					backgroundColor="$background"
+					borderColor="$primary100"
+					borderWidth={2}
+					borderRadius={16}
+					style={styles.card}
+				>
 					<XStack justifyContent="space-between">
 						<SizableText color="$primary100" size="$title2">
 							{item !== null
@@ -445,9 +453,10 @@ const AddItemPopup = ({
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		...StyleSheet.absoluteFill,
 		justifyContent: 'center',
 		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.4)',
 	},
 	singleItemContainer: {
 		height: '13%',

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import {
 	Button,
 	Input,
@@ -125,7 +125,14 @@ const PlannedTransactionConfirmModal = ({
 
 	return (
 		<View style={styles.container}>
-			<YStack backgroundColor="$background" style={styles.card}>
+			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+
+			<YStack
+				backgroundColor="$background"
+				style={styles.card}
+				borderWidth={2}
+				borderColor="$primary100"
+			>
 				<XStack
 					justifyContent="space-between"
 					alignItems="center"
@@ -275,7 +282,7 @@ const PlannedTransactionConfirmModal = ({
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		...StyleSheet.absoluteFill,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -285,8 +292,6 @@ const styles = StyleSheet.create({
 		maxHeight: '80%',
 		padding: 20,
 		borderRadius: 16,
-		borderWidth: 2,
-		borderColor: '$black',
 	},
 	scrollContainer: {
 		flexGrow: 1,

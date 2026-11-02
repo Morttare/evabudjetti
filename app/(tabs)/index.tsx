@@ -240,13 +240,13 @@ export default function Landing() {
 							left={0}
 							right={0}
 							bottom={0}
-							backgroundColor="rgba(0,0,0,0.5)"
+							backgroundColor="rgba(0,0,0,0.4)"
 							justifyContent="center"
 							alignItems="center"
 						>
 							<YStack
 								backgroundColor="$white"
-								borderColor="$black"
+								borderColor="$primary100"
 								borderWidth={2}
 								borderRadius={10}
 								width={'70%'}

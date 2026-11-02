@@ -610,8 +610,7 @@ export default function AddTransaction() {
 						<AlertDialog.Portal>
 							<AlertDialog.Overlay
 								key="success"
-								opacity={0.5}
-								backgroundColor="$black"
+								backgroundColor="rgba(0, 0, 0, 0.4)"
 							/>
 							<AlertDialog.Content
 								bordered
@@ -619,6 +618,7 @@ export default function AddTransaction() {
 								width="55%"
 								padding={24}
 								borderRadius={16}
+								borderColor="$primary100"
 							>
 								<SizableText size="$title1">
 									{t('Saved')}

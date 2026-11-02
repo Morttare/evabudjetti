@@ -80,7 +80,7 @@ export default function FixBalanceModal() {
 			<Dialog.Portal>
 				<Dialog.Overlay
 					key="overlay"
-					opacity={0.5}
+					backgroundColor="rgba(0,0,0,0.4)"
 					onPress={() => {
 						setOpen(false);
 						setInputValue('');
@@ -88,7 +88,10 @@ export default function FixBalanceModal() {
 				/>
 				<Dialog.Content
 					key="content"
-					width="100%"
+					width="90%"
+					borderRadius={16}
+					borderWidth={2}
+					borderColor="$primary100"
 					onLayout={(event: LayoutChangeEvent) => {
 						setDialogHeight(event.nativeEvent.layout.height);
 					}}
@@ -165,10 +168,18 @@ export default function FixBalanceModal() {
 
 			<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
 				<AlertDialog.Portal>
-					<AlertDialog.Overlay key="overlay" opacity={0.5} />
+					<AlertDialog.Overlay
+						key="overlay"
+						opacity={0.5}
+						backgroundColor="rgba(0,0,0,0.4)"
+						onPress={() => setConfirmOpen(false)}
+					/>
 					<AlertDialog.Content
 						key="content"
-						width="100%"
+						width="90%"
+						borderRadius={16}
+						borderWidth={2}
+						borderColor="$primary100"
 						maxWidth={400}
 						padding="$5"
 						height={dialogHeight > 0 ? dialogHeight : 'auto'}

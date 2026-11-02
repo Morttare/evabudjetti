@@ -1,7 +1,7 @@
 import { Trash2 } from '@tamagui/lucide-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import {
 	Button,
 	Input,
@@ -100,7 +100,14 @@ const EditTransactionModal = ({
 
 	return (
 		<View style={styles.container}>
-			<YStack backgroundColor="$background" style={styles.card}>
+			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+
+			<YStack
+				backgroundColor="$background"
+				style={styles.card}
+				borderColor="$primary100"
+				borderWidth={2}
+			>
 				<XStack
 					justifyContent="space-between"
 					alignItems="center"
@@ -245,11 +252,15 @@ const EditTransactionModal = ({
 			{/* Delete confirmation — inline overlay (AlertDialog.Portal doesn't pierce RN Modal) */}
 			{deleteConfirmVisible && (
 				<View style={styles.inlineOverlay}>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						onPress={() => setDeleteConfirmVisible(false)}
+					/>
 					<YStack
 						backgroundColor="$background"
 						borderRadius={16}
-						borderWidth={1}
-						borderColor="$borderColor"
+						borderColor="$primary100"
+						borderWidth={2}
 						padding={24}
 						width="90%"
 						elevation={8}
@@ -327,7 +338,7 @@ const EditTransactionModal = ({
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		...StyleSheet.absoluteFill,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -337,8 +348,6 @@ const styles = StyleSheet.create({
 		maxHeight: '85%',
 		padding: 20,
 		borderRadius: 16,
-		borderWidth: 2,
-		borderColor: '$black',
 	},
 	scrollContainer: {
 		flexGrow: 1,
@@ -348,10 +357,10 @@ const styles = StyleSheet.create({
 		height: 50,
 	},
 	inlineOverlay: {
-		...StyleSheet.absoluteFillObject,
+		...StyleSheet.absoluteFill,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: 'rgba(0, 0, 0, 0.4)',
 		borderRadius: 16,
 		zIndex: 10,
 	},

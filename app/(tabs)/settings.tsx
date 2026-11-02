@@ -468,12 +468,17 @@ function SettingsPopup({
 			<Separator />
 
 			<Dialog.Portal>
-				<Dialog.Overlay key="overlay" opacity={0.5} />
+				<Dialog.Overlay
+					key="overlay"
+					backgroundColor="rgba(0,0,0,0.4)"
+					onPress={() => onOpenChange(false)}
+				/>
 				<Dialog.Content
 					key="content"
 					bordered
 					elevate
 					width="90%"
+					borderColor="$primary100"
 					padding={24}
 					gap={10}
 				>
