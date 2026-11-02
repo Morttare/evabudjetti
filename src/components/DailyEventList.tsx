@@ -48,7 +48,9 @@ const DailyEventList: React.FC<Props> = ({
 	const title =
 		t(monthNames[month]) +
 		(year !== selectedDate.getFullYear() ? ` ${year}` : '');
-	const isSelectedMonth = month === selectedDate.getMonth();
+	const isSelectedMonth =
+		year === selectedDate.getFullYear() &&
+		month === selectedDate.getMonth();
 
 	// Normalize dates: ensure each txn.date is a Date object so getTime() is available
 	const normalizedTxns: TransactionOccurrence[] = transactions.map((t) => {
