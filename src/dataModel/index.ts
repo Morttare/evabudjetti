@@ -31,7 +31,8 @@ export interface Account {
 
 /**
  * A record of an account's balance at a specific date.
- * Used to update the estimated account balance based on the real balance.
+ * Used to anchor estimated balances; historical transaction edits adjust later anchors
+ * so their balance impact continues through to the current balance.
  */
 export interface BalanceReconciliation {
 	accountId: number;

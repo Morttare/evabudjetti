@@ -30,7 +30,7 @@ export function useDeleteRealTransaction() {
 					plannedOccurrenceDate,
 				);
 			}
-			await deleteRealTransactionFromDb(transaction.id);
+			await deleteRealTransactionFromDb(transaction);
 
 			// Normalize date: Drizzle expo-sqlite stores timestamps as seconds,
 			// so reconstruct a proper Date if needed.
