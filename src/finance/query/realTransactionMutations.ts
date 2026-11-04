@@ -7,20 +7,25 @@ import {
 	BALANCE_CORRECTION_NAMES,
 	mergeBalanceCorrections,
 } from '../logic/balanceCorrection';
+import { getBalanceReconciliationDeltaCents } from '../logic/balanceReconciliationAdjustment';
 
 export async function insertRealTransaction(
 	transaction: RealTransaction,
 ): Promise<Persisted<RealTransaction>> {
-	const [insertedRealTransaction] = await db
-		.insert(schema.realTransactions)
-		.values({
-			...transaction,
-			plannedTransactionId: transaction.plannedTransactionId ?? null,
-			plannedOccurrenceDate: transaction.plannedOccurrenceDate ?? null,
-		})
-		.returning();
+	return db.transaction(async (tx) => {
+		const [insertedRealTransaction] = await tx
+			.insert(schema.realTransactions)
+			.values({
+				...transaction,
+				plannedTransactionId: transaction.plannedTransactionId ?? null,
+				plannedOccurrenceDate:
+					transaction.plannedOccurrenceDate ?? null,
+			})
+			.returning();
 
-	return insertedRealTransaction;
+		await adjustBalanceReconciliations(tx, [], [insertedRealTransaction]);
+		return insertedRealTransaction;
+	});
 }
 
 export async function upsertDailyBalanceCorrection(
@@ -64,6 +69,7 @@ export async function upsertDailyBalanceCorrection(
 
 		if (merged === undefined) {
 			if (existing.length > 0) {
+				await adjustBalanceReconciliations(tx, existing, []);
 				await tx.delete(schema.realTransactions).where(
 					inArray(
 						schema.realTransactions.id,
@@ -79,6 +85,7 @@ export async function upsertDailyBalanceCorrection(
 				.insert(schema.realTransactions)
 				.values(merged)
 				.returning();
+			await adjustBalanceReconciliations(tx, [], [created]);
 			return { created, deleted: [] };
 		}
 
@@ -93,6 +100,8 @@ export async function upsertDailyBalanceCorrection(
 			.where(eq(schema.realTransactions.id, existing[0].id))
 			.returning();
 		const deleted = existing.slice(1);
+
+		await adjustBalanceReconciliations(tx, existing, [updated]);
 
 		if (deleted.length > 0) {
 			await tx.delete(schema.realTransactions).where(
@@ -110,27 +119,54 @@ export async function upsertDailyBalanceCorrection(
 export async function updateRealTransaction(
 	transaction: Persisted<RealTransaction>,
 ): Promise<Persisted<RealTransaction>> {
-	const [updated] = await db
-		.update(schema.realTransactions)
-		.set({
-			name: transaction.name,
-			amount: transaction.amount,
-			date: transaction.date,
-			type: transaction.type,
-			categoryId: transaction.categoryId,
-			plannedTransactionId: transaction.plannedTransactionId ?? null,
-			plannedOccurrenceDate: transaction.plannedOccurrenceDate ?? null,
-		})
-		.where(eq(schema.realTransactions.id, transaction.id))
-		.returning();
+	return db.transaction(async (tx) => {
+		const [previous] = await tx
+			.select()
+			.from(schema.realTransactions)
+			.where(eq(schema.realTransactions.id, transaction.id));
+		if (previous === undefined) {
+			throw new Error(
+				`Cannot update missing real transaction ${transaction.id}`,
+			);
+		}
 
-	return updated;
+		const [updated] = await tx
+			.update(schema.realTransactions)
+			.set({
+				name: transaction.name,
+				amount: transaction.amount,
+				date: transaction.date,
+				type: transaction.type,
+				categoryId: transaction.categoryId,
+				plannedTransactionId: transaction.plannedTransactionId ?? null,
+				plannedOccurrenceDate:
+					transaction.plannedOccurrenceDate ?? null,
+			})
+			.where(eq(schema.realTransactions.id, transaction.id))
+			.returning();
+
+		await adjustBalanceReconciliations(tx, [previous], [updated]);
+		return updated;
+	});
 }
 
-export async function deleteRealTransaction(id: number): Promise<void> {
-	await db
-		.delete(schema.realTransactions)
-		.where(eq(schema.realTransactions.id, id));
+export async function deleteRealTransaction(
+	transaction: Persisted<RealTransaction>,
+): Promise<void> {
+	await db.transaction(async (tx) => {
+		const [previous] = await tx
+			.select()
+			.from(schema.realTransactions)
+			.where(eq(schema.realTransactions.id, transaction.id));
+		if (previous === undefined) {
+			return;
+		}
+
+		await adjustBalanceReconciliations(tx, [previous], []);
+		await tx
+			.delete(schema.realTransactions)
+			.where(eq(schema.realTransactions.id, transaction.id));
+	});
 }
 
 export async function excludePlannedTransactionOccurrence(
@@ -142,4 +178,64 @@ export async function excludePlannedTransactionOccurrence(
 		.insert(schema.plannedTransactionOccurrenceExceptions)
 		.values({ plannedTransactionId, occurrenceDate })
 		.onConflictDoNothing();
+}
+
+async function adjustBalanceReconciliations(
+	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+	previousTransactions: readonly RealTransaction[],
+	nextTransactions: readonly RealTransaction[],
+): Promise<void> {
+	if (previousTransactions.length === 0 && nextTransactions.length === 0) {
+		return;
+	}
+
+	const accountIds = new Set([
+		...previousTransactions.map((transaction) => transaction.accountId),
+		...nextTransactions.map((transaction) => transaction.accountId),
+	]);
+
+	for (const accountId of accountIds) {
+		const affectedTransactions = [
+			...previousTransactions,
+			...nextTransactions,
+		].filter((transaction) => transaction.accountId === accountId);
+		const firstAffectedDate = new Date(
+			Math.min(
+				...affectedTransactions.map((transaction) =>
+					transaction.date.getTime(),
+				),
+			),
+		);
+		// Reconciliations are absolute anchors, so carry historical event changes into each later anchor.
+		const reconciliations = await tx
+			.select()
+			.from(schema.balanceReconciliations)
+			.where(
+				and(
+					eq(schema.balanceReconciliations.accountId, accountId),
+					gte(schema.balanceReconciliations.date, firstAffectedDate),
+				),
+			);
+
+		for (const reconciliation of reconciliations) {
+			const deltaCents = getBalanceReconciliationDeltaCents(
+				accountId,
+				reconciliation.date,
+				previousTransactions,
+				nextTransactions,
+			);
+			if (deltaCents === 0) {
+				continue;
+			}
+
+			await tx
+				.update(schema.balanceReconciliations)
+				.set({
+					amount:
+						(Math.round(reconciliation.amount * 100) + deltaCents) /
+						100,
+				})
+				.where(eq(schema.balanceReconciliations.id, reconciliation.id));
+		}
+	}
 }
