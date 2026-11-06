@@ -89,6 +89,8 @@ export default function FixBalanceModal() {
 				<Dialog.Content
 					key="content"
 					width="90%"
+					minHeight={280}
+					paddingTop="$5"
 					borderRadius={16}
 					borderWidth={2}
 					borderColor="$primary100"
@@ -182,7 +184,7 @@ export default function FixBalanceModal() {
 						borderColor="$primary100"
 						maxWidth={400}
 						padding="$5"
-						height={dialogHeight > 0 ? dialogHeight : 'auto'}
+						minHeight={dialogHeight > 0 ? dialogHeight : 'auto'}
 						justifyContent="space-between"
 					>
 						<AlertDialog.Title paddingBottom={20}>
