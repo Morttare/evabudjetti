@@ -139,8 +139,9 @@ i18next
 				'Expenses': 'Expenses',
 				'Balance': 'Balance',
 				'Available': 'Available',
+				'What is disposable income?': 'What is disposable income?',
 				'Help Disposable income':
-					'Disposable income refers to the amount of money left after your income and expenses. It helps you understand how much money you have available for other expenses or savings during the month.',
+					'Disposable income is the money left after planned expenses, available for other spending or saving during the month.',
 				'Close': 'Close',
 				'Future events': 'Future events',
 				'Edit Transaction': 'Edit Transaction',
@@ -412,8 +413,9 @@ i18next
 				'Available': 'Käytettävissä',
 				'Help': 'Ohjeet',
 				'Instructions': 'Ohjeet',
+				'What is disposable income?': 'Mitä tarkoittaa käyttövara?',
 				'Help Disposable income':
-					'Käyttövara tarkoittaa rahamäärää, joka jää jäljelle tulojen ja menojen jälkeen. Se auttaa sinua ymmärtämään, kuinka paljon rahaa sinulla on käytettävissä muihin menoihin tai säästöihin kuukauden aikana.',
+					'Käyttövara on kuukauden suunniteltujen menojen jälkeen jäljelle jäävä raha, joka on käytettävissä muuhun kulutukseen tai säästämiseen.',
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',

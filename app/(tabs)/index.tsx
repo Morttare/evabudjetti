@@ -264,18 +264,24 @@ export default function Landing() {
 								padding={20}
 							>
 								<SizableText
+									fontSize="$7"
 									textAlign="center"
 									maxFontSizeMultiplier={1.3}
 								>
-									{t('Help')}
+									{t('What is disposable income?')}
 								</SizableText>
 								<SizableText
+									marginTop="$3"
+									fontSize="$6"
 									textAlign="center"
 									maxFontSizeMultiplier={1.3}
 								>
 									{t('Help Disposable income')}
 								</SizableText>
 								<Button
+									marginTop="$3"
+									width={130}
+									height={40}
 									onPress={() => setHelpVisible(false)}
 									backgroundColor="$primary200"
 									borderRadius={40}
