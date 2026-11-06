@@ -211,26 +211,38 @@ export default function Landing() {
 						)}
 
 						{!budgetCreated && (
-							<YStack gap={5} paddingHorizontal={25}>
-								<Text numberOfLines={4} adjustsFontSizeToFit>
+							<YStack
+								gap={5}
+								paddingHorizontal={25}
+								alignItems="center"
+							>
+								<Text
+									mt={'$3'}
+									mb={'$3'}
+									textAlign="center"
+									fontSize="$3"
+									numberOfLines={4}
+									adjustsFontSizeToFit
+								>
 									{t('No budget created')}
 								</Text>
 								<Input
-									style={{ height: '25%' }}
-									width="100%"
+									size="$10"
+									width="70%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
 									borderColor="$primary100"
 									backgroundColor="$white"
 									keyboardType="numeric"
 									fontSize={15}
+									mb={'$3'}
 								/>
 								<Button
-									style={{ height: '25%' }}
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
-									width="100%"
+									width={200}
+									size="$buttons.lg"
 									color={'white'}
 									disabled={initialBalance === ''}
 									onPress={async () => {
