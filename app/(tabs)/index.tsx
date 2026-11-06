@@ -109,18 +109,6 @@ export default function Landing() {
 									style={{ height: '100%' }}
 									color={'$primary100'}
 								/>
-
-								{/* Help Icon positioned relative to the piggy bank */}
-								<Button
-									size={50}
-									style={{ height: '100%' }}
-									circular
-									chromeless
-									onPress={() => setHelpVisible(true)}
-									icon={
-										<MessageCircleQuestion color="$primary100" />
-									}
-								/>
 							</XStack>
 						</YStack>
 
@@ -134,35 +122,45 @@ export default function Landing() {
 									borderRadius={20}
 									borderWidth={2}
 									padding={10}
-									mt={'$2'}
-									mb={'$2'}
+									mt={'$4'}
+									mb={'$4'}
 								>
 									<YStack
 										alignItems="center"
 										gap={10}
 										width="100%"
 									>
-										<Text
-											textAlign="center"
-											fontWeight={'600'}
-											fontSize={'$3'}
+										<XStack
+											width="100%"
+											alignItems="center"
 										>
-											{t('Current situation')}
-											{'\n'}
-											{today.toLocaleDateString('fi-FI')}
-											{' - '}
-											{timeframeEnd.toLocaleDateString(
-												'fi-FI',
-											)}
-										</Text>
-										<Text
-											textAlign="center"
-											fontWeight={'800'}
-											fontSize={'$3'}
-											marginBottom={'-5%'}
-										>
-											{t('Usable funds')}:
-										</Text>
+											<YStack width={32} />
+											<Text
+												f={1}
+												mt={'$2'}
+												textAlign="center"
+												fontWeight={'800'}
+												fontSize={'$4'}
+												marginBottom={'-5%'}
+												color="$primary100"
+											>
+												{t('Usable funds')}:
+											</Text>
+											<Button
+												size={32}
+												circular
+												chromeless
+												onPress={() =>
+													setHelpVisible(true)
+												}
+												icon={
+													<MessageCircleQuestion
+														color="$primary100"
+														size={20}
+													/>
+												}
+											/>
+										</XStack>
 										<Text
 											textAlign="center"
 											fontWeight={'700'}
@@ -187,8 +185,23 @@ export default function Landing() {
 												)}
 											</Text>
 										)}
-										<Text>
-											{t('Current balance')}:{' '}
+										<Text
+											mt={'$3'}
+											textAlign="center"
+											fontWeight={'800'}
+											fontSize={'$4'}
+											color="$primary100"
+										>
+											{t('Current balance')}:
+										</Text>
+										<Text
+											mt={'-5%'}
+											mb={'$3'}
+											textAlign="center"
+											fontWeight={'700'}
+											fontSize={'$5'}
+											color="$primary100"
+										>
 											{displayBalance} €
 										</Text>
 									</YStack>
