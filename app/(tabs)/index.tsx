@@ -85,31 +85,31 @@ export default function Landing() {
 				keyboardShouldPersistTaps="handled"
 			>
 				<YStack f={1} backgroundColor="$background">
-					<YStack f={1} paddingHorizontal={10}>
+					<YStack f={1} paddingHorizontal={10} justifyContent="center">
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
 								fontSize={'$7'}
-								fontWeight={'500'}
+								fontWeight={'500'} /*700*/
 								numberOfLines={1}
 								adjustsFontSizeToFit
 							>
 								{t('EVA MyBudget')}
 							</Text>
 
-							<Text numberOfLines={1} adjustsFontSizeToFit>
+							<Text numberOfLines={1} adjustsFontSizeToFit fontSize={'$3'}>
 								{t('Supporting your financial well-being')}
 							</Text>
-
-							<XStack mt={'$5'}>
-								<Spacer size={'10%'} />
-								{/* Piggy Bank Icon */}
-								<PiggyBank
-									size={110}
-									style={{ height: '100%' }}
-									color={'$primary100'}
-								/>
-							</XStack>
+					
+							{/* Piggy Bank Icon */}
+							<PiggyBank
+								mt={'$4'}
+								mb={'$4'}
+								size={110}
+								style={{ height: '100%' }}
+								color={'$primary100'}
+							/>
+							
 						</YStack>
 
 						{budgetCreated && (

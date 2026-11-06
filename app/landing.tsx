@@ -34,6 +34,7 @@ export default function Landing() {
 						textAlign="center"
 						numberOfLines={1}
 						adjustsFontSizeToFit
+						color="$primary100"
 					>
 						{t('Supporting your financial well-being')}
 					</Text>
@@ -50,9 +51,10 @@ export default function Landing() {
 					width={250}
 					backgroundColor="$primary100"
 					alignSelf="center"
+					borderRadius={40}
 					onPress={() => router.push('/introduction')}
 				>
-					<SizableText size="$title2" color="$white">
+					<SizableText size="$title1" color="$white">
 						{t("Let's start!")}
 					</SizableText>
 				</Button>
