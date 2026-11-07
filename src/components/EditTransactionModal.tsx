@@ -113,6 +113,7 @@ const EditTransactionModal = ({
 						size="$buttons.lg"
 						circular
 						backgroundColor="$danger500"
+						color="$white"
 						icon={Trash2}
 						onPress={() => setDeleteConfirmVisible(true)}
 						disabled={saving}

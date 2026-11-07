@@ -105,6 +105,7 @@ const AddItemPopup = ({
 								size="$buttons.lg"
 								circular
 								backgroundColor="$danger500"
+								color="$white"
 								icon={Trash2}
 								onPress={handleDelete}
 								/*
