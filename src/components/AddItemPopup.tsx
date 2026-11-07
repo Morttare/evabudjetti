@@ -1,4 +1,4 @@
-import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { Check, ChevronDown, Trash2 } from '@tamagui/lucide-icons';
 import { addMonths } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -103,20 +103,24 @@ const AddItemPopup = ({
 					style={styles.card}
 				>
 					<XStack justifyContent="space-between">
-						<SizableText color="$primary100" size="$title2">
+						<SizableText color="$primary100" size="$title1">
 							{item !== null
 								? t('Edit item')
 								: t('Add a new item')}
 						</SizableText>
 						{item !== null && (
 							<Button
+								size="$buttons.lg"
+								circular
+								backgroundColor="$danger500"
+								color="$white"
+								icon={Trash2}
 								onPress={handleDelete}
+								/*
 								color="$white"
 								backgroundColor="$danger500"
-								height="100%"
-							>
-								{t('Delete')}
-							</Button>
+								height="100%" */
+							></Button>
 						)}
 					</XStack>
 					<View style={styles.inputsContainer}>

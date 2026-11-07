@@ -31,7 +31,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 				<XStack
 					borderColor={'$primary200'}
 					borderBottomWidth={isOpen ? 1 : 0}
-					alignItems="flex-start"
+					alignItems="center"
 					paddingBottom={isOpen ? 10 : 0}
 				>
 					<XStack gap="10" height="25">
@@ -57,7 +57,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 						</SizableText>
 					</XStack>
 
-					<XStack height="25" gap="5" alignItems="left">
+					<XStack height="35" gap="5" alignItems="left">
 						<Button
 							backgroundColor="$primary200"
 							color="$white"
