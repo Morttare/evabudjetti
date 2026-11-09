@@ -26,10 +26,12 @@ export default function Landing() {
 	const [initialBalance, setInitialBalance] = useState('');
 	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
-	const { getCurrentTimeframe } = useTimeframeStore();
+	const { getCurrentTimeframeStart, getCurrentTimeframeEnd } =
+		useTimeframeStore();
 
 	const today = new Date();
-	const timeframeEnd = getCurrentTimeframe(today);
+	const timeframeStart = getCurrentTimeframeStart(today);
+	const timeframeEnd = getCurrentTimeframeEnd(today);
 
 	const timespanBalances = useBalances(
 		today.getFullYear(),
@@ -148,7 +150,9 @@ export default function Landing() {
 										>
 											{t('Current situation')}
 											{'\n'}
-											{today.toLocaleDateString('fi-FI')}
+											{timeframeStart.toLocaleDateString(
+												'fi-FI',
+											)}
 											{' - '}
 											{timeframeEnd.toLocaleDateString(
 												'fi-FI',

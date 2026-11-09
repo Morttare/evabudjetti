@@ -141,10 +141,12 @@ export default function DailyBalanceView({
 
 	const dayBalance = getSelectedDayBalance();
 
-	/* Get  usable funds for selected day */
-	const { getCurrentTimeframe } = useTimeframeStore();
+	/* Get usable funds for selected day */
+	const { getCurrentTimeframeStart, getCurrentTimeframeEnd } =
+		useTimeframeStore();
 
-	const currentTimeframeEnd = getCurrentTimeframe(selectedDate);
+	const currentTimeframeStart = getCurrentTimeframeStart(selectedDate);
+	const currentTimeframeEnd = getCurrentTimeframeEnd(selectedDate);
 
 	const usableFunds = useUsableFunds(
 		selectedDate.getFullYear(),
@@ -293,7 +295,7 @@ export default function DailyBalanceView({
 				</XStack>
 				<Text color="$black" fontSize="$3" fontWeight="600">
 					{t('Usable funds timeframe')}:{' '}
-					{`${formatDate(selectedDate)} - ${formatDate(currentTimeframeEnd)}`}
+					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
 				</Text>
 			</StyledCard>
 

@@ -1,5 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addDays, addMonths, addYears } from 'date-fns';
+import {
+	addDays,
+	addMonths,
+	addYears,
+	subDays,
+	subMonths,
+	subYears,
+} from 'date-fns';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -14,7 +21,8 @@ interface TimeframeState {
 	timeframeLength: TimeframeLength;
 	setStartDate: (date: Date) => void;
 	setLength: (num: number, option: LengthOptions) => void;
-	getCurrentTimeframe: (date: Date) => Date;
+	getCurrentTimeframeStart: (date: Date) => Date;
+	getCurrentTimeframeEnd: (date: Date) => Date;
 }
 
 const addLength = (date: Date, timeframe: TimeframeLength) => {
@@ -38,8 +46,59 @@ const addLength = (date: Date, timeframe: TimeframeLength) => {
 	return endDate;
 };
 
+const subtractLength = (date: Date, timeframe: TimeframeLength) => {
+	switch (timeframe.type) {
+		case 'days':
+			return subDays(date, timeframe.length);
+		case 'weeks':
+			return subDays(date, timeframe.length * 7);
+		case 'months':
+			return subMonths(date, timeframe.length);
+		case 'years':
+			return subYears(date, timeframe.length);
+	}
+};
+
+const getTimeframeRange = (
+	date: Date,
+	startDate: Date,
+	timeframeLength: TimeframeLength,
+): { start: Date; end: Date } => {
+	if (timeframeLength.type === 'days' && timeframeLength.length === 1) {
+		return { start: date, end: date };
+	}
+
+	let currentTimeframeStart = startDate;
+	if (date < currentTimeframeStart) {
+		let currentTimeframeEnd = subDays(currentTimeframeStart, 1);
+		currentTimeframeStart = subtractLength(
+			currentTimeframeStart,
+			timeframeLength,
+		);
+
+		while (date < currentTimeframeStart) {
+			currentTimeframeEnd = subDays(currentTimeframeStart, 1);
+			currentTimeframeStart = subtractLength(
+				currentTimeframeStart,
+				timeframeLength,
+			);
+		}
+
+		return { start: currentTimeframeStart, end: currentTimeframeEnd };
+	}
+
+	let currentTimeframeEnd = addLength(currentTimeframeStart, timeframeLength);
+
+	while (date > addDays(currentTimeframeEnd, 1)) {
+		currentTimeframeStart = addDays(currentTimeframeEnd, 1);
+		currentTimeframeEnd = addLength(currentTimeframeStart, timeframeLength);
+	}
+
+	return { start: currentTimeframeStart, end: currentTimeframeEnd };
+};
+
 /**
- * Store for timeframe. For use outside of settings, only use getCurrentTimeframe.
+ * Store for timeframe. For use outside of settings, use the current timeframe getters.
  * The saved timeframe start date is the one that is originally set in settings
  * and wont show the current timeframes start date.
  */
@@ -64,47 +123,57 @@ export const useTimeframeStore = create<TimeframeState>()(
 				}),
 
 			/**
-			 * Function to calculate the current timeframe.
-			 *
 			 * @param date The date for which the current timeframe needs to be calculated
-			 * @returns The end date of the current timeframe.
+			 * @returns The start date of the current timeframe.
 			 */
-			getCurrentTimeframe: (date: Date) => {
+			getCurrentTimeframeStart: (date: Date) => {
 				const {
 					timeframeStartYear,
 					timeframeStartMonth,
 					timeframeStartDay,
 					timeframeLength,
 				} = get();
-
-				// skip calculations if timeframe is 1 day
-				if (
-					timeframeLength.type === 'days' &&
-					timeframeLength.length === 1
-				) {
-					return date;
-				}
-
-				let currentTimeframeStart = new Date(
+				const startDate = new Date(
 					timeframeStartYear,
 					timeframeStartMonth,
 					timeframeStartDay,
 				);
-				let currentTimeframeEnd = addLength(
-					currentTimeframeStart,
+
+				const { start } = getTimeframeRange(
+					date,
+					startDate,
 					timeframeLength,
 				);
 
-				while (date > addDays(currentTimeframeEnd, 1)) {
-					// increment next timeframe start to current end + 1 for new start
-					currentTimeframeStart = addDays(currentTimeframeEnd, 1);
-					currentTimeframeEnd = addLength(
-						currentTimeframeStart,
-						timeframeLength,
-					);
-				}
+				return start;
+			},
 
-				return currentTimeframeEnd;
+			/**
+			 * Function to calculate the end of the current timeframe.
+			 *
+			 * @param date The date for which the current timeframe needs to be calculated
+			 * @returns The end date of the current timeframe.
+			 */
+			getCurrentTimeframeEnd: (date: Date) => {
+				const {
+					timeframeStartYear,
+					timeframeStartMonth,
+					timeframeStartDay,
+					timeframeLength,
+				} = get();
+				const startDate = new Date(
+					timeframeStartYear,
+					timeframeStartMonth,
+					timeframeStartDay,
+				);
+
+				const { end } = getTimeframeRange(
+					date,
+					startDate,
+					timeframeLength,
+				);
+
+				return end;
 			},
 		}),
 		{
