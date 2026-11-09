@@ -2,7 +2,7 @@ import { Calendar, ChevronDown } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { Modal, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Button, SizableText, View, XStack, YStack } from 'tamagui';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
@@ -73,7 +73,7 @@ export default function YearsScreen() {
                             width="60%"
                             height={55}
                             backgroundColor="white"
-                            borderColor="$borderColor"
+                            borderColor="$primary100"
                             borderWidth={1}
                             borderRadius="$4"
                             paddingHorizontal="$3"
@@ -85,9 +85,9 @@ export default function YearsScreen() {
                                 <View
                                     padding="$2"
                                     borderRadius={100}
-                                    backgroundColor="#f0f4f8"
+                                    backgroundColor="$transparent"
                                 >
-                                    <Calendar size={18} color="#0277bd" />
+                                    <Calendar size={18} color="$primary100" />
                                 </View>
                                 <SizableText fontWeight="bold" size="$5">
                                     {t('Year')} {selectedYear}
@@ -96,64 +96,6 @@ export default function YearsScreen() {
                         </Button>
                     </XStack>
                         
-
-                    {/* Dropdown Modal List */}
-                    <Modal
-                        visible={isOpen}
-                        transparent={true}
-                        onRequestClose={() => setIsOpen(false)}
-                    >
-                        <TouchableOpacity
-                            style={{
-                                flex: 1,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                backgroundColor: 'rgba(0,0,0,0.4)',
-                                padding: 24,
-                            }}
-                            activeOpacity={1}
-                            onPress={() => setIsOpen(false)}
-                        >
-                            <YStack
-                                width="60%"
-                                maxWidth={320}
-                                backgroundColor="$background"
-                                borderColor="$primary100"
-                                borderWidth={2}
-                                borderRadius="$4"
-                                padding="$4"
-                                gap="$2"
-                                shadowColor="#000"
-                                shadowOffset={{ width: 0, height: 2 }}
-                                shadowOpacity={0.25}
-                                shadowRadius={4}
-                                elevation={5}
-                            >
-                                {availableYears.map((year) => (
-                                    <Button
-                                        key={year}
-                                        backgroundColor="transparent"
-										borderRadius="$4"
-                                        justifyContent="center"
-                                        height={50}
-                                        pressStyle={{ backgroundColor: '#f0f4f8' }}
-                                        onPress={() => {
-                                            setSelectedYear(year);
-                                            setIsOpen(false);
-                                        }}
-                                    >
-                                        <XStack gap="$3" alignItems="center">
-                                            <Calendar size={18} color="#0277bd" />
-                                            <SizableText size="$5" fontWeight="500">
-                                                {t('Year')} {year}
-                                            </SizableText>
-                                        </XStack>
-                                    </Button>
-                                ))}
-                            </YStack>
-                        </TouchableOpacity>
-                    </Modal>
-
                     {/* Months Grid (3x4 Layout) */}
                     <YStack gap="$3">
                         {monthRows.map((row, rowIndex) => (
@@ -230,6 +172,61 @@ export default function YearsScreen() {
                     </YStack>
                 </YStack>
             </ScrollView>
+
+            {/* Native Modal to ensure backdrop covers root window (including top/bottom bars) */}
+            <Modal
+                visible={isOpen}
+                transparent={true}
+                onRequestClose={() => setIsOpen(false)}
+            >
+                <TouchableOpacity
+                    style={styles.modalBackdrop}
+                    activeOpacity={0}
+                    onPress={() => setIsOpen(false)}
+                >
+                    <YStack
+                        width="60%"
+                        backgroundColor="$background"
+                        borderColor="$primary100"
+                        borderWidth={2}
+                        borderRadius="$4"
+                        padding="$3"
+                        gap="$2"
+                    >
+                        {availableYears.map((year) => (
+                            <Button
+                                key={year}
+                                backgroundColor="transparent"
+                                borderRadius="$4"
+                                justifyContent="center"
+                                height={50}
+                                pressStyle={{ backgroundColor: '$primary300' }}
+                                onPress={() => {
+                                    setSelectedYear(year);
+                                    setIsOpen(false);
+                                }}
+                            >
+                                <XStack gap="$3" alignItems="center">
+                                    <Calendar size={18} color="$primary100" />
+                                    <SizableText size="$5" fontWeight="500">
+                                        {t('Year')} {year}
+                                    </SizableText>
+                                </XStack>
+                            </Button>
+                        ))}
+                    </YStack>
+                </TouchableOpacity>
+            </Modal>
         </YStack>
     );
 }
+
+const styles = StyleSheet.create({
+    modalBackdrop: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        padding: 24,
+    },
+});
