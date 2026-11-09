@@ -14,13 +14,6 @@ export default function SummaryStackLayout() {
 			}}
 		>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Screen
-				name="[year]"
-				options={({ route }) => ({
-					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
-					headerBackButtonDisplayMode: 'minimal',
-				})}
-			/>
 		</Stack>
 	);
 }
