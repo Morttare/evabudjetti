@@ -266,7 +266,14 @@ i18next
 				'days': 'days',
 				'weeks': 'weeks',
 				'months': 'months',
-				'years': 'years'
+				'years': 'years',
+				
+				// TIMEFRAME INSTRUCTIONS (Settings → Timeframe and budget wizard)
+				'Timeframe info': 'The timeframe is the period your income has to last. Your usable funds (€/day) are calculated for the remaining days of the timeframe.',
+				'Timeframe start info': 'Start the timeframe on the day your largest regular income is paid. The timeframe lasts until the same income is paid again.',
+				'Timeframe length info': 'Choose the payment interval of that income as the length, e.g. 4 weeks for a daily allowance or 1 month for a salary. If you get income on several days, choose the interval of the most critical income.',
+				'Timeframe change info': 'You can change the timeframe later in Settings → Timeframe.',
+				'Timeframe suggestion': 'Suggestion based on your largest regular income {{name}} ({{amount}}): start {{date}}, length {{length}} {{unit}}.'
 			},
 		},
 		fi: {
@@ -535,7 +542,13 @@ i18next
 				'days': 'päivää',
 				'weeks': 'viikkoa',
 				'months': 'kuukausia',
-				'years': 'vuosia'
+				'years': 'vuosia',
+				// JAKSON OHJEET (Asetukset → Jakso ja budjettivelho)
+				'Timeframe info': 'Jakso on aika, jonka tulojesi pitää riittää. Käyttövara (€/vrk) lasketaan jakson jäljellä oleville päiville.',
+				'Timeframe start info': 'Aloita jakso yleensä päivästä, jolloin suurin säännöllinen tulosi maksetaan tilille. Jakso kestää siihen asti, kun sama tulo maksetaan seuraavan kerran.',
+				'Timeframe length info': 'Valitse pituudeksi tämän tulon maksuväli, esim. 4 viikkoa päivärahalle tai 1 kuukausi palkalle. Jos saat tuloja useana päivänä, valitse kriittisimmän tulon maksuväli.',
+				'Timeframe change info': 'Voit muuttaa jaksoa myöhemmin kohdasta Asetukset → Jakso.',
+				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi {{name}} ({{amount}}) perusteella: alku {{date}}, pituus {{length}} {{unit}}.'
 			},
 		},
 	},
