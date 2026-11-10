@@ -140,9 +140,14 @@ i18next
 				'Expenses': 'Expenses',
 				'Balance': 'Balance',
 				'Available': 'Available',
-				'What is disposable income?': 'What is disposable income?',
-				'Help Disposable income':
-					'Disposable income is the money left after planned expenses, available for other spending or saving during the month.',
+				'What are usable funds?': 'What are usable funds?',
+				'Help Usable funds':
+					'Usable funds are the money left after planned expenses, available for other spending or saving during the month.',
+				'Help Homepage': 
+					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the spending allowance stays up to date.\n' +
+					'Funds: record your income and expenses on the Funds page. You can edit them in the same place.\n' +
+					'Budget: add planned income and expenses on the Budget page. You can edit and delete them later.\n' +
+					'Bookkeeping: view monthly income and expenses, as well as a summary of the past year.',
 				'Close': 'Close',
 				'Future events': 'Future events',
 				'Edit Transaction': 'Edit Transaction',
@@ -435,9 +440,14 @@ i18next
 				'Available': 'Käytettävissä',
 				'Help': 'Ohjeet',
 				'Instructions': 'Ohjeet',
-				'What is disposable income?': 'Mitä tarkoittaa käyttövara?',
-				'Help Disposable income':
+				'What are usable funds?': 'Mitä tarkoittaa käyttövara?',
+				'Help Usable funds':
 					'Käyttövara on kuukauden suunniteltujen menojen jälkeen jäljelle jäävä raha, joka on käytettävissä muuhun kulutukseen tai säästämiseen.',
+				'Help Homepage':
+					'Kotisivu: kun olet luonut budjetin ja lisännyt tilin saldon, kotisivulla näkyvät käyttövara ja tilin saldo. Voit muokata saldoa suoraan kotisivulla. Muista tarkistaa saldo säännöllisesti, jotta käyttövara pysyy ajan tasalla.\n' +
+					'Käyttövara: merkitse tulot ja menot Käyttövara-sivulle. Voit muokata niitä samassa paikassa.\n' +
+					'Budjetti: lisää suunnitellut tulot ja menot Budjetti-sivulle. Voit muokata ja poistaa niitä myöhemmin.\n' +
+					'Kirjanpito: näet kuukausittaiset tulot ja menot sekä yhteenvedon kuluneesta vuodesta.',
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',
