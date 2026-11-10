@@ -100,6 +100,11 @@ const AddItemPopup = ({
 					borderColor="$primary100"
 					borderWidth={2}
 					borderRadius={16}
+					shadowColor="$black"
+					shadowOffset={{ width: 0, height: 5 }}
+					shadowOpacity={0.3}
+					shadowRadius={10}
+					elevation={12}
 					style={styles.card}
 				>
 					<XStack justifyContent="space-between">

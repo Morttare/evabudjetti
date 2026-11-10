@@ -132,6 +132,11 @@ const PlannedTransactionConfirmModal = ({
 				style={styles.card}
 				borderWidth={2}
 				borderColor="$primary100"
+				shadowColor="$black"
+				shadowOffset={{ width: 0, height: 5 }}
+				shadowOpacity={0.3}
+				shadowRadius={10}
+				elevation={12}
 			>
 				<XStack
 					justifyContent="space-between"

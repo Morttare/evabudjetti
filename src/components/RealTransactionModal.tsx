@@ -144,6 +144,11 @@ const RealTransactionModal = ({
 					borderColor="$primary100"
 					borderWidth={2}
 					borderRadius={16}
+					shadowColor="$black"
+					shadowOffset={{ width: 0, height: 5 }}
+					shadowOpacity={0.3}
+					shadowRadius={10}
+					elevation={12}
 					style={styles.card}
 				>
 					<SizableText color="$primary100" size="$title1">
@@ -309,6 +314,11 @@ const RealTransactionModal = ({
 						borderWidth={2}
 						opacity={1}
 						borderRadius={16}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 5 }}
+						shadowOpacity={0.3}
+						shadowRadius={10}
+						elevation={12}
 						padding={24}
 						width={'80%'}
 						gap={20}
