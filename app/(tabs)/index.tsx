@@ -90,21 +90,26 @@ export default function Landing() {
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
 								fontSize={'$7'}
-								fontWeight={'500'} /*700*/
+								fontWeight={'500'}
 								numberOfLines={1}
 								adjustsFontSizeToFit
+								color="$primary100"
 							>
 								{t('EVA MyBudget')}
 							</Text>
 
-							<Text numberOfLines={1} adjustsFontSizeToFit fontSize={'$3'}>
+							<Text 
+								numberOfLines={1} 
+								adjustsFontSizeToFit 
+								fontSize={'$3'}
+								color="$primary100"
+							>
 								{t('Supporting your financial well-being')}
 							</Text>
 					
 							{/* Piggy Bank Icon */}
 							<PiggyBank
-								mt={'$4'}
-								mb={'$4'}
+								marginVertical="$4"
 								size={110}
 								style={{ height: '100%' }}
 								color={'$primary100'}
@@ -116,14 +121,13 @@ export default function Landing() {
 							<YStack f={1} ai={'center'}>
 								{/* Current situation card */}
 								<YStack
+marginVertical="$4"
 									width={'70%'}
 									backgroundColor="$white"
 									borderColor="$primary200"
 									borderRadius={20}
 									borderWidth={2}
 									padding={10}
-									mt={'$4'}
-									mb={'$4'}
 								>
 									<YStack
 										alignItems="center"
@@ -217,8 +221,7 @@ export default function Landing() {
 								alignItems="center"
 							>
 								<Text
-									mt={'$3'}
-									mb={'$3'}
+									marginVertical="$3"
 									textAlign="center"
 									fontSize="$3"
 									numberOfLines={4}
@@ -235,7 +238,7 @@ export default function Landing() {
 									backgroundColor="$white"
 									keyboardType="numeric"
 									fontSize={15}
-									mb={'$3'}
+									marginVertical="$3"
 								/>
 								<Button
 									marginTop={10}
@@ -292,6 +295,7 @@ export default function Landing() {
 									fontSize="$7"
 									textAlign="center"
 									maxFontSizeMultiplier={1.3}
+									color="$gray700"
 								>
 									{t('What is disposable income?')}
 								</SizableText>
@@ -300,6 +304,7 @@ export default function Landing() {
 									fontSize="$6"
 									textAlign="center"
 									maxFontSizeMultiplier={1.3}
+									color="$gray700"
 								>
 									{t('Help Disposable income')}
 								</SizableText>
