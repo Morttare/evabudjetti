@@ -71,7 +71,8 @@ export default function FixBalanceModal() {
 				<Button
 					borderRadius={40}
 					backgroundColor="$primary200"
-					size={'$buttons.lg'}
+					height={50}
+					paddingHorizontal="$4"
 				>
 					<Text color={'$white'}>{t('EDIT BALANCE')}</Text>
 				</Button>

@@ -238,6 +238,7 @@ export default function Landing() {
 									width="70%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
+									paddingHorizontal="$4"
 									borderColor="$primary100"
 									backgroundColor="$white"
 									keyboardType="numeric"
@@ -248,8 +249,8 @@ export default function Landing() {
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
-									width={230}
-									size="$buttons.lg"
+									height={50}
+									paddingHorizontal="$4"
 									color={'white'}
 									disabled={initialBalance === ''}
 									onPress={async () => {
