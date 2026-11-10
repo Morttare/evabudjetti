@@ -18,9 +18,9 @@ export default function Introduction() {
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
-				paddingTop={75}
 				paddingHorizontal={10}
 				alignItems="center"
+				justifyContent="center"
 				flex={1}
 				gap={60}
 			>

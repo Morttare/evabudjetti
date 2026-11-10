@@ -12,13 +12,13 @@ export default function Landing() {
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
-				paddingTop="$paddingmd"
 				paddingHorizontal={10}
 				alignItems="center"
+				justifyContent="center"
 				flex={1}
 				gap={70}
 			>
-				<YStack paddingTop={70} alignItems="center" gap={5}>
+				<YStack alignItems="center" gap={5}>
 					<Text
 						fontSize="$7"
 						fontWeight={700}
@@ -40,11 +40,7 @@ export default function Landing() {
 					</Text>
 				</YStack>
 
-				<PiggyBank
-					size={220}
-					style={{ height: '100%' }}
-					color="$primary100"
-				/>
+				<PiggyBank size={220} color="$primary100" />
 
 				<Button
 					size={52}

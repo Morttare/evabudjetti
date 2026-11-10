@@ -3,7 +3,7 @@ import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { Modal, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
@@ -79,8 +79,12 @@ export default function Landing() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView
+			style={{ flex: 1, backgroundColor: '#fff' }}
+			edges={['left', 'right', 'bottom']}
+		>
 			<ScrollView
+				style={{ flex: 1, backgroundColor: '#fff' }}
 				contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
 				keyboardShouldPersistTaps="handled"
 			>
@@ -111,17 +115,16 @@ export default function Landing() {
 							<PiggyBank
 								marginVertical="$4"
 								size={110}
-								style={{ height: '100%' }}
 								color={'$primary100'}
 							/>
 							
 						</YStack>
 
 						{budgetCreated && (
-							<YStack f={1} ai={'center'}>
+							<YStack ai={'center'}>
 								{/* Current situation card */}
 								<YStack
-marginVertical="$4"
+									marginVertical="$4"
 									width={'70%'}
 									backgroundColor="$white"
 									borderColor="$primary200"
@@ -244,7 +247,7 @@ marginVertical="$4"
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
-									width={200}
+									width={230}
 									size="$buttons.lg"
 									color={'white'}
 									disabled={initialBalance === ''}
@@ -255,80 +258,84 @@ marginVertical="$4"
 										router.push('/budget_wizard');
 									}}
 								>
-									{t('Create budget')}
+									<SizableText
+										size="$buttons.md"
+										color="$white"
+										numberOfLines={1}
+										adjustsFontSizeToFit
+									>
+										{t('Create budget')}
+									</SizableText>
 								</Button>
 							</YStack>
 						)}
 					</YStack>
 
-					{/* Help Modal */}
-					{helpVisible && (
-						<YStack
-							position="absolute"
-							top={0}
-							left={0}
-							right={0}
-							bottom={0}
-							justifyContent="center"
-							alignItems="center"
-						>
-							<Pressable
-								style={[
-									StyleSheet.absoluteFill,
-									{ backgroundColor: 'rgba(0,0,0,0.4)' },
-								]}
-								accessibilityRole="button"
-								accessibilityLabel={t('Close')}
-								onPress={() => setHelpVisible(false)}
-							/>
-							<YStack
-								backgroundColor="$white"
-								borderColor="$primary100"
-								borderWidth={2}
-								borderRadius={10}
-								width={'70%'}
-								shadowColor="$black"
-								gap={'3%'}
-								padding={20}
-							>
-								<SizableText
-									fontSize="$7"
-									textAlign="center"
-									maxFontSizeMultiplier={1.3}
-									color="$gray700"
-								>
-									{t('What is disposable income?')}
-								</SizableText>
-								<SizableText
-									marginTop="$3"
-									fontSize="$6"
-									textAlign="center"
-									maxFontSizeMultiplier={1.3}
-									color="$gray700"
-								>
-									{t('Help Disposable income')}
-								</SizableText>
-								<Button
-									marginTop="$3"
-									width={130}
-									height={40}
-									onPress={() => setHelpVisible(false)}
-									backgroundColor="$primary200"
-									borderRadius={40}
-									alignSelf="center"
-								>
-									<SizableText
-										color="$white"
-										maxFontSizeMultiplier={1}
-									>
-										{t('CLOSE')}
-									</SizableText>
-								</Button>
-							</YStack>
-						</YStack>
-					)}
 				</YStack>
 			</ScrollView>
+			<Modal
+				visible={helpVisible}
+				transparent
+				animationType="fade"
+				statusBarTranslucent
+				navigationBarTranslucent
+				onRequestClose={() => setHelpVisible(false)}
+			>
+				<YStack
+					f={1}
+					justifyContent="center"
+					alignItems="center"
+					backgroundColor="rgba(0,0,0,0.4)"
+				>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						accessibilityRole="button"
+						accessibilityLabel={t('Close')}
+						onPress={() => setHelpVisible(false)}
+					/>
+					<YStack
+						backgroundColor="$white"
+						borderColor="$primary100"
+						borderWidth={2}
+						borderRadius={10}
+						width="70%"
+						shadowColor="$black"
+						gap="3%"
+						padding={20}
+					>
+						<SizableText
+							fontSize="$7"
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+							color="$gray700"
+						>
+							{t('What is disposable income?')}
+						</SizableText>
+						<SizableText
+							marginTop="$3"
+							fontSize="$6"
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+							color="$gray700"
+						>
+							{t('Help Disposable income')}
+						</SizableText>
+						<Button
+							marginTop="$3"
+							width={130}
+							height={40}
+							onPress={() => setHelpVisible(false)}
+							backgroundColor="$primary200"
+							borderRadius={40}
+							alignSelf="center"
+						>
+							<SizableText color="$white" maxFontSizeMultiplier={1}>
+								{t('CLOSE')}
+							</SizableText>
+						</Button>
+					</YStack>
+				</YStack>
+			</Modal>
 		</SafeAreaView>
 	);
 }
