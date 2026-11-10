@@ -124,6 +124,7 @@ i18next
 				'No budget created': 'No budget created yet. Enter your balance in € without commas and press the "Create budget" button below to get started!',
 				'Create budget': 'CREATE BUDGET',
 				'Edit Budget': 'Edit Budget',
+				'Select Year': 'Select Year',
 				'Bus card': 'Bus card',
 				'Study benefit': 'Study benefit',
 				'Study loan': 'Study loan',
@@ -162,6 +163,19 @@ i18next
 				"october": "October",
 				"november": "November",
 				"december": "December",
+
+				"Jan": "Jan",
+				"Feb": "Feb",
+				"Mar": "Mar",
+				"Apr": "Apr",
+				"May": "May",
+				"Jun": "Jun",
+				"Jul": "Jul",
+				"Aug": "Aug",
+				"Sep": "Sep",
+				"Oct": "Oct",
+				"Nov": "Nov",
+				"Dec": "Dec",
 
 				// FUNDS
 				'Daily situation': 'Daily situation',
@@ -253,7 +267,14 @@ i18next
 				'days': 'days',
 				'weeks': 'weeks',
 				'months': 'months',
-				'years': 'years'
+				'years': 'years',
+				
+				// TIMEFRAME INSTRUCTIONS (Settings → Timeframe and budget wizard)
+				'Timeframe info': 'The timeframe is the period your income has to last. Your usable funds (€/day) are calculated for the remaining days of the timeframe.',
+				'Timeframe start info': 'Start the timeframe on the day your largest regular income is paid. The timeframe lasts until the same income is paid again.',
+				'Timeframe length info': 'Choose the payment interval of that income as the length, e.g. 4 weeks for a daily allowance or 1 month for a salary. If you get income on several days, choose the interval of the most critical income.',
+				'Timeframe change info': 'You can change the timeframe later in Settings → Timeframe.',
+				'Timeframe suggestion': 'Suggestion based on your largest regular income {{name}} ({{amount}}): start {{date}}, length {{length}} {{unit}}.'
 			},
 		},
 		fi: {
@@ -367,6 +388,7 @@ i18next
 				'No budget created': 'Budjettia ei ole vielä luotu. Aloita syöttämällä tilisi saldo euroina (€) ilman pilkkuja ja paina alta löytyvää "Luo budjetti" -painiketta!',
 				'Create budget': 'LUO BUDJETTI',
 				'Edit Budget': 'Muokkaa Budjettia',
+				'Select Year': 'Valitse vuosi',
 				'Bus card': 'Bussikortti',
 				'Study benefit': 'Opintotuki',
 				'Study loan': 'Opintolaina',
@@ -394,18 +416,18 @@ i18next
 				"november": "Marraskuu",
 				"december": "Joulukuu",
 
-				"Jan": "tammi",
-				"Feb": "helmi",
-				"Mar": "maalis",
-				"Apr": "huhti",
-				"May": "touko",   // to avoid collision with full "may"
-				"Jun": "kesä",
-				"Jul": "heinä",
-				"Aug": "elo",
-				"Sep": "syys",
-				"Oct": "loka",
-				"Nov": "marras",
-				"Dec": "joulu",
+				"Jan": "Tammi",
+				"Feb": "Helmi",
+				"Mar": "Maalis",
+				"Apr": "Huhti",
+				"May": "Touko",   // to avoid collision with full "may"
+				"Jun": "Kesä",
+				"Jul": "Heinä",
+				"Aug": "Elo",
+				"Sep": "Syys",
+				"Oct": "Loka",
+				"Nov": "Marras",
+				"Dec": "Joulu",
 				
 				'Incomes': 'Tulot',
 				'Expenses': 'Menot',
@@ -522,7 +544,13 @@ i18next
 				'days': 'päivää',
 				'weeks': 'viikkoa',
 				'months': 'kuukausia',
-				'years': 'vuosia'
+				'years': 'vuosia',
+				// JAKSON OHJEET (Asetukset → Jakso ja budjettivelho)
+				'Timeframe info': 'Jakso on aika, jonka tulojesi pitää riittää. Käyttövara (€/vrk) lasketaan jakson jäljellä oleville päiville.',
+				'Timeframe start info': 'Aloita jakso yleensä päivästä, jolloin suurin säännöllinen tulosi maksetaan tilille. Jakso kestää siihen asti, kun sama tulo maksetaan seuraavan kerran.',
+				'Timeframe length info': 'Valitse pituudeksi tämän tulon maksuväli, esim. 4 viikkoa päivärahalle tai 1 kuukausi palkalle. Jos saat tuloja useana päivänä, valitse kriittisimmän tulon maksuväli.',
+				'Timeframe change info': 'Voit muuttaa jaksoa myöhemmin kohdasta Asetukset → Jakso.',
+				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi {{name}} ({{amount}}) perusteella: alku {{date}}, pituus {{length}} {{unit}}.'
 			},
 		},
 	},

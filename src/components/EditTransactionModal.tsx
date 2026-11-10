@@ -117,9 +117,10 @@ const EditTransactionModal = ({
 						{t('Edit transaction')}
 					</SizableText>
 					<Button
-						size="$buttons.sm"
+						size="$buttons.lg"
 						circular
-						backgroundColor="$caution"
+						backgroundColor="$danger500"
+						color="$white"
 						icon={Trash2}
 						onPress={() => setDeleteConfirmVisible(true)}
 						disabled={saving}

@@ -104,7 +104,7 @@ const DailyEventListItem: React.FC<Props> = ({
 										alignItems="center"
 										justifyContent="flex-end"
 										key={itemKey}
-										maxWidth={'90%'}
+										maxWidth={'100%'}
 									>
 										<Text
 											flex={1}
@@ -120,9 +120,13 @@ const DailyEventListItem: React.FC<Props> = ({
 										</Text>
 										{onEditPress && txn.realTransaction && (
 											<Button
-												size="$buttons.sm"
+												size="$buttons.md"
 												circular
-												backgroundColor="transparent"
+												marginBottom="$1"
+												backgroundColor="$white"
+												borderWidth={1}
+												borderColor="$disabled"
+												color="$disabled"
 												icon={Pencil}
 												onPress={() => onEditPress(txn)}
 											/>
@@ -131,9 +135,12 @@ const DailyEventListItem: React.FC<Props> = ({
 											txn.plannedTransaction &&
 											!txn.realTransaction && (
 												<Button
-													size="$buttons.sm"
+													size="$buttons.md"
 													circular
-													backgroundColor="transparent"
+													backgroundColor="$white"
+													borderWidth={1}
+													borderColor="$disabled"
+													color="$disabled"
 													icon={Pencil}
 													onPress={() =>
 														onEditPlannedPress(txn)

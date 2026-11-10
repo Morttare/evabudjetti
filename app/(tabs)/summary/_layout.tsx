@@ -1,9 +1,6 @@
 import { Stack } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 
 export default function SummaryStackLayout() {
-	const { t } = useTranslation();
-
 	return (
 		<Stack
 			screenOptions={{
@@ -14,13 +11,6 @@ export default function SummaryStackLayout() {
 			}}
 		>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Screen
-				name="[year]"
-				options={({ route }) => ({
-					title: `${t('Year')} ${(route.params as { year?: string })?.year}`,
-					headerBackButtonDisplayMode: 'minimal',
-				})}
-			/>
 		</Stack>
 	);
 }
