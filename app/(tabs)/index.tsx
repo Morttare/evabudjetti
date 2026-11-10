@@ -229,6 +229,7 @@ export default function Landing() {
 									fontSize="$3"
 									numberOfLines={4}
 									adjustsFontSizeToFit
+									color="$gray700"
 								>
 									{t('No budget created')}
 								</Text>
@@ -300,7 +301,11 @@ export default function Landing() {
 						borderRadius={10}
 						width="70%"
 						shadowColor="$black"
-						gap="3%"
+						shadowOffset={{ width: 0, height: 3 }}
+						shadowOpacity={0.25}
+						shadowRadius={3}
+						elevation={2}
+						gap="$3"
 						padding={20}
 					>
 						<SizableText
@@ -312,7 +317,6 @@ export default function Landing() {
 							{t('What is disposable income?')}
 						</SizableText>
 						<SizableText
-							marginTop="$3"
 							fontSize="$6"
 							textAlign="center"
 							maxFontSizeMultiplier={1.3}
@@ -321,7 +325,6 @@ export default function Landing() {
 							{t('Help Disposable income')}
 						</SizableText>
 						<Button
-							marginTop="$3"
 							width={130}
 							height={40}
 							onPress={() => setHelpVisible(false)}

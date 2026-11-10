@@ -578,6 +578,7 @@ export default function AddTransaction() {
 									placeholder={t(
 										'Corrected actual amount (€)',
 									)}
+									placeholderTextColor="#a3a3a3"
 									height={48}
 									borderRadius={10}
 									px="10px"

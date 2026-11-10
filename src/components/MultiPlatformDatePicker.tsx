@@ -73,6 +73,7 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 					color="$primary100"
 					flex={1}
 					placeholder={t('Write the date here (DD-MM-YYYY)')}
+					placeholderTextColor="#a3a3a3"
 					value={editorDate}
 					onChangeText={setEditorDate}
 				/>

@@ -162,6 +162,7 @@ const RealTransactionModal = ({
 								<Input
 									color="$primary100"
 									placeholder={t(' Enter transaction name')}
+									placeholderTextColor="#a3a3a3"
 									value={name}
 									onChangeText={setName}
 									height={40}
@@ -182,6 +183,7 @@ const RealTransactionModal = ({
 								<Input
 									color="$primary100"
 									placeholder={t(' Enter amount (€)')}
+									placeholderTextColor="#a3a3a3"
 									value={amount}
 									onChangeText={handleAmountChange}
 									keyboardType="decimal-pad"
@@ -318,6 +320,7 @@ const RealTransactionModal = ({
 							value={newCategoryName}
 							onChangeText={setNewCategoryName}
 							placeholder={t('Enter category')}
+							placeholderTextColor="#a3a3a3"
 							height={40}
 							borderRadius={6}
 							marginBottom={22}

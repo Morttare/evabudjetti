@@ -131,6 +131,7 @@ const AddItemPopup = ({
 							<Input
 								color="$primary100"
 								placeholder={t('Write the name here')}
+								placeholderTextColor="#a3a3a3"
 								style={styles.input}
 								value={name}
 								onChangeText={setName}
@@ -143,6 +144,7 @@ const AddItemPopup = ({
 							<Input
 								color="$primary100"
 								placeholder={t('Write the amount here (€)')}
+								placeholderTextColor="#a3a3a3"
 								style={styles.input}
 								maxLength={12}
 								defaultValue={amount ? String(amount) : null}

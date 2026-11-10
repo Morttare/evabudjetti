@@ -497,7 +497,7 @@ i18next
 
 				// LANDING
 				'Welcome to the budgeting app!':
-					'Tervetuloa budjettisovellukseen! Käytä alaosan navigointipainikkeita siirtyäksesi osioiden välillä. Lisää tulo tai mepainamalla "Lisää tulo/meno". Voit tarkastella ja muokata budjettiasi sekä nähdä yhteenvedon taloudestasi.',
+					'Tervetuloa budjettisovellukseen! Käytä alaosan navigointipainikkeita siirtyäksesi osioiden välillä. Lisää tulo tai meno painamalla "Lisää tulo/meno". Voit tarkastella ja muokata budjettiasi sekä nähdä yhteenvedon taloudestasi.',
 				'Supporting your financial well-being':
 					'Taloudenhallintasi tueksi',
 				'Current situation': 'Nykytilanne',

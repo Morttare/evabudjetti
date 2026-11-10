@@ -52,7 +52,7 @@ export default function Introduction() {
 						<ListItem>
 							<SizableText
 								size="$title2"
-								color="$black"
+								color="$gray700"
 								textAlign="center"
 							>
 								{t('1. instruction')}
