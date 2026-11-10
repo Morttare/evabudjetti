@@ -1,22 +1,46 @@
-import { Plus } from '@tamagui/lucide-icons';
+import { Check, ChevronDown, Plus } from '@tamagui/lucide-icons';
+import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Progress, SizableText, YStack } from 'tamagui';
+import {
+	Button,
+	Input,
+	Progress,
+	Select,
+	SizableText,
+	View as TamaguiView,
+	XStack,
+	YStack,
+} from 'tamagui';
 import BudgetWizardItem from '@/src/components/BudgetWizardItem';
+import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
 import type { Persisted, PlannedTransaction } from '@/src/dataModel';
 import { useAddPlannedTransaction } from '@/src/finance/hook/useAddPlannedTransaction';
 import { useDeletePlannedTransaction } from '@/src/finance/hook/useDeletePlannedTransaction';
 import { useInvalidateFinanceCaches } from '@/src/finance/hook/useInvalidateFinanceCaches';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { useUpdatePlannedTransaction } from '@/src/finance/hook/useUpdatePlannedTransaction';
+import { suggestTimeframe } from '@/src/finance/logic/timeframeSuggestion';
+import { useTimeframeDraft } from '@/src/store/useTimeframeDraft';
+import type { LengthOptions } from '@/src/store/useTimeframeStore';
 import AddItemPopup from '../src/components/AddItemPopup';
 import {
 	BUDGET_WIZARD_STEPS,
 	type BudgetWizardStep,
 } from '../src/constants/wizardConfig';
+
+const TIMEFRAME_LENGTH_OPTIONS: readonly LengthOptions[] = [
+	'days',
+	'weeks',
+	'months',
+	'years',
+];
+
+const isLengthOption = (value: string): value is LengthOptions =>
+	TIMEFRAME_LENGTH_OPTIONS.some((option) => option === value);
 
 export default function BudgetWizard() {
 	const { t } = useTranslation();
@@ -26,6 +50,8 @@ export default function BudgetWizard() {
 	const updatePlannedTransaction = useUpdatePlannedTransaction();
 	const deletePlannedTransactionHook = useDeletePlannedTransaction();
 	const invalidateFinanceCaches = useInvalidateFinanceCaches();
+	const timeframeDraft = useTimeframeDraft();
+	const timeframeSuggestion = suggestTimeframe(transactions);
 
 	const [stepIndex, setStepIndex] = useState(0);
 	const [wizardData, setWizardData] =
@@ -42,6 +68,7 @@ export default function BudgetWizard() {
 		);
 	}, [transactions]);
 	const [popupVisible, setPopupVisible] = useState(false);
+	const [selectOpen, setSelectOpen] = useState(false);
 	const currentStep = wizardData[stepIndex];
 	const progressBarValue = ((stepIndex + 1) * 100) / wizardData.length;
 
@@ -76,6 +103,7 @@ export default function BudgetWizard() {
 	};
 
 	const handleFinish = () => {
+		timeframeDraft.save();
 		invalidateFinanceCaches();
 		router.push('/');
 	};
@@ -135,18 +163,206 @@ export default function BudgetWizard() {
 					contentContainerStyle={{ flexGrow: 1 }}
 					style={styles.content}
 				>
-					{currentStep.items.map((item, index) => (
-						<BudgetWizardItem
-							item={item}
-							onEdit={(it) => {
-								setSelectedItem({ index: index, item: it });
-								setPopupVisible(true);
-							}}
-							key={String(
-								item.name + item.amount + item.startDate,
+					{currentStep.header === 'Timeframe' ? (
+						<YStack gap="$3" padding="$3">
+							<SizableText color="$gray700">
+								{t('Timeframe info')}
+							</SizableText>
+							<SizableText color="$gray700">
+								{t('Timeframe start info')}
+							</SizableText>
+							<XStack alignItems="center" gap="$2">
+								<SizableText color="$gray700">
+									{t('Start date')} *
+								</SizableText>
+								<MultiPlatformDatePicker
+									value={timeframeDraft.startDate}
+									color="primary100"
+									onChange={timeframeDraft.setStartDate}
+								/>
+							</XStack>
+							<SizableText color="$gray700">
+								{t('Timeframe length info')}
+							</SizableText>
+							<SizableText color="$gray700">
+								{t('Timeframe length')}
+							</SizableText>
+							<XStack gap="$2" alignItems="center">
+								<Input
+									color="$black"
+									borderColor="$black"
+									textAlign="center"
+									maxLength={3}
+									value={timeframeDraft.lengthInput}
+									onChangeText={timeframeDraft.setLengthInput}
+									keyboardType="numeric"
+									style={{
+										minWidth: '21%',
+										height: selectOpen ? '25%' : '100%',
+									}}
+								/>
+								<View>
+									<Select
+										value={timeframeDraft.option}
+										onValueChange={(option) => {
+											if (isLengthOption(option)) {
+												timeframeDraft.setOption(
+													option,
+												);
+												setSelectOpen(false);
+											}
+										}}
+										disablePreventBodyScroll
+										native="web"
+									>
+										<Select.Trigger
+											height={45}
+											iconAfter={ChevronDown}
+											borderColor="$black"
+											borderWidth={selectOpen ? 2 : 1}
+											borderBottomLeftRadius={
+												selectOpen ? 0 : 15
+											}
+											borderBottomRightRadius={
+												selectOpen ? 0 : 15
+											}
+											onPressOut={() =>
+												setSelectOpen(!selectOpen)
+											}
+										>
+											<Select.Value
+												placeholder={t(
+													timeframeDraft.option,
+												)}
+											/>
+										</Select.Trigger>
+										<Select.Content>
+											<Select.Viewport>
+												<Select.Group>
+													<TamaguiView
+														height={
+															selectOpen
+																? 'auto'
+																: 0
+														}
+														overflow="hidden"
+													>
+														{TIMEFRAME_LENGTH_OPTIONS.map(
+															(option, index) => (
+																<Select.Item
+																	index={
+																		index
+																	}
+																	key={option}
+																	value={
+																		option
+																	}
+																	onTouchEnd={() => {
+																		timeframeDraft.setOption(
+																			option,
+																		);
+																		setSelectOpen(
+																			false,
+																		);
+																	}}
+																	borderColor="$black"
+																	borderWidth={
+																		1
+																	}
+																	borderTopWidth={
+																		0
+																	}
+																	borderBottomWidth={
+																		index ===
+																		TIMEFRAME_LENGTH_OPTIONS.length -
+																			1
+																			? 1
+																			: 0
+																	}
+																	borderBottomLeftRadius={
+																		index ===
+																		TIMEFRAME_LENGTH_OPTIONS.length -
+																			1
+																			? 15
+																			: 0
+																	}
+																	borderBottomRightRadius={
+																		index ===
+																		TIMEFRAME_LENGTH_OPTIONS.length -
+																			1
+																			? 15
+																			: 0
+																	}
+																>
+																	<Select.ItemText>
+																		{t(
+																			option,
+																		)}
+																	</Select.ItemText>
+																	<Select.ItemIndicator marginLeft="auto">
+																		<Check
+																			size={
+																				16
+																			}
+																		/>
+																	</Select.ItemIndicator>
+																</Select.Item>
+															),
+														)}
+													</TamaguiView>
+												</Select.Group>
+											</Select.Viewport>
+										</Select.Content>
+									</Select>
+								</View>
+							</XStack>
+							{timeframeSuggestion && (
+								<YStack gap="$2">
+									<SizableText color="$gray700">
+										{t('Timeframe suggestion', {
+											name: timeframeSuggestion.basedOn
+												.name,
+											amount: `${timeframeSuggestion.basedOn.amount} €`,
+											date: format(
+												timeframeSuggestion.startDate,
+												'dd.MM.yyyy',
+											),
+											length: timeframeSuggestion.length,
+											unit: t(timeframeSuggestion.type),
+										})}
+									</SizableText>
+									<Button
+										backgroundColor="$primary200"
+										onPress={() =>
+											timeframeDraft.applySuggestion(
+												timeframeSuggestion,
+											)
+										}
+									>
+										<SizableText color="$white">
+											{t('Use suggestion')}
+										</SizableText>
+									</Button>
+								</YStack>
 							)}
-						/>
-					))}
+							<SizableText color="$gray700">
+								{t('Timeframe change info')}
+							</SizableText>
+						</YStack>
+					) : (
+						currentStep.items.map((item, index) => (
+							<BudgetWizardItem
+								item={item}
+								onEdit={(it) => {
+									setSelectedItem({ index, item: it });
+									setPopupVisible(true);
+								}}
+								key={String(
+									item.name + item.amount + item.startDate,
+								)}
+							/>
+						))
+					)}
 					{/* Empty Y-stack to get margin after last budget item*/}
 					<YStack marginTop="10" />
 				</ScrollView>

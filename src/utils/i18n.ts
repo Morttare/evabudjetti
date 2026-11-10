@@ -279,7 +279,8 @@ i18next
 				'Timeframe start info': 'Start the timeframe on the day your largest regular income is paid. The timeframe lasts until the same income is paid again.',
 				'Timeframe length info': 'Choose the payment interval of that income as the length, e.g. 4 weeks for a daily allowance or 1 month for a salary. If you get income on several days, choose the interval of the most critical income.',
 				'Timeframe change info': 'You can change the timeframe later in Settings → Timeframe.',
-				'Timeframe suggestion': 'Suggestion based on your largest regular income {{name}} ({{amount}}): start {{date}}, length {{length}} {{unit}}.'
+				'Timeframe suggestion': 'Suggestion based on your largest regular income {{name}} ({{amount}}): start {{date}}, length {{length}} {{unit}}.',
+				'Use suggestion': 'Use suggestion'
 			},
 		},
 		fi: {
@@ -556,11 +557,12 @@ i18next
 				'months': 'kuukausia',
 				'years': 'vuosia',
 				// JAKSON OHJEET (Asetukset → Jakso ja budjettivelho)
-				'Timeframe info': 'Jakso on aika, jonka tulojesi pitää riittää. Käyttövara (€/vrk) lasketaan jakson jäljellä oleville päiville.',
+				'Timeframe info': 'Jakso on ajanjakso, jolle tulot tulee riittää. Käyttövara (€/vrk) lasketaan jakson jäljellä oleville päiville.',
 				'Timeframe start info': 'Aloita jakso yleensä päivästä, jolloin suurin säännöllinen tulosi maksetaan tilille. Jakso kestää siihen asti, kun sama tulo maksetaan seuraavan kerran.',
 				'Timeframe length info': 'Valitse pituudeksi tämän tulon maksuväli, esim. 4 viikkoa päivärahalle tai 1 kuukausi palkalle. Jos saat tuloja useana päivänä, valitse kriittisimmän tulon maksuväli.',
 				'Timeframe change info': 'Voit muuttaa jaksoa myöhemmin kohdasta Asetukset → Jakso.',
-				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi {{name}} ({{amount}}) perusteella: alku {{date}}, pituus {{length}} {{unit}}.'
+				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi {{name}} ({{amount}}) perusteella: alku {{date}}, pituus {{length}} {{unit}}.',
+				'Use suggestion': 'Käytä ehdotusta'
 			},
 		},
 	},
