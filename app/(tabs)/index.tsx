@@ -1,4 +1,7 @@
-import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import {
+	Info,
+	PiggyBank,
+} from '@tamagui/lucide-icons';
 import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -134,7 +137,7 @@ export default function Landing() {
 									accessibilityLabel={t('Help')}
 									onPress={() => setHomeHelpVisible(true)}
 									icon={
-										<MessageCircleQuestion
+										<Info
 											color="$primary100"
 											size={24}
 										/>
@@ -182,7 +185,7 @@ export default function Landing() {
 													setHelpVisible(true)
 												}
 												icon={
-													<MessageCircleQuestion
+													<Info
 														color="$primary100"
 														size={20}
 													/>

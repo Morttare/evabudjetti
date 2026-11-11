@@ -187,7 +187,7 @@ export default function BudgetWizard() {
 							<SizableText color="$gray700">
 								{t('Timeframe length')}
 							</SizableText>
-							<XStack gap="$2" alignItems="center">
+							<XStack gap="$2" alignItems="unset">
 								<Input
 									color="$black"
 									borderColor="$black"
