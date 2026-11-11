@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
-import { addMonths, subMonths } from 'date-fns';
+import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
@@ -103,12 +103,13 @@ export default function DailyBalanceView({
 		}
 	};
 
-	/* 
-	Variable to determine how many past and future months are rendered. 
-	On first load, render only current month
-	*/
-	const [futureCount, setFutureCount] = useState(0);
-	const [pastCount, setPastCount] = useState(0);
+	/* Keep the explicitly loaded range independent of calendar navigation. */
+	const [loadedStartMonth, setLoadedStartMonth] = useState(() =>
+		startOfMonth(selectedDate),
+	);
+	const [loadedEndMonth, setLoadedEndMonth] = useState(() =>
+		startOfMonth(selectedDate),
+	);
 
 	const selectedDay = selectedDate.getDate();
 
@@ -120,19 +121,42 @@ export default function DailyBalanceView({
 
 	const selectedMonthKey = `${selectedYearStr}-${selectedMonthstr}`;
 
-	// Fetch occurrences and balances for the months that are rendered
-	const dataStartDate = subMonths(selectedDate, pastCount);
-	const dataEndDate = addMonths(selectedDate, futureCount);
+	const selectedMonth = startOfMonth(selectedDate);
+	const selectedMonthIsLoaded =
+		selectedMonth >= loadedStartMonth && selectedMonth <= loadedEndMonth;
 
 	const occurrencesAndBalances = useOccurrencesAndBalances(
-		dataStartDate.getFullYear(),
-		dataStartDate.getMonth(),
-		dataEndDate.getFullYear(),
-		dataEndDate.getMonth(),
+		loadedStartMonth.getFullYear(),
+		loadedStartMonth.getMonth(),
+		loadedEndMonth.getFullYear(),
+		loadedEndMonth.getMonth(),
+	);
+	const selectedMonthData = useOccurrencesAndBalances(
+		selectedMonthIsLoaded
+			? loadedStartMonth.getFullYear()
+			: selectedMonth.getFullYear(),
+		selectedMonthIsLoaded
+			? loadedStartMonth.getMonth()
+			: selectedMonth.getMonth(),
+		selectedMonthIsLoaded
+			? loadedEndMonth.getFullYear()
+			: selectedMonth.getFullYear(),
+		selectedMonthIsLoaded
+			? loadedEndMonth.getMonth()
+			: selectedMonth.getMonth(),
+	);
+	const renderedMonthMap = new Map(
+		occurrencesAndBalances.map((month) => [month.monthKey, month] as const),
+	);
+	for (const month of selectedMonthData) {
+		renderedMonthMap.set(month.monthKey, month);
+	}
+	const renderedMonths = [...renderedMonthMap.values()].sort((a, b) =>
+		a.monthKey.localeCompare(b.monthKey),
 	);
 
 	const getSelectedDayBalance = () => {
-		for (const month of occurrencesAndBalances) {
+		for (const month of renderedMonths) {
 			if (month.monthKey === selectedMonthKey) {
 				return month.dailyBalances[selectedDay - 1]?.balance;
 			}
@@ -171,10 +195,10 @@ export default function DailyBalanceView({
 
 	// On "load more" press, display 1 more past/future month
 	const handleFutureLoadMorePress = () => {
-		setFutureCount((prev) => prev + 1);
+		setLoadedEndMonth((month) => addMonths(month, 1));
 	};
 	const handlePastLoadMorePress = () => {
-		setPastCount((prev) => prev + 1);
+		setLoadedStartMonth((month) => subMonths(month, 1));
 	};
 
 	return (
@@ -368,7 +392,7 @@ export default function DailyBalanceView({
 					</YStack>
 
 					{/* --- Render all loaded months in order (oldest first) ---*/}
-					{occurrencesAndBalances.map((month) => (
+					{renderedMonths.map((month) => (
 						<DailyEventList
 							transactions={month.transactionOccurrences}
 							monthKey={month.monthKey}

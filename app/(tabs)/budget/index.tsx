@@ -167,6 +167,8 @@ export default function YearsScreen() {
 											backgroundColor={bgColor}
 											borderRadius="$3"
 											borderWidth={1}
+											paddingLeft="$2"
+											paddingRight="$2"
 											borderColor={borderColor}
 											pressStyle={{ opacity: 0.8 }}
 											onPress={() =>
