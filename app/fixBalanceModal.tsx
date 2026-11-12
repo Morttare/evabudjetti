@@ -207,7 +207,10 @@ export default function FixBalanceModal() {
 						>
 							{t('Are you sure?')}
 						</AlertDialog.Title>
-						<AlertDialog.Description paddingTop={10} color="$primary100">
+						<AlertDialog.Description
+							paddingTop={10}
+							color="$primary100"
+						>
 							{t('This will alter the balance record.')}
 						</AlertDialog.Description>
 

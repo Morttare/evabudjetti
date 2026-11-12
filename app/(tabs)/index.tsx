@@ -1,7 +1,4 @@
-import {
-	Info,
-	PiggyBank,
-} from '@tamagui/lucide-icons';
+import { Info, PiggyBank } from '@tamagui/lucide-icons';
 import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -13,7 +10,6 @@ import {
 	Input,
 	ScrollView,
 	SizableText,
-	Spacer,
 	Text,
 	XStack,
 	YStack,
@@ -93,7 +89,11 @@ export default function Landing() {
 				keyboardShouldPersistTaps="handled"
 			>
 				<YStack f={1} backgroundColor="$background">
-					<YStack f={1} paddingHorizontal={10} justifyContent="center">
+					<YStack
+						f={1}
+						paddingHorizontal={10}
+						justifyContent="center"
+					>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
@@ -106,15 +106,15 @@ export default function Landing() {
 								{t('EVA MyBudget')}
 							</Text>
 
-							<Text 
-								numberOfLines={1} 
-								adjustsFontSizeToFit 
+							<Text
+								numberOfLines={1}
+								adjustsFontSizeToFit
 								fontSize={'$3'}
 								color="$primary100"
 							>
 								{t('Supporting your financial well-being')}
 							</Text>
-					
+
 							<XStack
 								width={170}
 								height={140}
@@ -137,14 +137,10 @@ export default function Landing() {
 									accessibilityLabel={t('Help')}
 									onPress={() => setHomeHelpVisible(true)}
 									icon={
-										<Info
-											color="$primary100"
-											size={24}
-										/>
+										<Info color="$primary100" size={24} />
 									}
 								/>
 							</XStack>
-							
 						</YStack>
 
 						{budgetCreated && (
@@ -206,9 +202,7 @@ export default function Landing() {
 											{t('/ day')}
 										</Text>
 										{usableFunds <= 0 && (
-											<Text
-												color={'$color.danger500'}
-											>
+											<Text color={'$color.danger500'}>
 												{t('Balance runs out')}{' '}
 												{getBalanceZeroDate().toLocaleDateString(
 													'fi-FI',
@@ -310,7 +304,6 @@ export default function Landing() {
 							</YStack>
 						)}
 					</YStack>
-
 				</YStack>
 			</ScrollView>
 
@@ -373,7 +366,10 @@ export default function Landing() {
 							borderRadius={40}
 							alignSelf="center"
 						>
-							<SizableText color="$white" maxFontSizeMultiplier={1}>
+							<SizableText
+								color="$white"
+								maxFontSizeMultiplier={1}
+							>
 								{t('CLOSE')}
 							</SizableText>
 						</Button>
@@ -430,18 +426,18 @@ export default function Landing() {
 								{t('Help')}
 							</SizableText>
 							{t('Help Homepage')
-							.split('\n')
-							.map((paragraph, i) => (
-								<SizableText
-									key={i}
-									fontSize="$6"
-									textAlign="center"
-									maxFontSizeMultiplier={1.3}
-									color="$gray700"
-								>
-									{paragraph}
-								</SizableText>
-							))}
+								.split('\n')
+								.map((paragraph) => (
+									<SizableText
+										key={paragraph}
+										fontSize="$6"
+										textAlign="center"
+										maxFontSizeMultiplier={1.3}
+										color="$gray700"
+									>
+										{paragraph}
+									</SizableText>
+								))}
 							<Button
 								width={130}
 								height={40}
