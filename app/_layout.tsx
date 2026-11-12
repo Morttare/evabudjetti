@@ -7,6 +7,10 @@ import { PortalProvider, Spinner, Text, YStack } from 'tamagui';
 import migrations from '@/drizzle/migrations';
 import { db, isDbReal } from '@/src/db/client';
 import { seedCategories, seedDefaultBudgetAndAccount } from '@/src/db/seed';
+import {
+	initializeCategoryStore,
+	useCategoryStore,
+} from '@/src/store/categoryStore';
 import config from '../tamagui.config';
 import '@/src/utils/i18n';
 
@@ -18,13 +22,25 @@ import { useLanguageStore } from '@/src/store/useLanguageStore';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
+	const categoriesInitialized = useCategoryStore(
+		(state) => state.initialized,
+	);
+	const categoryError = useCategoryStore((state) => state.error);
 
 	useEffect(() => {
-		if (success && isDbReal) {
-			seedDefaultBudgetAndAccount();
-			seedCategories();
+		if (success && isDbReal && !categoriesInitialized && !categoryError) {
+			void (async () => {
+				await seedDefaultBudgetAndAccount();
+				await seedCategories();
+				await initializeCategoryStore();
+			})().catch((initializationError) => {
+				console.error(
+					'Failed to initialize app data:',
+					initializationError,
+				);
+			});
 		}
-	}, [success]);
+	}, [success, categoriesInitialized, categoryError]);
 
 	const language = useLanguageStore((state) => state.language);
 	const { instructionShown } = useInstructionStore();
@@ -56,6 +72,45 @@ export default function RootLayout() {
 						</SafeAreaProvider>
 					</Theme>
 				</PortalProvider>
+			</TamaguiProvider>
+		);
+	}
+
+	if (isDbReal && success && categoryError && !categoriesInitialized) {
+		return (
+			<TamaguiProvider config={config} defaultTheme="light">
+				<Theme name="light">
+					<SafeAreaProvider>
+						<YStack f={1} jc="center" ai="center" padding="$4">
+							<YStack gap="$3" ai="center">
+								<Text
+									color="$danger500"
+									fontSize="$6"
+									fontWeight="bold"
+								>
+									Category Data Error
+								</Text>
+								<Text color="$danger500" ta="center">
+									{categoryError}
+								</Text>
+							</YStack>
+						</YStack>
+					</SafeAreaProvider>
+				</Theme>
+			</TamaguiProvider>
+		);
+	}
+
+	if (isDbReal && success && !categoriesInitialized && !categoryError) {
+		return (
+			<TamaguiProvider config={config} defaultTheme="light">
+				<Theme name="light">
+					<SafeAreaProvider>
+						<YStack f={1} jc="center" ai="center">
+							<Spinner size="large" color="$info500" />
+						</YStack>
+					</SafeAreaProvider>
+				</Theme>
 			</TamaguiProvider>
 		);
 	}

@@ -1,3 +1,4 @@
+import { gt } from 'drizzle-orm';
 import { Platform } from 'react-native';
 import { DEFAULT_ACCOUNT_ID, DEFAULT_BUDGET_ID } from '../dataModel';
 import { db } from './client';
@@ -32,7 +33,11 @@ export const seedCategories = async () => {
 
 	try {
 		// Check if categories exist
-		const existing = await db.select().from(categories).limit(1);
+		const existing = await db
+			.select()
+			.from(categories)
+			.where(gt(categories.id, 0))
+			.limit(1);
 
 		if (existing.length > 0) {
 			return;
