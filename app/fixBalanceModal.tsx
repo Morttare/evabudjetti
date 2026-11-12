@@ -71,7 +71,8 @@ export default function FixBalanceModal() {
 				<Button
 					borderRadius={40}
 					backgroundColor="$primary200"
-					size={'$buttons.lg'}
+					height={50}
+					paddingHorizontal="$4"
 				>
 					<Text color={'$white'}>{t('EDIT BALANCE')}</Text>
 				</Button>
@@ -96,12 +97,17 @@ export default function FixBalanceModal() {
 						setDialogHeight(event.nativeEvent.layout.height);
 					}}
 				>
-					<Dialog.Title paddingBottom={5}>
+					<Dialog.Title
+						lineHeight={30}
+						paddingTop={5}
+						paddingBottom={5}
+						color="$primary100"
+					>
 						{t('Update Account Balance')}
 					</Dialog.Title>
 
 					<YStack gap="$3">
-						<Text paddingTop={12}>
+						<Text paddingTop={12} color="$primary100">
 							{t('Current Planned Balance')}: {currentBalance}€
 						</Text>
 
@@ -115,13 +121,22 @@ export default function FixBalanceModal() {
 							placeholder={t('New actual balance')}
 							borderColor="$primary100"
 							backgroundColor="$white"
-							placeholderTextColor="$gray9"
+							placeholderTextColor="#a3a3a3"
 							fontSize={15}
 						/>
 
-						<Text color={difference >= 0 ? '$green' : '$red'}>
-							{t('Difference')}: {difference > 0 ? '+' : ''}
-							{difference}€
+						<Text color="$primary100">
+							{t('Difference')}:{' '}
+							<Text
+								color={
+									difference >= 0
+										? '$success500'
+										: '$danger500'
+								}
+							>
+								{difference > 0 ? '+' : ''}
+								{difference}€
+							</Text>
 						</Text>
 
 						<XStack
@@ -181,14 +196,21 @@ export default function FixBalanceModal() {
 						borderWidth={2}
 						borderColor="$primary100"
 						maxWidth={400}
-						padding="$5"
-						height={dialogHeight > 0 ? dialogHeight : 'auto'}
+						minHeight={dialogHeight > 0 ? dialogHeight : 'auto'}
 						justifyContent="space-between"
 					>
-						<AlertDialog.Title paddingBottom={20}>
+						<AlertDialog.Title
+							lineHeight={30}
+							paddingTop={5}
+							paddingBottom={20}
+							color="$primary100"
+						>
 							{t('Are you sure?')}
 						</AlertDialog.Title>
-						<AlertDialog.Description paddingTop={20}>
+						<AlertDialog.Description
+							paddingTop={10}
+							color="$primary100"
+						>
 							{t('This will alter the balance record.')}
 						</AlertDialog.Description>
 

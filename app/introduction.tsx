@@ -18,9 +18,9 @@ export default function Introduction() {
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
-				paddingTop={75}
 				paddingHorizontal={10}
 				alignItems="center"
+				justifyContent="center"
 				flex={1}
 				gap={60}
 			>
@@ -52,7 +52,7 @@ export default function Introduction() {
 						<ListItem>
 							<SizableText
 								size="$title2"
-								color="$black"
+								color="$gray700"
 								textAlign="center"
 							>
 								{t('1. instruction')}
@@ -64,7 +64,7 @@ export default function Introduction() {
 						<ListItem>
 							<SizableText
 								size="$title2"
-								color="$black"
+								color="$gray700"
 								textAlign="center"
 							>
 								{t('2. instruction')}
@@ -75,9 +75,10 @@ export default function Introduction() {
 
 				<Button
 					size={52}
-					width={250}
+					width={200}
 					backgroundColor="$primary100"
 					alignSelf="center"
+					borderRadius={40}
 					onPress={showApp}
 				>
 					<SizableText size="$title2" color="$white">

@@ -100,6 +100,11 @@ const AddItemPopup = ({
 					borderColor="$primary100"
 					borderWidth={2}
 					borderRadius={16}
+					shadowColor="$black"
+					shadowOffset={{ width: 0, height: 5 }}
+					shadowOpacity={0.3}
+					shadowRadius={10}
+					elevation={12}
 					style={styles.card}
 				>
 					<XStack justifyContent="space-between">
@@ -131,6 +136,7 @@ const AddItemPopup = ({
 							<Input
 								color="$primary100"
 								placeholder={t('Write the name here')}
+								placeholderTextColor="#a3a3a3"
 								style={styles.input}
 								value={name}
 								onChangeText={setName}
@@ -143,6 +149,7 @@ const AddItemPopup = ({
 							<Input
 								color="$primary100"
 								placeholder={t('Write the amount here (€)')}
+								placeholderTextColor="#a3a3a3"
 								style={styles.input}
 								maxLength={12}
 								defaultValue={amount ? String(amount) : null}

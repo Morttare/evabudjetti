@@ -132,6 +132,11 @@ const PlannedTransactionConfirmModal = ({
 				style={styles.card}
 				borderWidth={2}
 				borderColor="$primary100"
+				shadowColor="$black"
+				shadowOffset={{ width: 0, height: 5 }}
+				shadowOpacity={0.3}
+				shadowRadius={10}
+				elevation={12}
 			>
 				<XStack
 					justifyContent="space-between"
@@ -168,6 +173,7 @@ const PlannedTransactionConfirmModal = ({
 								value={name}
 								onChangeText={setName}
 								placeholder={t('Enter transaction name')}
+								placeholderTextColor="#a3a3a3"
 								height={40}
 								borderRadius={6}
 								px="10px"
@@ -187,6 +193,7 @@ const PlannedTransactionConfirmModal = ({
 								onChangeText={handleAmountChange}
 								keyboardType="decimal-pad"
 								placeholder={t('Enter amount (€)')}
+								placeholderTextColor="#a3a3a3"
 								height={40}
 								borderRadius={6}
 								px="10px"

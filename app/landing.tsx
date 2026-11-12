@@ -12,13 +12,13 @@ export default function Landing() {
 		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
-				paddingTop="$paddingmd"
 				paddingHorizontal={10}
 				alignItems="center"
+				justifyContent="center"
 				flex={1}
 				gap={70}
 			>
-				<YStack paddingTop={70} alignItems="center" gap={5}>
+				<YStack alignItems="center" gap={5}>
 					<Text
 						fontSize="$7"
 						fontWeight={700}
@@ -34,25 +34,23 @@ export default function Landing() {
 						textAlign="center"
 						numberOfLines={1}
 						adjustsFontSizeToFit
+						color="$primary100"
 					>
 						{t('Supporting your financial well-being')}
 					</Text>
 				</YStack>
 
-				<PiggyBank
-					size={220}
-					style={{ height: '100%' }}
-					color="$primary100"
-				/>
+				<PiggyBank size={220} color="$primary100" />
 
 				<Button
 					size={52}
 					width={250}
 					backgroundColor="$primary100"
 					alignSelf="center"
+					borderRadius={40}
 					onPress={() => router.push('/introduction')}
 				>
-					<SizableText size="$title2" color="$white">
+					<SizableText size="$title1" color="$white">
 						{t("Let's start!")}
 					</SizableText>
 				</Button>

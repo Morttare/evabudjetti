@@ -1,15 +1,15 @@
-import { MessageCircleQuestion, PiggyBank } from '@tamagui/lucide-icons';
+import { Info, PiggyBank } from '@tamagui/lucide-icons';
 import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Modal, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
 	Input,
 	ScrollView,
 	SizableText,
-	Spacer,
 	Text,
 	XStack,
 	YStack,
@@ -26,11 +26,10 @@ export default function Landing() {
 	const [initialBalance, setInitialBalance] = useState('');
 	const saveBalanceToDb = useAddBalanceReconciliation();
 	const [helpVisible, setHelpVisible] = useState(false);
-	const { getCurrentTimeframeStart, getCurrentTimeframeEnd } =
-		useTimeframeStore();
+	const [homeHelpVisible, setHomeHelpVisible] = useState(false);
+	const { getCurrentTimeframeEnd } = useTimeframeStore();
 
 	const today = new Date();
-	const timeframeStart = getCurrentTimeframeStart(today);
 	const timeframeEnd = getCurrentTimeframeEnd(today);
 
 	const timespanBalances = useBalances(
@@ -80,13 +79,21 @@ export default function Landing() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView
+			style={{ flex: 1, backgroundColor: '#fff' }}
+			edges={['left', 'right', 'bottom']}
+		>
 			<ScrollView
+				style={{ flex: 1, backgroundColor: '#fff' }}
 				contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
 				keyboardShouldPersistTaps="handled"
 			>
 				<YStack f={1} backgroundColor="$background">
-					<YStack f={1} paddingHorizontal={10}>
+					<YStack
+						f={1}
+						paddingHorizontal={10}
+						justifyContent="center"
+					>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
@@ -94,78 +101,93 @@ export default function Landing() {
 								fontWeight={'500'}
 								numberOfLines={1}
 								adjustsFontSizeToFit
+								color="$primary100"
 							>
 								{t('EVA MyBudget')}
 							</Text>
 
-							<Text numberOfLines={1} adjustsFontSizeToFit>
+							<Text
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								fontSize={'$3'}
+								color="$primary100"
+							>
 								{t('Supporting your financial well-being')}
 							</Text>
 
-							<XStack mt={'$5'}>
-								<Spacer size={'10%'} />
-								{/* Piggy Bank Icon */}
+							<XStack
+								width={170}
+								height={140}
+								alignItems="center"
+								justifyContent="center"
+								position="relative"
+							>
 								<PiggyBank
-									size={110}
-									style={{ height: '100%' }}
-									color={'$primary100'}
+									marginVertical="$2"
+									size={120}
+									color="$primary100"
 								/>
-
-								{/* Help Icon positioned relative to the piggy bank */}
 								<Button
-									size={50}
-									style={{ height: '100%' }}
+									position="absolute"
+									right={0}
+									top={15}
+									size={40}
 									circular
 									chromeless
-									onPress={() => setHelpVisible(true)}
+									accessibilityLabel={t('Help')}
+									onPress={() => setHomeHelpVisible(true)}
 									icon={
-										<MessageCircleQuestion color="$primary100" />
+										<Info color="$primary100" size={24} />
 									}
 								/>
 							</XStack>
 						</YStack>
 
 						{budgetCreated && (
-							<YStack f={1} ai={'center'}>
-								{/* Current situation card */}
+							<YStack alignItems="center" gap="$3">
+								{/* Usable funds card */}
 								<YStack
 									width={'70%'}
 									backgroundColor="$white"
 									borderColor="$primary200"
 									borderRadius={20}
 									borderWidth={2}
-									padding={10}
-									mt={'$2'}
-									mb={'$2'}
+									padding={20}
 								>
 									<YStack
 										alignItems="center"
-										gap={10}
+										gap="$1"
 										width="100%"
 									>
-										<Text
-											textAlign="center"
-											fontWeight={'600'}
-											fontSize={'$3'}
+										<XStack
+											width="100%"
+											alignItems="center"
 										>
-											{t('Current situation')}
-											{'\n'}
-											{timeframeStart.toLocaleDateString(
-												'fi-FI',
-											)}
-											{' - '}
-											{timeframeEnd.toLocaleDateString(
-												'fi-FI',
-											)}
-										</Text>
-										<Text
-											textAlign="center"
-											fontWeight={'800'}
-											fontSize={'$3'}
-											marginBottom={'-5%'}
-										>
-											{t('Usable funds')}:
-										</Text>
+											<YStack width={32} />
+											<Text
+												f={1}
+												textAlign="center"
+												fontWeight={'800'}
+												fontSize={'$4'}
+												color="$primary100"
+											>
+												{t('Usable funds')}:
+											</Text>
+											<Button
+												size={32}
+												circular
+												chromeless
+												onPress={() =>
+													setHelpVisible(true)
+												}
+												icon={
+													<Info
+														color="$primary100"
+														size={20}
+													/>
+												}
+											/>
+										</XStack>
 										<Text
 											textAlign="center"
 											fontWeight={'700'}
@@ -180,47 +202,87 @@ export default function Landing() {
 											{t('/ day')}
 										</Text>
 										{usableFunds <= 0 && (
-											<Text
-												mt={'-5%'}
-												color={'$color.danger500'}
-											>
+											<Text color={'$color.danger500'}>
 												{t('Balance runs out')}{' '}
 												{getBalanceZeroDate().toLocaleDateString(
 													'fi-FI',
 												)}
 											</Text>
 										)}
-										<Text>
-											{t('Current balance')}:{' '}
-											{displayBalance} €
-										</Text>
 									</YStack>
 								</YStack>
-								<FixBalanceModal />
+
+								{/* Current balance card */}
+								<YStack
+									width="70%"
+									backgroundColor="$white"
+									borderColor="$primary200"
+									borderRadius={20}
+									borderWidth={2}
+									padding={20}
+								>
+									<YStack
+										alignItems="center"
+										gap="$1"
+										width="100%"
+									>
+										<Text
+											textAlign="center"
+											fontWeight={'800'}
+											fontSize={'$4'}
+											color="$primary100"
+										>
+											{t('Current balance')}:
+										</Text>
+										<Text
+											mb="$2"
+											textAlign="center"
+											fontWeight={'700'}
+											fontSize={'$5'}
+											color="$primary100"
+										>
+											{displayBalance} €
+										</Text>
+										<FixBalanceModal />
+									</YStack>
+								</YStack>
 							</YStack>
 						)}
 
 						{!budgetCreated && (
-							<YStack gap={5} paddingHorizontal={25}>
-								<Text numberOfLines={4} adjustsFontSizeToFit>
+							<YStack
+								gap={5}
+								paddingHorizontal={25}
+								alignItems="center"
+							>
+								<Text
+									marginVertical="$3"
+									textAlign="center"
+									fontSize="$3"
+									numberOfLines={4}
+									adjustsFontSizeToFit
+									color="$gray700"
+								>
 									{t('No budget created')}
 								</Text>
 								<Input
-									style={{ height: '25%' }}
-									width="100%"
+									size="$10"
+									width="70%"
 									value={initialBalance}
 									onChangeText={setInitialBalance}
+									paddingHorizontal="$4"
 									borderColor="$primary100"
 									backgroundColor="$white"
 									keyboardType="numeric"
 									fontSize={15}
+									marginVertical="$3"
 								/>
 								<Button
-									style={{ height: '25%' }}
 									marginTop={10}
 									borderRadius={40}
 									backgroundColor="$primary200"
-									width="100%"
+									height={50}
+									paddingHorizontal="$4"
 									color={'white'}
 									disabled={initialBalance === ''}
 									onPress={async () => {
@@ -230,64 +292,168 @@ export default function Landing() {
 										router.push('/budget_wizard');
 									}}
 								>
-									{t('Create budget')}
+									<SizableText
+										size="$buttons.md"
+										color="$white"
+										numberOfLines={1}
+										adjustsFontSizeToFit
+									>
+										{t('Create budget')}
+									</SizableText>
 								</Button>
 							</YStack>
 						)}
 					</YStack>
-
-					{/* Help Modal */}
-					{helpVisible && (
-						<YStack
-							position="absolute"
-							top={0}
-							left={0}
-							right={0}
-							bottom={0}
-							backgroundColor="rgba(0,0,0,0.4)"
-							justifyContent="center"
-							alignItems="center"
-						>
-							<YStack
-								backgroundColor="$white"
-								borderColor="$primary100"
-								borderWidth={2}
-								borderRadius={10}
-								width={'70%'}
-								shadowColor="$black"
-								gap={'3%'}
-								padding={20}
-							>
-								<SizableText
-									textAlign="center"
-									maxFontSizeMultiplier={1.3}
-								>
-									{t('Help')}
-								</SizableText>
-								<SizableText
-									textAlign="center"
-									maxFontSizeMultiplier={1.3}
-								>
-									{t('Help Disposable income')}
-								</SizableText>
-								<Button
-									onPress={() => setHelpVisible(false)}
-									backgroundColor="$primary200"
-									borderRadius={40}
-									alignSelf="center"
-								>
-									<SizableText
-										color="$white"
-										maxFontSizeMultiplier={1}
-									>
-										{t('CLOSE')}
-									</SizableText>
-								</Button>
-							</YStack>
-						</YStack>
-					)}
 				</YStack>
 			</ScrollView>
+
+			{/* Usable funds explanation modal */}
+			<Modal
+				visible={helpVisible}
+				transparent
+				animationType="fade"
+				statusBarTranslucent
+				navigationBarTranslucent
+				onRequestClose={() => setHelpVisible(false)}
+			>
+				<YStack
+					f={1}
+					justifyContent="center"
+					alignItems="center"
+					backgroundColor="rgba(0,0,0,0.4)"
+				>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						accessibilityRole="button"
+						accessibilityLabel={t('Close')}
+						onPress={() => setHelpVisible(false)}
+					/>
+					<YStack
+						backgroundColor="$white"
+						borderColor="$primary100"
+						borderWidth={2}
+						borderRadius={10}
+						width="70%"
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 3 }}
+						shadowOpacity={0.25}
+						shadowRadius={3}
+						elevation={2}
+						gap="$3"
+						padding={20}
+					>
+						<SizableText
+							fontSize="$7"
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+							color="$gray700"
+						>
+							{t('What are usable funds?')}
+						</SizableText>
+						<SizableText
+							fontSize="$6"
+							textAlign="center"
+							maxFontSizeMultiplier={1.3}
+							color="$gray700"
+						>
+							{t('Help Usable funds')}
+						</SizableText>
+						<Button
+							width={130}
+							height={40}
+							onPress={() => setHelpVisible(false)}
+							backgroundColor="$primary200"
+							borderRadius={40}
+							alignSelf="center"
+						>
+							<SizableText
+								color="$white"
+								maxFontSizeMultiplier={1}
+							>
+								{t('CLOSE')}
+							</SizableText>
+						</Button>
+					</YStack>
+				</YStack>
+			</Modal>
+
+			{/* Homepage help modal */}
+			<Modal
+				visible={homeHelpVisible}
+				transparent
+				animationType="fade"
+				statusBarTranslucent
+				navigationBarTranslucent
+				onRequestClose={() => setHomeHelpVisible(false)}
+			>
+				<YStack
+					f={1}
+					justifyContent="center"
+					alignItems="center"
+					backgroundColor="rgba(0,0,0,0.4)"
+				>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						accessibilityRole="button"
+						accessibilityLabel={t('Close')}
+						onPress={() => setHomeHelpVisible(false)}
+					/>
+					<YStack
+						width="90%"
+						maxHeight="80%"
+						minHeight={280}
+						backgroundColor="$white"
+						borderColor="$primary100"
+						borderWidth={2}
+						borderRadius={10}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 3 }}
+						shadowOpacity={0.25}
+						shadowRadius={3}
+						elevation={2}
+						padding={20}
+					>
+						<YStack
+							alignItems="center"
+							justifyContent="space-between"
+							gap="$3"
+						>
+							<SizableText
+								fontSize="$7"
+								color="$gray700"
+								maxFontSizeMultiplier={1.3}
+							>
+								{t('Help')}
+							</SizableText>
+							{t('Help Homepage')
+								.split('\n')
+								.map((paragraph) => (
+									<SizableText
+										key={paragraph}
+										fontSize="$6"
+										textAlign="center"
+										maxFontSizeMultiplier={1.3}
+										color="$gray700"
+									>
+										{paragraph}
+									</SizableText>
+								))}
+							<Button
+								width={130}
+								height={40}
+								onPress={() => setHomeHelpVisible(false)}
+								backgroundColor="$primary200"
+								borderRadius={40}
+								alignSelf="center"
+							>
+								<SizableText color="$white">
+									{t('CLOSE')}
+								</SizableText>
+							</Button>
+						</YStack>
+					</YStack>
+				</YStack>
+			</Modal>
 		</SafeAreaView>
 	);
 }

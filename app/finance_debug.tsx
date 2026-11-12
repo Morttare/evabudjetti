@@ -1144,7 +1144,7 @@ export default function FinanceDebugScreen() {
 							value={startDateInput}
 							onChangeText={setStartDateInput}
 							placeholder={'YYYY-MM-DD'}
-							placeholderTextColor={'#6a8a84'}
+							placeholderTextColor="#a3a3a3"
 							selectionColor={'#0A5B55'}
 							style={{
 								flex: 1,
@@ -1170,7 +1170,7 @@ export default function FinanceDebugScreen() {
 							value={reconciliationDateInput}
 							onChangeText={setReconciliationDateInput}
 							placeholder={'Recon YYYY-MM-DD'}
-							placeholderTextColor={'#6a8a84'}
+							placeholderTextColor="#a3a3a3"
 							selectionColor={'#0A5B55'}
 							style={{
 								flex: 1,
@@ -1192,7 +1192,7 @@ export default function FinanceDebugScreen() {
 							value={reconciliationAmountInput}
 							onChangeText={setReconciliationAmountInput}
 							placeholder={'Balance'}
-							placeholderTextColor={'#6a8a84'}
+							placeholderTextColor="#a3a3a3"
 							selectionColor={'#0A5B55'}
 							keyboardType={'decimal-pad'}
 							style={{
@@ -1257,7 +1257,7 @@ export default function FinanceDebugScreen() {
 								value={realTransactionDateInput}
 								onChangeText={setRealTransactionDateInput}
 								placeholder={'Real YYYY-MM-DD'}
-								placeholderTextColor={'#6a8a84'}
+								placeholderTextColor="#a3a3a3"
 								selectionColor={'#0A5B55'}
 								style={{
 									flex: 1,
@@ -1279,7 +1279,7 @@ export default function FinanceDebugScreen() {
 								value={realTransactionAmountInput}
 								onChangeText={setRealTransactionAmountInput}
 								placeholder={'Amount +/-'}
-								placeholderTextColor={'#6a8a84'}
+								placeholderTextColor="#a3a3a3"
 								selectionColor={'#0A5B55'}
 								keyboardType={'decimal-pad'}
 								style={{
@@ -1313,7 +1313,7 @@ export default function FinanceDebugScreen() {
 								value={realTransactionDateInput}
 								onChangeText={setRealTransactionDateInput}
 								placeholder={'Delete YYYY-MM-DD'}
-								placeholderTextColor={'#6a8a84'}
+								placeholderTextColor="#a3a3a3"
 								selectionColor={'#0A5B55'}
 								style={{
 									flex: 1,

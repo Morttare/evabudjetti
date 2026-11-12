@@ -107,6 +107,11 @@ const EditTransactionModal = ({
 				style={styles.card}
 				borderColor="$primary100"
 				borderWidth={2}
+				shadowColor="$black"
+				shadowOffset={{ width: 0, height: 5 }}
+				shadowOpacity={0.3}
+				shadowRadius={10}
+				elevation={12}
 			>
 				<XStack
 					justifyContent="space-between"
@@ -139,6 +144,7 @@ const EditTransactionModal = ({
 								value={name}
 								onChangeText={setName}
 								placeholder={t('Enter transaction name')}
+								placeholderTextColor="#a3a3a3"
 								height={40}
 								borderRadius={6}
 								px="10px"
@@ -158,6 +164,7 @@ const EditTransactionModal = ({
 								onChangeText={handleAmountChange}
 								keyboardType="decimal-pad"
 								placeholder={t('Enter amount (€)')}
+								placeholderTextColor="#a3a3a3"
 								height={40}
 								borderRadius={6}
 								px="10px"
@@ -264,7 +271,11 @@ const EditTransactionModal = ({
 						borderWidth={2}
 						padding={24}
 						width="90%"
-						elevation={8}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 5 }}
+						shadowOpacity={0.3}
+						shadowRadius={10}
+						elevation={12}
 					>
 						<SizableText size="$title2" marginBottom={8}>
 							{t('Delete transaction')}
@@ -314,7 +325,11 @@ const EditTransactionModal = ({
 						borderColor="$borderColor"
 						padding={24}
 						width="90%"
-						elevation={8}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 5 }}
+						shadowOpacity={0.3}
+						shadowRadius={10}
+						elevation={12}
 					>
 						<SizableText size="$title3" marginBottom={20}>
 							{feedbackMessage}

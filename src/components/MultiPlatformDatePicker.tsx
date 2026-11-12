@@ -2,12 +2,17 @@ import DateTimePicker, {
 	type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import { Calendar } from '@tamagui/lucide-icons';
-import { format, parse } from 'date-fns';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import { format, isValid, parseISO } from 'date-fns';
+import React, {
+	type ChangeEvent,
+	type CSSProperties,
+	createElement,
+	useEffect,
+	useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, View } from 'react-native';
-import { Button, Input, SizableText, XStack } from 'tamagui';
+import { Button, SizableText, XStack } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
@@ -20,34 +25,13 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	color,
 	onChange,
 }) => {
-	const [editorDate, setEditorDate] = useState<string>('');
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const [date, setDate] = useState<Date | null>(value || null);
 	const { t } = useTranslation();
 
 	useEffect(() => {
 		setDate(value || null);
-		setEditorDate(value ? format(value, 'dd/MM/yyyy') : '');
 	}, [value]);
-
-	// Only update date when editorDate is valid and different
-	useEffect(() => {
-		const isValidDateFormat = /^\d{2}-\d{2}-\d{4}$/.test(editorDate);
-		if (isValidDateFormat) {
-			const parsedDate = parse(editorDate, 'dd/MM/yyyy', new Date());
-			if (!Number.isNaN(parsedDate.getTime())) {
-				const parsedTime = parsedDate.getTime();
-				let currentTime = NaN;
-				if (date instanceof Date) {
-					currentTime = date.getTime();
-				}
-				if (Number.isNaN(currentTime) || parsedTime !== currentTime) {
-					onChange(parsedDate);
-					setDate(parsedDate);
-				}
-			}
-		}
-	}, [editorDate, onChange, date]);
 
 	const handleDateChange = (
 		event: DateTimePickerEvent,
@@ -61,21 +45,30 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 		if (event.type === 'set' && selectedDate) {
 			setDate(selectedDate);
-			setEditorDate(format(selectedDate, 'dd/MM/yyyy'));
 			onChange(selectedDate);
 		}
+	};
+
+	const handleWebDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const selectedDate = parseISO(event.currentTarget.value);
+		if (!isValid(selectedDate)) {
+			return;
+		}
+
+		setDate(selectedDate);
+		onChange(selectedDate);
 	};
 
 	if (Platform.OS === 'web') {
 		return (
 			<View style={styles.dateElementsContainer}>
-				<Input
-					color="$primary100"
-					flex={1}
-					placeholder={t('Write the date here (DD-MM-YYYY)')}
-					value={editorDate}
-					onChangeText={setEditorDate}
-				/>
+				{createElement('input', {
+					type: 'date',
+					'aria-label': t('Start date'),
+					value: date ? format(date, 'yyyy-MM-dd') : '',
+					onChange: handleWebDateChange,
+					style: webDateInputStyle,
+				})}
 			</View>
 		);
 	}
@@ -111,9 +104,24 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
 	dateElementsContainer: {
-		flex: 1,
+		flex: 0,
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 10,
+		width: 180,
 	},
 });
+
+const webDateInputStyle: CSSProperties = {
+	width: '100%',
+	minWidth: 0,
+	height: 45,
+	padding: '0 10px',
+	border: '1px solid #0A5B55',
+	borderRadius: 15,
+	backgroundColor: '#fff',
+	color: '#0A5B55',
+	fontSize: 16,
+	fontFamily: 'inherit',
+	boxSizing: 'border-box',
+};

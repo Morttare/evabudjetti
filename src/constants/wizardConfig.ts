@@ -14,4 +14,8 @@ export const BUDGET_WIZARD_STEPS: BudgetWizardStep[] = [
 		header: 'Expenses',
 		items: [],
 	},
+	{
+		header: 'Timeframe',
+		items: [],
+	},
 ];
