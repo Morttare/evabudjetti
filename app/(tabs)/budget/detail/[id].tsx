@@ -39,7 +39,7 @@ export default function BudgetDetailedMonthScreen() {
 		'december',
 	];
 	const translatedMonth = t(monthKeys[monthNum]);
-	const formattedTitle = `${translatedMonth} ${yearNum} (${t('Budget')})`;
+	const formattedTitle = `${translatedMonth} ${yearNum}`;
 
 	const plannedTransactions = usePlannedTransactions();
 
@@ -134,6 +134,7 @@ export default function BudgetDetailedMonthScreen() {
 					title: formattedTitle,
 					headerLargeTitle: false,
 					headerTitleAlign: 'center',
+					headerBackButtonDisplayMode: 'minimal',
 				}}
 			/>
 			<ScrollView contentInsetAdjustmentBehavior="never">
