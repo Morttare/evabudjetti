@@ -275,11 +275,11 @@ i18next
 				'years': 'years',
 				
 				// TIMEFRAME INSTRUCTIONS (Settings → Timeframe and budget wizard)
-				'Timeframe info': 'The timeframe is the period your income has to last. Your usable funds (€/day) are calculated for the remaining days of the timeframe.',
-				'Timeframe start info': 'Start the timeframe on the day your largest regular income is paid. The timeframe lasts until the same income is paid again.',
-				'Timeframe length info': 'Choose the payment interval of that income as the length, e.g. 4 weeks for a daily allowance or 1 month for a salary. If you get income on several days, choose the interval of the most critical income.',
-				'Timeframe change info': 'You can change the timeframe later in Settings → Timeframe.',
-				'Timeframe suggestion': 'Suggestion based on your largest regular income {{name}} ({{amount}}): start {{date}}, length {{length}} {{unit}}.',
+				'Timeframe info': 'The timeframe is the period your income needs to last. Your daily budget (€/day) is calculated from the money left and the days remaining in the timeframe.',
+				'Timeframe start info': 'Start the timeframe on the day your largest regular income arrives. It ends when that same income arrives again.',
+				'Timeframe length info': 'Set the length to match how often that income is paid, e.g. 1 month for a monthly salary or 4 weeks for a benefit paid every 4 weeks. If you receive income on several dates, follow the one you depend on most.',
+				'Timeframe change info': 'You can change the timeframe at any time in Settings → Timeframe.',
+				'Timeframe suggestion': 'Suggested timeframe based on your largest regular income, {{name}} ({{amount}}): starts {{date}}, lasts {{length}} {{unit}}.',
 				'Use suggestion': 'Use suggestion'
 			},
 		},
@@ -533,8 +533,8 @@ i18next
 				"Let's start!": "Aloitetaan!",
 				'Welcome': 'Tervetuloa',
 				'to EVA MyBudget': 'EVA OmaBudjettiin',
-				'1. instruction': 'Tämän sovelluksen tarkoituksena on auttaa sinua saamaan taloutesi hallintaasi luomalla oman elämäsi todellinen budjetti.',
-				'2. instruction': 'Kun olet asettanut budjettisi, voit tarkistaa sinun päivittäistä käyttövaraa sekä vuosi ja kuukausibudjettiasi ja voit myös muokata olemassa olevaa budjettia helposti.',
+				'1. instruction': 'Tämän sovelluksen tarkoituksena on auttaa talouden hallinnassa luomalla todellinen budjetti.',
+				'2. instruction': 'Budjetin asettamisen jälkeen voit tarkastella käyttövaraa, kuukausittaista ja vuosittaista budjettia sekä muokata olemassa olevaa budjettia.',
 				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 				'Continue': 'Jatka',
 
@@ -556,12 +556,13 @@ i18next
 				'weeks': 'viikkoa',
 				'months': 'kuukausia',
 				'years': 'vuosia',
+
 				// JAKSON OHJEET (Asetukset → Jakso ja budjettivelho)
-				'Timeframe info': 'Jakso on ajanjakso, jolle tulot tulee riittää. Käyttövara (€/vrk) lasketaan jakson jäljellä oleville päiville.',
-				'Timeframe start info': 'Aloita jakso yleensä päivästä, jolloin suurin säännöllinen tulosi maksetaan tilille. Jakso kestää siihen asti, kun sama tulo maksetaan seuraavan kerran.',
-				'Timeframe length info': 'Valitse pituudeksi tämän tulon maksuväli, esim. 4 viikkoa päivärahalle tai 1 kuukausi palkalle. Jos saat tuloja useana päivänä, valitse kriittisimmän tulon maksuväli.',
-				'Timeframe change info': 'Voit muuttaa jaksoa myöhemmin kohdasta Asetukset → Jakso.',
-				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi {{name}} ({{amount}}) perusteella: alku {{date}}, pituus {{length}} {{unit}}.',
+				'Timeframe info': 'Jakso on ajanjakso, jonka ajan tulojesi pitää riittää. Päiväbudjetti (€/vrk) lasketaan jäljellä olevasta rahasta ja jakson jäljellä olevista päivistä.',
+				'Timeframe start info': 'Aloita jakso päivästä, jolloin suurin säännöllinen tulosi maksetaan tilille. Jakso päättyy, kun sama tulo maksetaan seuraavan kerran.',
+				'Timeframe length info': 'Valitse pituudeksi tämän tulon maksuväli, esim. 1 kuukausi kuukausipalkalle tai 4 viikkoa etuudelle, joka maksetaan 4 viikon välein. Jos saat tuloja useana päivänä, valitse se tulo, jonka varassa olet eniten.',
+				'Timeframe change info': 'Voit muuttaa jaksoa milloin tahansa kohdasta Asetukset → Jakso.',
+				'Timeframe suggestion': 'Ehdotus suurimman säännöllisen tulosi, {{name}} ({{amount}}), perusteella: jakso alkaa {{date}} ja kestää {{length}} {{unit}}.',
 				'Use suggestion': 'Käytä ehdotusta'
 			},
 		},

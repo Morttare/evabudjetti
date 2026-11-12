@@ -332,6 +332,8 @@ export default function BudgetWizard() {
 										})}
 									</SizableText>
 									<Button
+										borderRadius={40}
+										height={50}
 										backgroundColor="$primary200"
 										onPress={() =>
 											timeframeDraft.applySuggestion(
