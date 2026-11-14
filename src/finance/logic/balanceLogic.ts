@@ -100,11 +100,8 @@ export function calculateBalanceDatasForMonths(
 				occurrences[occurrenceIndex].date.getDate() <= day
 			) {
 				const occurrence = occurrences[occurrenceIndex];
-				// Occurrences at or before the reconciliation time are already included in the reconciled amount
-				if (
-					reconciliationForDay === undefined ||
-					occurrence.date > reconciliationForDay.date
-				) {
+				// A reconciliation is the final balance for its day, so it includes every occurrence that day.
+				if (reconciliationForDay === undefined) {
 					currentBalance += getSignedOccurrenceAmount(occurrence);
 				}
 				occurrenceIndex++;
@@ -147,6 +144,9 @@ export function calculateStartingBalanceForMonth(
 	targetMonth: MonthInstance,
 ): number {
 	let currentBalance = startingReconciliation.amount;
+	const startingReconciliationDateKey = dateToDateKey(
+		startingReconciliation.date,
+	);
 
 	const startMonth = startingReconciliation.date.getMonth();
 	const startYear = startingReconciliation.date.getFullYear();
@@ -172,10 +172,9 @@ export function calculateStartingBalanceForMonth(
 		// The occurrences should be sorted by date
 		for (const occurrence of occurrencesData.transactionOccurrences) {
 			if (
-				occurrence.date.getTime() <=
-				startingReconciliation.date.getTime()
+				dateToDateKey(occurrence.date) <= startingReconciliationDateKey
 			) {
-				// Skip occurrences that happen before or at the starting reconciliation, since they are already included in the reconciliation amount
+				// The end-of-day reconciliation already includes all occurrences on or before its date.
 				continue;
 			}
 			currentBalance += getSignedOccurrenceAmount(occurrence);

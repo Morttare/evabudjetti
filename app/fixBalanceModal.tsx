@@ -46,8 +46,6 @@ export default function FixBalanceModal() {
 
 	const handleConfirmSave = async () => {
 		if (!Number.isNaN(numericInput)) {
-			await saveBalanceReconciliation(numericInput);
-			// The reconciliation is the latest balance; this event records its delta.
 			if (difference !== 0) {
 				await saveBalanceCorrection({
 					accountId: DEFAULT_ACCOUNT_ID,
@@ -59,6 +57,9 @@ export default function FixBalanceModal() {
 					plannedTransactionId: null,
 				});
 			}
+			// Save the end-of-day balance after the correction, since transaction
+			// mutations adjust any existing same-day reconciliation.
+			await saveBalanceReconciliation(numericInput);
 			setConfirmOpen(false);
 			setOpen(false);
 			setInputValue('');
