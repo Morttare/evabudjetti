@@ -5,7 +5,10 @@ import type {
 	TransactionOccurrence,
 	TransactionOccurrencesMonthData,
 } from '@/src/dataModel';
-import { calculateBalanceDatasForMonths } from '../balanceLogic';
+import {
+	calculateBalanceDatasForMonths,
+	calculateStartingBalanceForMonth,
+} from '../balanceLogic';
 import { generateTransactionOccurrences } from '../transactionOccurrencesLogic';
 import { createMonthKey, plannedTransactionIsActiveInMonth } from '../util';
 
@@ -64,7 +67,7 @@ describe('first occurrence of a recurring transaction', () => {
 		expect(occurrences.map((o) => o.date.getDate())).toEqual([6, 4]);
 	});
 
-	it('is included when the balance was reconciled earlier on the same day', () => {
+	it('is superseded by an end-of-day reconciliation on its date', () => {
 		const occurrences = generateTransactionOccurrences(
 			2026,
 			10,
@@ -81,11 +84,11 @@ describe('first occurrence of a recurring transaction', () => {
 			NOV,
 			DEC,
 		);
-		expect(result[0].dailyBalances[5]?.balance).toBe(580); // 6 Nov
-		expect(result[1].dailyBalances[3]?.balance).toBe(1160); // 4 Dec
+		expect(result[0].dailyBalances[5]?.balance).toBe(0); // 6 Nov
+		expect(result[1].dailyBalances[3]?.balance).toBe(580); // 4 Dec
 	});
 
-	it('is not counted twice when the balance was reconciled after it', () => {
+	it('does not count occurrences from the reconciliation date again', () => {
 		const occurrences = generateTransactionOccurrences(
 			2026,
 			10,
@@ -103,5 +106,25 @@ describe('first occurrence of a recurring transaction', () => {
 			DEC,
 		);
 		expect(result[0].dailyBalances[5]?.balance).toBe(580);
+		expect(result[0].dailyBalances[6]?.balance).toBe(580);
+		expect(result[1].dailyBalances[3]?.balance).toBe(1160);
+	});
+
+	it('excludes the reconciliation date when calculating a later month starting balance', () => {
+		const occurrences = generateTransactionOccurrences(
+			2026,
+			10,
+			2026,
+			11,
+			[dailyAllowance],
+			[],
+		);
+		expect(
+			calculateStartingBalanceForMonth(
+				occurrencesByMonth(occurrences),
+				reconciliation(580, new Date(2026, 10, 6, 15, 0)),
+				DEC,
+			),
+		).toBe(580);
 	});
 });
