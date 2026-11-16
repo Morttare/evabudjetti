@@ -1,23 +1,37 @@
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
-import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
+import type { LayoutChangeEvent } from 'react-native';
+import { YStack } from 'tamagui';
+import { MonthBreakdownCard, type ProcessedItem } from '@/src/components/MonthBreakdownCard';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 
-type ProcessedItem = {
-	id: number;
-	name: string;
-	count: number;
-	totalAmount: number;
-};
+const CARD_GAP = 16;
+
+function allocateHeights(
+	available: number,
+	incomeNeed: number,
+	expenseNeed: number,
+): { income?: number; expense?: number } {
+	const usable = available - CARD_GAP;
+	if (usable <= 0) return {};
+
+	// Everything fits: no constraint, nothing scrolls
+	if (incomeNeed + expenseNeed <= usable) return {};
+
+	const half = usable / 2;
+	if (incomeNeed <= half) {
+		return { income: incomeNeed, expense: usable - incomeNeed };
+	}
+	if (expenseNeed <= half) {
+		return { income: usable - expenseNeed, expense: expenseNeed };
+	}
+	return { income: half, expense: half };
+}
 
 export default function BudgetDetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const [expensesExpanded, setExpensesExpanded] = useState(false);
-	const [incomeExpanded, setIncomeExpanded] = useState(false);
 	const { t } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
@@ -127,6 +141,21 @@ export default function BudgetDetailedMonthScreen() {
 			};
 		}, [plannedTransactions, yearNum, monthNum, t]);
 
+	const [availableHeight, setAvailableHeight] = useState(0);
+	const [incomeNeed, setIncomeNeed] = useState(0);
+	const [expenseNeed, setExpenseNeed] = useState(0);
+
+	const heights = useMemo(
+		() =>
+			availableHeight > 0 && incomeNeed > 0 && expenseNeed > 0
+				? allocateHeights(availableHeight, incomeNeed, expenseNeed)
+				: {},
+		[availableHeight, incomeNeed, expenseNeed],
+	);
+
+	const handleIncomeNeed = useCallback((h: number) => setIncomeNeed(h), []);
+	const handleExpenseNeed = useCallback((h: number) => setExpenseNeed(h), []);
+
 	return (
 		<YStack flex={1} backgroundColor="$background">
 			<Stack.Screen
@@ -137,203 +166,36 @@ export default function BudgetDetailedMonthScreen() {
 					headerBackButtonDisplayMode: 'minimal',
 				}}
 			/>
-			<ScrollView contentInsetAdjustmentBehavior="never">
-				<YStack padding="$4" gap="$4" paddingBottom="$10">
-					<YStack gap="$2">
-						<Button
-							height={60}
-							justifyContent="space-between"
-							onPress={() =>
-								setExpensesExpanded(!expensesExpanded)
-							}
-							backgroundColor="white"
-							borderWidth={1}
-							borderColor="$borderColor"
-						>
-							<SizableText fontWeight="bold">
-								{t('Planned Expenses')}
-							</SizableText>
-							<XStack gap="$2" alignItems="center">
-								<SizableText fontWeight="bold">
-									{totalExpenses.toFixed(2)} €
-								</SizableText>
-								{expensesExpanded ? (
-									<ChevronUp size={20} />
-								) : (
-									<ChevronDown size={20} />
-								)}
-							</XStack>
-						</Button>
-
-						{expensesExpanded && (
-							<Card
-								bordered
-								padding="$4"
-								backgroundColor="#fafafa"
-							>
-								{expenseBreakdown.length === 0 ? (
-									<SizableText
-										color="$color10"
-										textAlign="center"
-										paddingVertical="$2"
-									>
-										{t('No expenses planned')}
-									</SizableText>
-								) : (
-									<YStack
-										separator={
-											<Separator
-												borderColor="$borderColor"
-												opacity={0.5}
-											/>
-										}
-									>
-										{expenseBreakdown.map((cat) => (
-											<YStack
-												key={cat.categoryName}
-												paddingVertical="$2"
-											>
-												<XStack justifyContent="space-between">
-													<SizableText
-														fontWeight="bold"
-														fontSize={15}
-													>
-														{cat.categoryName}
-													</SizableText>
-													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
-													</SizableText>
-												</XStack>
-
-												{cat.items.map((item) => (
-													<XStack
-														key={`expense-${item.id}`}
-														justifyContent="space-between"
-														paddingLeft="$3"
-														marginTop="$1"
-													>
-														<SizableText
-															size="$3"
-															color="$color11"
-														>
-															{item.name}
-														</SizableText>
-														<SizableText
-															size="$3"
-															color="$color11"
-														>
-															{Math.abs(
-																item.totalAmount,
-															).toFixed(2)}{' '}
-															€
-														</SizableText>
-													</XStack>
-												))}
-											</YStack>
-										))}
-									</YStack>
-								)}
-							</Card>
-						)}
-					</YStack>
-
-					<YStack gap="$2">
-						<Button
-							height={60}
-							justifyContent="space-between"
-							onPress={() => setIncomeExpanded(!incomeExpanded)}
-							backgroundColor="white"
-							borderWidth={1}
-							borderColor="$borderColor"
-						>
-							<SizableText fontWeight="bold">
-								{t('Planned Incomes')}
-							</SizableText>
-							<XStack gap="$2" alignItems="center">
-								<SizableText fontWeight="bold">
-									{totalIncomes.toFixed(2)} €
-								</SizableText>
-								{incomeExpanded ? (
-									<ChevronUp size={20} />
-								) : (
-									<ChevronDown size={20} />
-								)}
-							</XStack>
-						</Button>
-
-						{incomeExpanded && (
-							<Card
-								bordered
-								padding="$4"
-								backgroundColor="#FAFAFA"
-							>
-								{incomeBreakdown.length === 0 ? (
-									<SizableText
-										color="$color10"
-										textAlign="center"
-										paddingVertical="$2"
-									>
-										{t('No income planned')}
-									</SizableText>
-								) : (
-									<YStack
-										separator={
-											<Separator
-												borderColor="$borderColor"
-												opacity={0.5}
-											/>
-										}
-									>
-										{incomeBreakdown.map((cat) => (
-											<YStack
-												key={cat.categoryName}
-												paddingVertical="$2"
-											>
-												<XStack justifyContent="space-between">
-													<SizableText
-														fontWeight="bold"
-														fontSize={15}
-													>
-														{cat.categoryName}
-													</SizableText>
-													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
-													</SizableText>
-												</XStack>
-
-												{cat.items.map((item) => (
-													<XStack
-														key={`expense-${item.id}`}
-														justifyContent="space-between"
-														paddingLeft="$3"
-														marginTop="$1"
-													>
-														<SizableText
-															size="$3"
-															color="$color11"
-														>
-															{item.name}
-														</SizableText>
-														<SizableText
-															size="$3"
-															color="$color11"
-														>
-															{Math.abs(
-																item.totalAmount,
-															).toFixed(2)}{' '}
-															€
-														</SizableText>
-													</XStack>
-												))}
-											</YStack>
-										))}
-									</YStack>
-								)}
-							</Card>
-						)}
-					</YStack>
+			<YStack flex={1} padding="$4" paddingBottom="$10">
+				{/* No padding on this one, so its measured height is exactly the space available to the cards */}
+				<YStack
+					flex={1}
+					gap={CARD_GAP}
+					justifyContent="flex-start"
+					onLayout={(e: LayoutChangeEvent) =>
+						setAvailableHeight(e.nativeEvent.layout.height)
+					}
+				>
+					<MonthBreakdownCard
+						title={t('Planned Incomes')}
+						total={totalIncomes}
+						breakdown={incomeBreakdown}
+						emptyText={t('No income planned')}
+						keyPrefix="income"
+						maxHeight={heights.income}
+						onNaturalHeightChange={handleIncomeNeed}
+					/>
+					<MonthBreakdownCard
+						title={t('Planned Expenses')}
+						total={totalExpenses}
+						breakdown={expenseBreakdown}
+						emptyText={t('No expenses planned')}
+						keyPrefix="expense"
+						maxHeight={heights.expense}
+						onNaturalHeightChange={handleExpenseNeed}
+					/>
 				</YStack>
-			</ScrollView>
+			</YStack>
 		</YStack>
 	);
 }
