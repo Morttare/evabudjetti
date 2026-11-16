@@ -1,4 +1,4 @@
-import { Trash2 } from '@tamagui/lucide-icons';
+import { Plus, Trash2 } from '@tamagui/lucide-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -27,6 +27,7 @@ const EditTransactionModal = ({
 }: EditTransactionModalProps) => {
 	const { t } = useTranslation();
 	const categories = useCategoryStore((state) => state.categories);
+	const addCategory = useCategoryStore((state) => state.addCategory);
 	const updateRealTransaction = useUpdateRealTransaction();
 	const deleteRealTransaction = useDeleteRealTransaction();
 
@@ -37,6 +38,8 @@ const EditTransactionModal = ({
 		transaction.categoryId,
 	);
 	const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [newCategoryName, setNewCategoryName] = useState('');
 	const [saving, setSaving] = useState(false);
 	const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
@@ -97,6 +100,39 @@ const EditTransactionModal = ({
 	const filteredCategories = categories.filter(
 		(cat) => cat.type === transaction.type,
 	);
+	const displayCategories = [
+		{ id: 0, name: t('Uncategorized default') },
+		...filteredCategories.filter((category) => category.id !== 0),
+	];
+
+	const handleAddCategory = async () => {
+		const categoryName = newCategoryName.trim();
+		if (!categoryName) return;
+
+		try {
+			await addCategory({
+				name: categoryName,
+				type: transaction.type,
+				color: '#000000',
+				icon: 'circle',
+			});
+			const createdCategory = useCategoryStore
+				.getState()
+				.categories.find(
+					(category) =>
+						category.name === categoryName &&
+						category.type === transaction.type,
+				);
+			if (createdCategory) {
+				setSelectedCategory(createdCategory.id);
+			}
+			setNewCategoryName('');
+			setCategoryModalVisible(false);
+		} catch (error) {
+			console.error('Failed to add category:', error);
+			setFeedbackMessage(t('Failed to save changes'));
+		}
+	};
 
 	return (
 		<View style={styles.container}>
@@ -186,38 +222,54 @@ const EditTransactionModal = ({
 						</YStack>
 
 						{/* Category */}
-						{filteredCategories.length > 0 && (
-							<YStack gap={8}>
-								<SizableText color="$primary100" size="$title2">
-									{t('Category')}
-								</SizableText>
-								<XStack flexWrap="wrap">
-									{filteredCategories.map(
-										({ id, name: label }) => (
-											<Button
-												key={id}
-												onPress={() =>
-													setSelectedCategory(id)
-												}
-												size={28}
-												padding={14}
-												marginRight={8}
-												marginBottom={8}
-												backgroundColor={
-													id === selectedCategory
-														? '$primary200'
-														: '$white'
-												}
+						<YStack gap={8}>
+							<SizableText color="$primary100" size="$title2">
+								{t('Category')}
+							</SizableText>
+							<XStack flexWrap="wrap">
+								<Button
+									onPress={() =>
+										setCategoryModalVisible(true)
+									}
+									icon={Plus}
+									size={40}
+									marginRight={8}
+									marginBottom={8}
+									borderWidth={1}
+									borderColor="$primary200"
+									backgroundColor="$white"
+								/>
+								{displayCategories.map(({ id, name }) => {
+									const selected = id === selectedCategory;
+									return (
+										<Button
+											key={id}
+											onPress={() =>
+												setSelectedCategory(id)
+											}
+											size={40}
+											paddingHorizontal={14}
+											marginRight={8}
+											marginBottom={8}
+											borderWidth={1}
+											borderColor="$primary200"
+											backgroundColor={
+												selected
+													? '$primary300'
+													: '$white'
+											}
+										>
+											<SizableText
+												color="$primary100"
+												size="$title3"
 											>
-												<SizableText size="$title3">
-													{label}
-												</SizableText>
-											</Button>
-										),
-									)}
-								</XStack>
-							</YStack>
-						)}
+												{name}
+											</SizableText>
+										</Button>
+									);
+								})}
+							</XStack>
+						</YStack>
 					</YStack>
 				</ScrollView>
 
@@ -256,6 +308,78 @@ const EditTransactionModal = ({
 					</Button>
 				</XStack>
 			</YStack>
+
+			{categoryModalVisible && (
+				<View style={styles.inlineOverlay}>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						onPress={() => setCategoryModalVisible(false)}
+					/>
+					<YStack
+						backgroundColor="$white"
+						borderColor="$primary100"
+						borderWidth={2}
+						borderRadius={16}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 5 }}
+						shadowOpacity={0.3}
+						shadowRadius={10}
+						elevation={12}
+						padding={24}
+						width="90%"
+						gap={20}
+					>
+						<SizableText
+							color="$primary100"
+							size="$title1"
+							marginBottom={8}
+						>
+							{t('Add category')}
+						</SizableText>
+						<Input
+							color="$primary100"
+							value={newCategoryName}
+							onChangeText={setNewCategoryName}
+							placeholder={t('Enter category')}
+							placeholderTextColor="#a3a3a3"
+							height={40}
+							borderRadius={6}
+							px="10px"
+							fontSize="$title3"
+							focusStyle={{ outlineColor: 'transparent' }}
+						/>
+						<XStack width="100%" justifyContent="space-between">
+							<Button
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								borderRadius={28}
+								style={styles.button}
+								onPress={() => {
+									setNewCategoryName('');
+									setCategoryModalVisible(false);
+								}}
+							>
+								<SizableText color="$primary100" size="$title3">
+									{t('Cancel')}
+								</SizableText>
+							</Button>
+							<Button
+								backgroundColor="$primary200"
+								borderRadius={28}
+								style={styles.button}
+								disabled={!newCategoryName.trim()}
+								onPress={() => {
+									void handleAddCategory();
+								}}
+							>
+								<SizableText color="$white" size="$title3">
+									{t('Save')}
+								</SizableText>
+							</Button>
+						</XStack>
+					</YStack>
+				</View>
+			)}
 
 			{/* Delete confirmation — inline overlay (AlertDialog.Portal doesn't pierce RN Modal) */}
 			{deleteConfirmVisible && (
