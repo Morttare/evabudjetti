@@ -107,23 +107,13 @@ const AddItemPopup = ({
 		if (!trimmedName) return;
 
 		try {
-			await addCategory({
+			const createdCategory = await addCategory({
 				name: trimmedName,
 				type: transactionType,
 				color: '#000000',
 				icon: 'circle',
 			});
-			const createdCategory = useCategoryStore
-				.getState()
-				.categories.filter(
-					(category) =>
-						category.name === trimmedName &&
-						category.type === transactionType,
-				)
-				.sort((a, b) => b.id - a.id)[0];
-			if (createdCategory) {
-				setCategoryId(createdCategory.id);
-			}
+			setCategoryId(createdCategory.id);
 			setNewCategoryName('');
 			setCategoryError(null);
 			setCategoryModalVisible(false);

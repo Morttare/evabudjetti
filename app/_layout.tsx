@@ -28,7 +28,11 @@ export default function RootLayout() {
 	const categoryError = useCategoryStore((state) => state.error);
 
 	useEffect(() => {
-		if (success && isDbReal && !categoriesInitialized && !categoryError) {
+		if (
+			(success || !isDbReal) &&
+			!categoriesInitialized &&
+			!categoryError
+		) {
 			void (async () => {
 				await seedDefaultBudgetAndAccount();
 				await seedCategories();
@@ -76,7 +80,7 @@ export default function RootLayout() {
 		);
 	}
 
-	if (isDbReal && success && categoryError && !categoriesInitialized) {
+	if ((!isDbReal || success) && categoryError && !categoriesInitialized) {
 		return (
 			<TamaguiProvider config={config} defaultTheme="light">
 				<Theme name="light">
@@ -101,7 +105,7 @@ export default function RootLayout() {
 		);
 	}
 
-	if (isDbReal && success && !categoriesInitialized && !categoryError) {
+	if ((!isDbReal || success) && !categoriesInitialized && !categoryError) {
 		return (
 			<TamaguiProvider config={config} defaultTheme="light">
 				<Theme name="light">

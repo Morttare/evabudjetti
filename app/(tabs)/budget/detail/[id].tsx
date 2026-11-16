@@ -6,6 +6,7 @@ import { ScrollView } from 'react-native';
 import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
+import { useCategoryStore } from '@/src/store/categoryStore';
 
 type ProcessedItem = {
 	id: number;
@@ -42,6 +43,12 @@ export default function BudgetDetailedMonthScreen() {
 	const formattedTitle = `${translatedMonth} ${yearNum} (${t('Budget')})`;
 
 	const plannedTransactions = usePlannedTransactions();
+	const categories = useCategoryStore((state) => state.categories);
+	const categoryNameById = useMemo(
+		() =>
+			new Map(categories.map((category) => [category.id, category.name])),
+		[categories],
+	);
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
 		useMemo(() => {
@@ -100,9 +107,12 @@ export default function BudgetDetailedMonthScreen() {
 			) => {
 				return Object.entries(categoryMap)
 					.map(([categoryId, data]) => {
-						const categoryName = !Number(categoryId)
-							? t('Uncategorized')
-							: `${t('Category')} ${categoryId}`;
+						const numericCategoryId = Number(categoryId);
+						const categoryName =
+							numericCategoryId === 0
+								? t('Uncategorized')
+								: (categoryNameById.get(numericCategoryId) ??
+									`${t('Category')} ${categoryId}`);
 
 						const sortedItems = [...data.items].sort(
 							(a, b) =>
@@ -125,7 +135,7 @@ export default function BudgetDetailedMonthScreen() {
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
-		}, [plannedTransactions, yearNum, monthNum, t]);
+		}, [plannedTransactions, yearNum, monthNum, t, categoryNameById]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">

@@ -110,22 +110,13 @@ const EditTransactionModal = ({
 		if (!categoryName) return;
 
 		try {
-			await addCategory({
+			const createdCategory = await addCategory({
 				name: categoryName,
 				type: transaction.type,
 				color: '#000000',
 				icon: 'circle',
 			});
-			const createdCategory = useCategoryStore
-				.getState()
-				.categories.find(
-					(category) =>
-						category.name === categoryName &&
-						category.type === transaction.type,
-				);
-			if (createdCategory) {
-				setSelectedCategory(createdCategory.id);
-			}
+			setSelectedCategory(createdCategory.id);
 			setNewCategoryName('');
 			setCategoryModalVisible(false);
 		} catch (error) {
