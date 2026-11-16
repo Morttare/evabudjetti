@@ -97,6 +97,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 			if (Platform.OS === 'web') {
 				inserted = { ...category, id: getNextId(get().categories) };
 			} else {
+				// SQLite owns native IDs; Zustand only mirrors rows for reactive UI.
 				const [row] = await db
 					.insert(schema.categories)
 					.values({
@@ -150,6 +151,7 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 }));
 
 async function migrateLegacyCategories(): Promise<void> {
+	// Avoid repeating legacy reconciliation on every native app startup.
 	const [migration] = await db
 		.select({ id: schema.appSettings.id })
 		.from(schema.appSettings)
@@ -215,6 +217,8 @@ async function migrateLegacyCategories(): Promise<void> {
 		}
 
 		if (idMappings.length > 0) {
+			// Apply the complete mapping in one CASE update so overlapping IDs
+			// cannot cascade through sequential updates.
 			const cases = sql.join(
 				idMappings.map(
 					([legacyId, databaseId]) =>
@@ -246,6 +250,7 @@ async function migrateLegacyCategories(): Promise<void> {
 			.onConflictDoNothing();
 	});
 
+	// Keep the legacy copy until the database transaction has committed.
 	await AsyncStorage.removeItem(LEGACY_STORAGE_KEY);
 }
 
@@ -255,6 +260,7 @@ export async function initializeCategoryStore(): Promise<void> {
 
 	try {
 		if (Platform.OS === 'web') {
+			// The web database client is a stub, so web keeps AsyncStorage persistence.
 			const storedCategories =
 				await AsyncStorage.getItem(LEGACY_STORAGE_KEY);
 			const categories = storedCategories

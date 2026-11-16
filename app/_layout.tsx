@@ -28,6 +28,7 @@ export default function RootLayout() {
 	const categoryError = useCategoryStore((state) => state.error);
 
 	useEffect(() => {
+		// Web skips SQLite migrations but still needs its AsyncStorage categories loaded.
 		if (
 			(success || !isDbReal) &&
 			!categoriesInitialized &&
