@@ -11,7 +11,7 @@ interface MonthMeta {
 	monthNumber: number; // 0-indexed for calculation (0 = Jan, 11 = Dec)
 	translationKey: string; // Key used for i18n
 }
-
+	
 export default function YearsScreen() {
 	const router = useRouter();
 	const { t } = useTranslation();
@@ -59,6 +59,17 @@ export default function YearsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
+			<SizableText
+				width="100%"
+				paddingHorizontal="$4"
+				paddingTop="$3"
+				size="$9"
+				fontWeight="bold"
+				color="$primary100"
+				textAlign="center"
+			>
+				{t('Budget')}
+			</SizableText>
 			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$4">
 					<Button

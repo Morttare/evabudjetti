@@ -18,6 +18,17 @@ export default function YearsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
+			<SizableText
+				width="100%"
+				paddingHorizontal="$4"
+				paddingTop="$3"
+				size="$9"
+				fontWeight="bold"
+				color="$primary100"
+				textAlign="center"
+			>
+				{t('Summary')}
+			</SizableText>
 			<ScrollView>
 				<YStack padding="$4" gap="$3">
 					{availableYears.map((year) => (
