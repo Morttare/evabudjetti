@@ -6,29 +6,7 @@ import { YStack } from 'tamagui';
 import { MonthBreakdownCard, type ProcessedItem } from '@/src/components/MonthBreakdownCard';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
-
-const CARD_GAP = 16;
-
-function allocateHeights(
-	available: number,
-	incomeNeed: number,
-	expenseNeed: number,
-): { income?: number; expense?: number } {
-	const usable = available - CARD_GAP;
-	if (usable <= 0) return {};
-
-	// Everything fits: no constraint, nothing scrolls
-	if (incomeNeed + expenseNeed <= usable) return {};
-
-	const half = usable / 2;
-	if (incomeNeed <= half) {
-		return { income: incomeNeed, expense: usable - incomeNeed };
-	}
-	if (expenseNeed <= half) {
-		return { income: usable - expenseNeed, expense: expenseNeed };
-	}
-	return { income: half, expense: half };
-}
+import { allocateHeights, CARD_GAP } from '@/src/finance/logic/allocateHeights';
 
 export default function BudgetDetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();

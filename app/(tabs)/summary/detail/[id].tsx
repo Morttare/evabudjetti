@@ -1,33 +1,47 @@
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
-import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
+import type { LayoutChangeEvent } from 'react-native';
+import { YStack } from 'tamagui';
+import {
+	type Breakdown,
+	MonthBreakdownCard,
+	type ProcessedItem,
+} from '@/src/components/MonthBreakdownCard';
 import type { TransactionOccurrence } from '@/src/dataModel';
 import { useTransactionOccurrencesCache } from '@/src/finance/cache/transactionOccurrencesCache';
 import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
+import { allocateHeights, CARD_GAP } from '@/src/finance/logic/allocateHeights';
 import { createMonthKey } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
 
-type GroupedItem = {
-	name: string;
-	amount: number;
-	count: number;
-	isReal: boolean;
-};
+type CategoryGroup = { total: number; items: TransactionOccurrence[] };
+
+const MONTH_KEYS = [
+	'january',
+	'february',
+	'march',
+	'april',
+	'may',
+	'june',
+	'july',
+	'august',
+	'september',
+	'october',
+	'november',
+	'december',
+];
 
 export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const [expensesExpanded, setExpensesExpanded] = useState(false);
-	const [incomeExpanded, setIncomeExpanded] = useState(false);
 	const { t } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
 	const monthNum = Number(monthStr);
-	const categories = useCategoryStore((state) => state.categories);
+	const formattedTitle = `${t(MONTH_KEYS[monthNum])} ${yearNum}`;
 
+	const categories = useCategoryStore((state) => state.categories);
 	const categoryNameById = useMemo(() => {
 		const map = new Map<number, string>();
 		for (const category of categories) {
@@ -35,23 +49,6 @@ export default function DetailedMonthScreen() {
 		}
 		return map;
 	}, [categories]);
-
-	const monthKeys = [
-		'january',
-		'february',
-		'march',
-		'april',
-		'may',
-		'june',
-		'july',
-		'august',
-		'september',
-		'october',
-		'november',
-		'december',
-	];
-	const translatedMonth = t(monthKeys[monthNum]);
-	const formattedTitle = `${translatedMonth} ${yearNum}`;
 
 	const monthDataArray = useTransactionSummaries(
 		yearNum,
@@ -69,25 +66,19 @@ export default function DetailedMonthScreen() {
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
 		useMemo(() => {
-			if (!monthData)
+			if (!monthData) {
 				return {
-					expenseBreakdown: [],
-					incomeBreakdown: [],
+					expenseBreakdown: [] as Breakdown,
+					incomeBreakdown: [] as Breakdown,
 					totalExpenses: 0,
 					totalIncomes: 0,
 				};
+			}
 
 			let totalExp = 0;
 			let totalInc = 0;
-
-			const expensesByCat: Record<
-				string,
-				{ total: number; items: TransactionOccurrence[] }
-			> = {};
-			const incomesByCat: Record<
-				string,
-				{ total: number; items: TransactionOccurrence[] }
-			> = {};
+			const expensesByCat: Record<string, CategoryGroup> = {};
+			const incomesByCat: Record<string, CategoryGroup> = {};
 
 			for (const occ of allOccurrences) {
 				const amount = Math.abs(occ.amount);
@@ -95,105 +86,103 @@ export default function DetailedMonthScreen() {
 
 				if (occ.type === 'expense') {
 					totalExp += amount;
-					if (!expensesByCat[catIdStr]) {
-						expensesByCat[catIdStr] = { total: 0, items: [] };
-					}
+					expensesByCat[catIdStr] ??= { total: 0, items: [] };
 					expensesByCat[catIdStr].total += amount;
 					expensesByCat[catIdStr].items.push(occ);
 				} else if (occ.type === 'income') {
 					totalInc += amount;
-					if (!incomesByCat[catIdStr]) {
-						incomesByCat[catIdStr] = { total: 0, items: [] };
-					}
+					incomesByCat[catIdStr] ??= { total: 0, items: [] };
 					incomesByCat[catIdStr].total += amount;
 					incomesByCat[catIdStr].items.push(occ);
 				}
 			}
 
-			const expenseBreakdown = Object.entries(expensesByCat)
-				.map(([categoryId, data]) => {
-					const numericCategoryId = Number(categoryId);
-					const categoryName =
-						numericCategoryId === 0
-							? t('Uncategorized default')
-							: (categoryNameById.get(numericCategoryId) ??
-								t('Uncategorized'));
+			const formatBreakdown = (
+				byCat: Record<string, CategoryGroup>,
+			): Breakdown => {
+				// Items merged across categories need unique keys inside the card
+				let nextId = 0;
 
-					const mergedItemsMap: Record<string, GroupedItem> = {};
-					for (const occ of data.items) {
-						const mergeKey = `${occ.name}-${!!occ.realTransaction}`;
-						if (!mergedItemsMap[mergeKey]) {
-							mergedItemsMap[mergeKey] = {
-								name: occ.name,
-								amount: Math.abs(occ.amount),
-								count: 1,
-								isReal: !!occ.realTransaction,
-							};
-						} else {
-							mergedItemsMap[mergeKey].amount += Math.abs(
-								occ.amount,
-							);
-							mergedItemsMap[mergeKey].count += 1;
+				return Object.entries(byCat)
+					.map(([categoryId, data]) => {
+						const numericCategoryId = Number(categoryId);
+						const categoryName =
+							numericCategoryId === 0
+								? t('Uncategorized default')
+								: (categoryNameById.get(numericCategoryId) ??
+									t('Uncategorized'));
+
+						// Merge same-name items, keeping planned and real ones separate
+						const merged: Record<
+							string,
+							{
+								name: string;
+								amount: number;
+								count: number;
+								isReal: boolean;
+							}
+						> = {};
+						for (const occ of data.items) {
+							const isReal = !!occ.realTransaction;
+							const mergeKey = `${occ.name}-${isReal}`;
+							const amount = Math.abs(occ.amount);
+							if (!merged[mergeKey]) {
+								merged[mergeKey] = {
+									name: occ.name,
+									amount,
+									count: 1,
+									isReal,
+								};
+							} else {
+								merged[mergeKey].amount += amount;
+								merged[mergeKey].count += 1;
+							}
 						}
-					}
 
-					const mergedItems = Object.values(mergedItemsMap).sort(
-						(a, b) => b.amount - a.amount,
-					);
+						const items: ProcessedItem[] = Object.values(merged)
+							.sort((a, b) => b.amount - a.amount)
+							.map((item) => {
+								const baseName = item.isReal
+									? item.name
+									: `${item.name} (${t('Planned')})`;
+								return {
+									id: nextId++,
+									name:
+										item.count > 1
+											? `${baseName} (x${item.count})`
+											: baseName,
+									count: item.count,
+									totalAmount: item.amount,
+								};
+							});
 
-					return {
-						categoryName,
-						total: data.total,
-						items: mergedItems,
-					};
-				})
-				.sort((a, b) => b.total - a.total);
-
-			const incomeBreakdown = Object.entries(incomesByCat)
-				.map(([categoryId, data]) => {
-					const numericCategoryId = Number(categoryId);
-					const categoryName =
-						numericCategoryId === 0
-							? t('Uncategorized default')
-							: (categoryNameById.get(numericCategoryId) ??
-								t('Uncategorized'));
-
-					const mergedItemsMap: Record<string, GroupedItem> = {};
-					for (const occ of data.items) {
-						const mergeKey = `${occ.name}-${!!occ.realTransaction}`;
-						if (!mergedItemsMap[mergeKey]) {
-							mergedItemsMap[mergeKey] = {
-								name: occ.name,
-								amount: Math.abs(occ.amount),
-								count: 1,
-								isReal: !!occ.realTransaction,
-							};
-						} else {
-							mergedItemsMap[mergeKey].amount += Math.abs(
-								occ.amount,
-							);
-							mergedItemsMap[mergeKey].count += 1;
-						}
-					}
-					const mergedItems = Object.values(mergedItemsMap).sort(
-						(a, b) => b.amount - a.amount,
-					);
-
-					return {
-						categoryName,
-						total: data.total,
-						items: mergedItems,
-					};
-				})
-				.sort((a, b) => b.total - a.total);
+						return { categoryName, total: data.total, items };
+					})
+					.sort((a, b) => b.total - a.total);
+			};
 
 			return {
-				expenseBreakdown,
-				incomeBreakdown,
+				expenseBreakdown: formatBreakdown(expensesByCat),
+				incomeBreakdown: formatBreakdown(incomesByCat),
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
 		}, [monthData, allOccurrences, t, categoryNameById]);
+
+	const [availableHeight, setAvailableHeight] = useState(0);
+	const [incomeNeed, setIncomeNeed] = useState(0);
+	const [expenseNeed, setExpenseNeed] = useState(0);
+
+	const heights = useMemo(
+		() =>
+			availableHeight > 0 && incomeNeed > 0 && expenseNeed > 0
+				? allocateHeights(availableHeight, incomeNeed, expenseNeed)
+				: {},
+		[availableHeight, incomeNeed, expenseNeed],
+	);
+
+	const handleIncomeNeed = useCallback((h: number) => setIncomeNeed(h), []);
+	const handleExpenseNeed = useCallback((h: number) => setExpenseNeed(h), []);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
@@ -202,240 +191,38 @@ export default function DetailedMonthScreen() {
 					title: formattedTitle,
 					headerLargeTitle: false,
 					headerTitleAlign: 'center',
+					headerBackButtonDisplayMode: 'minimal',
 				}}
 			/>
-			<ScrollView contentInsetAdjustmentBehavior="never">
-				<YStack padding="$4" gap="$4" paddingBottom="$10">
-					<YStack gap="$2">
-						<Button
-							height={60}
-							justifyContent="space-between"
-							onPress={() =>
-								setExpensesExpanded(!expensesExpanded)
-							}
-							backgroundColor="white"
-							borderWidth={1}
-							borderColor="$borderColor"
-						>
-							<SizableText fontWeight="bold">
-								{t('Expenses')}
-							</SizableText>
-							<XStack gap="$2" alignItems="center">
-								<SizableText fontWeight="bold">
-									{totalExpenses.toFixed(2)} €
-								</SizableText>
-								{expensesExpanded ? (
-									<ChevronUp size={20} />
-								) : (
-									<ChevronDown size={20} />
-								)}
-							</XStack>
-						</Button>
-
-						{expensesExpanded && (
-							<Card
-								bordered
-								padding="$4"
-								backgroundColor="#fafafa"
-							>
-								{expenseBreakdown.length === 0 ? (
-									<SizableText
-										color="$color10"
-										textAlign="center"
-										paddingVertical="$2"
-									>
-										{t('No expenses this month')}
-									</SizableText>
-								) : (
-									<YStack
-										separator={
-											<Separator
-												borderColor="$borderColor"
-												opacity={0.5}
-											/>
-										}
-									>
-										{expenseBreakdown.map((cat) => (
-											<YStack
-												key={cat.categoryName}
-												paddingVertical="$2"
-											>
-												<XStack justifyContent="space-between">
-													<SizableText
-														fontWeight="bold"
-														fontSize={15}
-													>
-														{cat.categoryName}
-													</SizableText>
-													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
-													</SizableText>
-												</XStack>
-
-												{cat.items.map(
-													(item: GroupedItem) => {
-														const baseName =
-															item.isReal
-																? item.name
-																: `${item.name} (${t('Planned')})`;
-
-														const displayName =
-															item.count > 1
-																? `${baseName} (x${item.count})`
-																: baseName;
-
-														return (
-															<XStack
-																key={`${cat.categoryName}-${item.name}-${item.isReal}`}
-																justifyContent="space-between"
-																paddingLeft="$3"
-																marginTop="$1"
-															>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{
-																		displayName
-																	}
-																</SizableText>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
-																</SizableText>
-															</XStack>
-														);
-													},
-												)}
-											</YStack>
-										))}
-									</YStack>
-								)}
-							</Card>
-						)}
-					</YStack>
-
-					<YStack gap="$2">
-						<Button
-							height={60}
-							justifyContent="space-between"
-							onPress={() => setIncomeExpanded(!incomeExpanded)}
-							backgroundColor="white"
-							borderWidth={1}
-							borderColor="$borderColor"
-						>
-							<SizableText fontWeight="bold">
-								{t('Incomes')}
-							</SizableText>
-							<XStack gap="$2" alignItems="center">
-								<SizableText fontWeight="bold">
-									{totalIncomes.toFixed(2)} €
-								</SizableText>
-								{incomeExpanded ? (
-									<ChevronUp size={20} />
-								) : (
-									<ChevronDown size={20} />
-								)}
-							</XStack>
-						</Button>
-
-						{incomeExpanded && (
-							<Card
-								bordered
-								padding="$4"
-								backgroundColor="#FAFAFA"
-							>
-								{incomeBreakdown.length === 0 ? (
-									<SizableText
-										color="$color10"
-										textAlign="center"
-										paddingVertical="$2"
-									>
-										{t('No income this month')}
-									</SizableText>
-								) : (
-									<YStack
-										separator={
-											<Separator
-												borderColor="$borderColor"
-												opacity={0.5}
-											/>
-										}
-									>
-										{incomeBreakdown.map((cat) => (
-											<YStack
-												key={cat.categoryName}
-												paddingVertical="$2"
-											>
-												<XStack justifyContent="space-between">
-													<SizableText
-														fontWeight="bold"
-														fontSize={15}
-													>
-														{cat.categoryName}
-													</SizableText>
-													<SizableText fontWeight="bold">
-														{cat.total.toFixed(2)} €
-													</SizableText>
-												</XStack>
-
-												{cat.items.map(
-													(item: GroupedItem) => {
-														const baseName =
-															item.isReal
-																? item.name
-																: `${item.name} (${t('Planned')})`;
-
-														const displayName =
-															item.count > 1
-																? `${baseName} (x${item.count})`
-																: baseName;
-														return (
-															<XStack
-																key={`${cat.categoryName}-${item.name}-${item.isReal}`}
-																justifyContent="space-between"
-																paddingLeft="$3"
-																marginTop="$1"
-															>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{
-																		displayName
-																	}
-																</SizableText>
-																<SizableText
-																	size="$3"
-																	color="$color11"
-																>
-																	{Math.abs(
-																		item.amount,
-																	).toFixed(
-																		2,
-																	)}{' '}
-																	€
-																</SizableText>
-															</XStack>
-														);
-													},
-												)}
-											</YStack>
-										))}
-									</YStack>
-								)}
-							</Card>
-						)}
-					</YStack>
+			<YStack flex={1} padding="$4" paddingBottom="$10">
+				<YStack
+					flex={1}
+					gap={CARD_GAP}
+					justifyContent="flex-start"
+					onLayout={(e: LayoutChangeEvent) =>
+						setAvailableHeight(e.nativeEvent.layout.height)
+					}
+				>
+					<MonthBreakdownCard
+						title={t('Incomes')}
+						total={totalIncomes}
+						breakdown={incomeBreakdown}
+						emptyText={t('No income this month')}
+						keyPrefix="income"
+						maxHeight={heights.income}
+						onNaturalHeightChange={handleIncomeNeed}
+					/>
+					<MonthBreakdownCard
+						title={t('Expenses')}
+						total={totalExpenses}
+						breakdown={expenseBreakdown}
+						emptyText={t('No expenses this month')}
+						keyPrefix="expense"
+						maxHeight={heights.expense}
+						onNaturalHeightChange={handleExpenseNeed}
+					/>
 				</YStack>
-			</ScrollView>
+			</YStack>
 		</YStack>
 	);
 }
