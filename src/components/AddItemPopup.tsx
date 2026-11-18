@@ -27,6 +27,7 @@ import type {
 } from '../dataModel';
 import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { useCategoryStore } from '../store/categoryStore';
+import { getCategoryDisplayName } from '../utils/categoryName';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
@@ -50,7 +51,7 @@ const AddItemPopup = ({
 		'month',
 		'year',
 	];
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const categories = useCategoryStore((state) => state.categories);
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const transactionCategories = categories.filter(
@@ -230,7 +231,10 @@ const AddItemPopup = ({
 									.filter((category) => category.id !== 0)
 									.map((category) => ({
 										id: category.id,
-										name: category.name,
+										name: getCategoryDisplayName(
+											category.name,
+											i18n.language,
+										),
 									})),
 							].map((category) => {
 								const selected = category.id === categoryId;

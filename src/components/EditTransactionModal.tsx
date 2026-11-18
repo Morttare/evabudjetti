@@ -14,6 +14,7 @@ import type { Persisted, RealTransaction } from '../dataModel';
 import { useDeleteRealTransaction } from '../finance/hook/useDeleteRealTransaction';
 import { useUpdateRealTransaction } from '../finance/hook/useUpdateRealTransaction';
 import { useCategoryStore } from '../store/categoryStore';
+import { getCategoryDisplayName } from '../utils/categoryName';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type EditTransactionModalProps = {
@@ -25,7 +26,7 @@ const EditTransactionModal = ({
 	transaction,
 	onClose,
 }: EditTransactionModalProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const categories = useCategoryStore((state) => state.categories);
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const updateRealTransaction = useUpdateRealTransaction();
@@ -102,7 +103,12 @@ const EditTransactionModal = ({
 	);
 	const displayCategories = [
 		{ id: 0, name: t('Uncategorized default') },
-		...filteredCategories.filter((category) => category.id !== 0),
+		...filteredCategories
+			.filter((category) => category.id !== 0)
+			.map((category) => ({
+				...category,
+				name: getCategoryDisplayName(category.name, i18n.language),
+			})),
 	];
 
 	const handleAddCategory = async () => {

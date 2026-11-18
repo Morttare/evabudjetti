@@ -36,6 +36,8 @@ export default function RootLayout() {
 		) {
 			void (async () => {
 				await seedDefaultBudgetAndAccount();
+				// Reconcile legacy IDs before renaming old seeded category labels.
+				await initializeCategoryStore();
 				await seedCategories();
 				await initializeCategoryStore();
 			})().catch((initializationError) => {

@@ -7,6 +7,7 @@ import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
 type ProcessedItem = {
 	id: number;
@@ -19,7 +20,7 @@ export default function BudgetDetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [expensesExpanded, setExpensesExpanded] = useState(false);
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
@@ -46,8 +47,13 @@ export default function BudgetDetailedMonthScreen() {
 	const categories = useCategoryStore((state) => state.categories);
 	const categoryNameById = useMemo(
 		() =>
-			new Map(categories.map((category) => [category.id, category.name])),
-		[categories],
+			new Map(
+				categories.map((category) => [
+					category.id,
+					getCategoryDisplayName(category.name, i18n.language),
+				]),
+			),
+		[categories, i18n.language],
 	);
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
