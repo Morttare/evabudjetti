@@ -1,9 +1,10 @@
-import { Calendar, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
+import { Calendar, ChevronDown, ChevronRight, Minus } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
+import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 interface MonthMeta {
 	monthNumber: number; // 0-indexed for calculation (0 = Jan, 11 = Dec)
@@ -18,7 +19,19 @@ export default function YearsScreen() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedYear, setSelectedYear] = useState<string>(
 			String(currentYear),
-		);
+	);
+
+	const yearNum = Number(selectedYear);
+	const currentDate = new Date();
+	const currentMonth = currentDate.getMonth();
+	const endMonth = yearNum === currentYear ? currentMonth : 11;
+
+	const yearlySummaries = useTransactionSummaries(
+		yearNum, 
+		0,
+		yearNum, 
+		endMonth,
+	);
 
 	const availableYears = useMemo(() => {
 		const currentYear = new Date().getFullYear();
@@ -102,8 +115,98 @@ export default function YearsScreen() {
 							</XStack>
 						</Button>
 					</XStack>
+
+					{/* Months Grid (3x4 Layout) */}
+					<YStack gap="$3">
+						{monthRows.map((row) => (
+							<XStack 
+								key={row.map((m) => m.translationKey).join('-')}
+								gap="$3" 
+								justifyContent="space-between"
+								width="100%"
+							>
+								{row.map((month) => {
+									const monthData =
+										yearlySummaries[month.monthNumber];
+									const change = monthData?.cashFlow ?? 0;
+									const isWarning = change < 0;
+									const isNeutral = change === 0;
+									const translatedMonth = t(
+										month.translationKey,
+									);
+									const routeId = `${yearNum}-${month.monthNumber.toString().padStart(2, '0')}`;
+
+									const bgColor = isWarning
+										? '#fce4ec'
+										: isNeutral
+											? '#f5f5f5'
+											: '#e6f4ea';
+									const borderColor = isWarning
+										? '#fad2cf'
+										: isNeutral
+											? '#e0e0e0'
+											: '#ceead6';
+									const textColor = isWarning
+										? '#c5221f'
+										: isNeutral
+											? '#757575'
+											: '#137333';
+
+									return (
+										<Button
+											key={month.monthNumber}
+											flex={1}
+											height={100}
+											backgroundColor={bgColor}
+											borderRadius="$3"
+											borderWidth={1}
+											paddingHorizontal="$2"
+											borderColor={borderColor}
+											pressStyle={{ scale: 0.98 }}
+											onPress={() =>
+												router.push(
+													`/summary/detail/${routeId}`,
+												)
+											}
+										>
+											<YStack
+												alignItems="center"
+												gap="$1"
+											>
+												<SizableText
+													fontWeight="bold"
+													size="$8"
+												>
+													{translatedMonth}
+												</SizableText>
+												<XStack
+													gap="$1"
+													alignItems="center"
+												>
+													{isNeutral ? (
+														<Minus
+															size={16}
+															color={textColor}
+														/>
+													) : null}
+													<SizableText
+														color={textColor}
+														size="$5"
+													>
+														{change > 0 ? '+' : ''}
+														{change.toFixed(2)} €
+													</SizableText>
+												</XStack>
+											</YStack>
+										</Button>
+									);
+								})}
+							</XStack>
+						))}
+					</YStack>
 					
-					{availableYears.map((year) => (
+
+					{/*{availableYears.map((year) => (
 						<Card
 							key={year}
 							bordered
@@ -132,10 +235,10 @@ export default function YearsScreen() {
 								<ChevronRight size={20} color="$color10" />
 							</XStack>
 						</Card>
-					))}
+					))}*/}
 				</YStack>
 			</ScrollView>
-			
+
 			{/* Native Modal to ensure backdrop covers root window (including top/bottom bars) */}
 			<Modal
 				visible={isOpen}
