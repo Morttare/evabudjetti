@@ -1,4 +1,4 @@
-import { Calendar, ChevronDown, ChevronRight, Minus } from '@tamagui/lucide-icons';
+import { Calendar, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -73,7 +73,7 @@ export default function YearsScreen() {
 			<SizableText
 				width="100%"
 				paddingHorizontal="$4"
-				paddingTop="$3"
+				paddingTop="$4"
 				size="$9"
 				fontWeight="bold"
 				color="$primary100"
@@ -82,7 +82,7 @@ export default function YearsScreen() {
 				{t('Summary')}
 			</SizableText>
 
-			<ScrollView>
+			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$4">
 
 					{/* Centered Year Dropdown Trigger Button */}
@@ -129,6 +129,7 @@ export default function YearsScreen() {
 									const monthData =
 										yearlySummaries[month.monthNumber];
 									const change = monthData?.cashFlow ?? 0;
+									const roundedChange = change.toFixed(0);
 									const isWarning = change < 0;
 									const isNeutral = change === 0;
 									const translatedMonth = t(
@@ -183,18 +184,13 @@ export default function YearsScreen() {
 													gap="$1"
 													alignItems="center"
 												>
-													{isNeutral ? (
-														<Minus
-															size={16}
-															color={textColor}
-														/>
-													) : null}
 													<SizableText
 														color={textColor}
 														size="$5"
 													>
-														{change > 0 ? '+' : ''}
-														{change.toFixed(2)} €
+														{change > 0
+														? `+${roundedChange}€`
+														: `${roundedChange}€`}
 													</SizableText>
 												</XStack>
 											</YStack>

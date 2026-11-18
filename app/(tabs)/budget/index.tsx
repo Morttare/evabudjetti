@@ -62,7 +62,7 @@ export default function YearsScreen() {
 			<SizableText
 				width="100%"
 				paddingHorizontal="$4"
-				paddingTop="$3"
+				paddingTop="$4"
 				size="$9"
 				fontWeight="bold"
 				color="$primary100"
@@ -70,6 +70,7 @@ export default function YearsScreen() {
 			>
 				{t('Budget')}
 			</SizableText>
+			
 			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$4">
 					<Button
