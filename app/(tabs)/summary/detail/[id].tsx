@@ -9,6 +9,7 @@ import { useTransactionOccurrencesCache } from '@/src/finance/cache/transactionO
 import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 import { createMonthKey } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
 type GroupedItem = {
 	name: string;
@@ -21,7 +22,7 @@ export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [expensesExpanded, setExpensesExpanded] = useState(false);
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
@@ -31,10 +32,13 @@ export default function DetailedMonthScreen() {
 	const categoryNameById = useMemo(() => {
 		const map = new Map<number, string>();
 		for (const category of categories) {
-			map.set(category.id, category.name);
+			map.set(
+				category.id,
+				getCategoryDisplayName(category.name, i18n.language),
+			);
 		}
 		return map;
-	}, [categories]);
+	}, [categories, i18n.language]);
 
 	const monthKeys = [
 		'january',

@@ -17,6 +17,7 @@ import type {
 	TransactionOccurrence,
 } from '../dataModel';
 import { formatCurrency } from '../utils/budgetUtils';
+import { getCategoryDisplayName } from '../utils/categoryName';
 import DailyEventList from './DailyEventList';
 import EditTransactionModal from './EditTransactionModal';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
@@ -38,7 +39,7 @@ export default function DailyBalanceView({
 	selectedDate,
 	onDateChange,
 }: DailyBalanceViewProps) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [editingTransaction, setEditingTransaction] =
 		useState<Persisted<RealTransaction> | null>(null);
@@ -60,7 +61,7 @@ export default function DailyBalanceView({
 
 	const dynamicCategories = categories.map((cat) => ({
 		key: cat.id,
-		label: cat.name,
+		label: getCategoryDisplayName(cat.name, i18n.language),
 		type: cat.type,
 	}));
 

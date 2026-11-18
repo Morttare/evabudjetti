@@ -96,7 +96,7 @@ i18next
 				'Adjustment saved': 'Adjustment saved',
 				'Already confirmed': 'Already confirmed',
 				'Planned section title': 'Planned',
-				'Uncategorized default': 'Uncategorized',
+				'Uncategorized default': 'Other',
 
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Add a new item',
@@ -262,7 +262,7 @@ i18next
 				'Months': 'Months',
 				'No expenses this month': 'No expenses this month',
 				'No income this month': 'No income this month',
-				'Uncategorized': 'Uncategorized',
+				'Uncategorized': 'Other',
 
 				// SETTINGS
 				'Language': 'Language',
@@ -365,7 +365,7 @@ i18next
 				'Adjustment saved': 'Korjaus tallennettu',
 				'Already confirmed': 'Jo kirjatut',
 				'Planned section title': 'Suunnitellut',
-				'Uncategorized default': 'muu',
+				'Uncategorized default': 'Muu',
 				
 				//ADD NEW ITEM POPUP
 				'Add a new item': 'Lisää uusi tapahtuma',
@@ -543,7 +543,7 @@ i18next
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
-				'Uncategorized': 'Ei määritelty',
+				'Uncategorized': 'muu',
 				'Planned Incomes': 'Suunnitellut Tulot',
 				'Planned Expenses': 'Suunnitellut Menot',
 

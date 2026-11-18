@@ -23,10 +23,11 @@ import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction'
 import { useTransactionOccurrences } from '@/src/finance/hook/useTransactionOccurrences';
 import { useUpdateRealTransaction } from '@/src/finance/hook/useUpdateRealTransaction';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 import RealTransactionModal from '../src/components/RealTransactionModal';
 
 export default function AddTransaction() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const [popupVisible, setPopupVisible] = useState(false);
 	const [entryMode, setEntryMode] = useState<'addNew' | 'adjustBudgeted'>(
 		'addNew',
@@ -105,7 +106,7 @@ export default function AddTransaction() {
 
 	const dynamicCategories = (categories || []).map((category) => ({
 		key: category.id,
-		label: category.name,
+		label: getCategoryDisplayName(category.name, i18n.language),
 		type: category.type,
 	}));
 

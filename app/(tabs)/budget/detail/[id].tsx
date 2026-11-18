@@ -6,6 +6,8 @@ import { ScrollView } from 'react-native';
 import { Button, Card, Separator, SizableText, XStack, YStack } from 'tamagui';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
+import { useCategoryStore } from '@/src/store/categoryStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
 type ProcessedItem = {
 	id: number;
@@ -18,7 +20,7 @@ export default function BudgetDetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [expensesExpanded, setExpensesExpanded] = useState(false);
 	const [incomeExpanded, setIncomeExpanded] = useState(false);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
@@ -42,6 +44,17 @@ export default function BudgetDetailedMonthScreen() {
 	const formattedTitle = `${translatedMonth} ${yearNum} (${t('Budget')})`;
 
 	const plannedTransactions = usePlannedTransactions();
+	const categories = useCategoryStore((state) => state.categories);
+	const categoryNameById = useMemo(
+		() =>
+			new Map(
+				categories.map((category) => [
+					category.id,
+					getCategoryDisplayName(category.name, i18n.language),
+				]),
+			),
+		[categories, i18n.language],
+	);
 
 	const { expenseBreakdown, incomeBreakdown, totalExpenses, totalIncomes } =
 		useMemo(() => {
@@ -100,9 +113,12 @@ export default function BudgetDetailedMonthScreen() {
 			) => {
 				return Object.entries(categoryMap)
 					.map(([categoryId, data]) => {
-						const categoryName = !Number(categoryId)
-							? t('Uncategorized')
-							: `${t('Category')} ${categoryId}`;
+						const numericCategoryId = Number(categoryId);
+						const categoryName =
+							numericCategoryId === 0
+								? t('Uncategorized')
+								: (categoryNameById.get(numericCategoryId) ??
+									`${t('Category')} ${categoryId}`);
 
 						const sortedItems = [...data.items].sort(
 							(a, b) =>
@@ -125,7 +141,7 @@ export default function BudgetDetailedMonthScreen() {
 				totalExpenses: totalExp,
 				totalIncomes: totalInc,
 			};
-		}, [plannedTransactions, yearNum, monthNum, t]);
+		}, [plannedTransactions, yearNum, monthNum, t, categoryNameById]);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
