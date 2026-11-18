@@ -100,7 +100,7 @@ export function MonthBreakdownCard({
 								<SizableText
 									fontWeight="bold"
 									fontSize={15}
-									color="$color12"
+									color="$primary100"
 								>
 									{cat.categoryName}
 								</SizableText>
@@ -109,10 +109,10 @@ export function MonthBreakdownCard({
 										key={`${keyPrefix}-item-${item.id}`}
 										justifyContent="space-between"
 									>
-										<SizableText fontSize={18} color="$color12">
+										<SizableText fontSize={18} color="$primary100">
 											{item.name}
 										</SizableText>
-										<SizableText fontSize={18} color="$color12">
+										<SizableText fontSize={18} color="$primary100">
 											{Math.abs(item.totalAmount).toFixed(2)} €
 										</SizableText>
 									</XStack>
