@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { type LayoutChangeEvent, ScrollView } from 'react-native';
 import { Card, SizableText, XStack, YStack } from 'tamagui';
 
@@ -27,7 +27,7 @@ type MonthBreakdownCardProps = {
 	onNaturalHeightChange?: (height: number) => void;
 };
 
-export function MonthBreakdownCard({
+export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 	title,
 	total,
 	breakdown,
@@ -124,4 +124,4 @@ export function MonthBreakdownCard({
 			</ScrollView>
 		</Card>
 	);
-}
+});

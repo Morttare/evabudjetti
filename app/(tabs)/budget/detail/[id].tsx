@@ -131,8 +131,14 @@ export default function BudgetDetailedMonthScreen() {
 		[availableHeight, incomeNeed, expenseNeed],
 	);
 
-	const handleIncomeNeed = useCallback((h: number) => setIncomeNeed(h), []);
-	const handleExpenseNeed = useCallback((h: number) => setExpenseNeed(h), []);
+	const handleIncomeNeed = useCallback((h: number) => {
+		const r = Math.round(h);
+		setIncomeNeed((prev) => (prev === r ? prev : r));
+	}, []);
+	const handleExpenseNeed = useCallback((h: number) => {
+		const r = Math.round(h);
+		setExpenseNeed((prev) => (prev === r ? prev : r));
+	}, []);
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
@@ -150,9 +156,10 @@ export default function BudgetDetailedMonthScreen() {
 					flex={1}
 					gap={CARD_GAP}
 					justifyContent="flex-start"
-					onLayout={(e: LayoutChangeEvent) =>
-						setAvailableHeight(e.nativeEvent.layout.height)
-					}
+					onLayout={(e: LayoutChangeEvent) => {
+						const r = Math.round(e.nativeEvent.layout.height);
+						setAvailableHeight((prev) => (prev === r ? prev : r));
+					}}
 				>
 					<MonthBreakdownCard
 						title={t('Planned Incomes')}
