@@ -145,9 +145,9 @@ i18next
 					'Usable funds are the money left after planned expenses, available for other spending or saving during the month.',
 				'Help Homepage': 
 					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the spending allowance stays up to date.\n' +
-					'Funds: record your income and expenses on the Funds page. You can edit them in the same place.\n' +
+					'Funds: record your income and expenses on the Funds page. You can edit and delete them in the same place.\n' +
 					'Budget: add planned income and expenses on the Budget page. You can edit and delete them later.\n' +
-					'Bookkeeping: view monthly income and expenses, as well as a summary of the past year.',
+					'Bookkeeping: view actual monthly income and expenses.',
 				'Close': 'Close',
 				'Future events': 'Future events',
 				'Edit Transaction': 'Edit Transaction',
@@ -446,9 +446,9 @@ i18next
 					'Käyttövara on kuukauden suunniteltujen menojen jälkeen jäljelle jäävä raha, joka on käytettävissä muuhun kulutukseen tai säästämiseen.',
 				'Help Homepage':
 					'Kotisivu: kun olet luonut budjetin ja lisännyt tilin saldon, kotisivulla näkyvät käyttövara ja tilin saldo. Voit muokata saldoa suoraan kotisivulla. Muista tarkistaa saldo säännöllisesti, jotta käyttövara pysyy ajan tasalla.\n' +
-					'Käyttövara: merkitse tulot ja menot Käyttövara-sivulle. Voit muokata niitä samassa paikassa.\n' +
+					'Käyttövara: merkitse tulot ja menot Käyttövara-sivulle. Voit muokata ja poistaa niitä samassa paikassa.\n' +
 					'Budjetti: lisää suunnitellut tulot ja menot Budjetti-sivulle. Voit muokata ja poistaa niitä myöhemmin.\n' +
-					'Kirjanpito: näet kuukausittaiset tulot ja menot sekä yhteenvedon kuluneesta vuodesta.',
+					'Kirjanpito: näet toteutuneet, kuukausittaiset tulot ja menot.',
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',

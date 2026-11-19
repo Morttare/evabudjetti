@@ -83,10 +83,10 @@ export default function YearsScreen() {
 			</SizableText>
 
 			<ScrollView contentInsetAdjustmentBehavior="never">
-				<YStack padding="$4" gap="$4">
+				<YStack padding="$4" gap="$3">
 
 					{/* Centered Year Dropdown Trigger Button */}
-					<XStack justifyContent="center" width="100%">
+					<XStack justifyContent="center" width="100%"> 
 						<Button
 							width="60%"
 							height={55}
@@ -200,38 +200,6 @@ export default function YearsScreen() {
 							</XStack>
 						))}
 					</YStack>
-					
-
-					{/*{availableYears.map((year) => (
-						<Card
-							key={year}
-							bordered
-							padding="$4"
-							onPress={() => router.push(`/summary/${year}`)}
-							backgroundColor="white"
-							borderColor="$borderColor"
-							pressStyle={{ scale: 0.98 }}
-						>
-							<XStack
-								justifyContent="space-between"
-								alignItems="center"
-							>
-								<XStack gap="$4" alignItems="center">
-									<View
-										padding="$2"
-										borderRadius={100}
-										backgroundColor="#f0f4f8"
-									>
-										<Calendar size={20} color="#0277bd" />
-									</View>
-									<SizableText fontWeight="bold" size="$6">
-										{t('Year')} {year}
-									</SizableText>
-								</XStack>
-								<ChevronRight size={20} color="$color10" />
-							</XStack>
-						</Card>
-					))}*/}
 				</YStack>
 			</ScrollView>
 
