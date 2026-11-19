@@ -1,13 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { Platform } from 'react-native';
 import { create } from 'zustand';
 import type { Category, Persisted } from '../dataModel';
 import { db } from '../db/client';
 import * as schema from '../db/schema';
 
-const LEGACY_STORAGE_KEY = 'categories-storage';
-const CATEGORY_MIGRATION_KEY = 'category_store_migrated';
+const CATEGORY_STORAGE_KEY = 'categories-storage';
 
 interface CategoryStore {
 	categories: Persisted<Category>[];
@@ -79,7 +78,7 @@ async function saveWebCategories(
 	categories: Persisted<Category>[],
 ): Promise<void> {
 	await AsyncStorage.setItem(
-		LEGACY_STORAGE_KEY,
+		CATEGORY_STORAGE_KEY,
 		JSON.stringify({ state: { categories }, version: 2 }),
 	);
 }
@@ -150,110 +149,6 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 	},
 }));
 
-async function migrateLegacyCategories(): Promise<void> {
-	// Avoid repeating legacy reconciliation on every native app startup.
-	const [migration] = await db
-		.select({ id: schema.appSettings.id })
-		.from(schema.appSettings)
-		.where(eq(schema.appSettings.key, CATEGORY_MIGRATION_KEY))
-		.limit(1);
-	if (migration) return;
-
-	const storedCategories = await AsyncStorage.getItem(LEGACY_STORAGE_KEY);
-	const legacyCategories = storedCategories
-		? parseStoredCategories(storedCategories)
-		: [];
-
-	await db.transaction(async (tx) => {
-		await tx
-			.insert(schema.categories)
-			.values({
-				id: 0,
-				name: 'Uncategorized',
-				type: 'expense',
-				color: null,
-				icon: null,
-			})
-			.onConflictDoNothing();
-
-		const databaseCategories = await tx.select().from(schema.categories);
-		const idMappings: [number, number][] = [];
-
-		for (const legacyCategory of legacyCategories) {
-			if (legacyCategory.id === 0) continue;
-
-			const matchingCategory = databaseCategories
-				.filter(
-					(category) =>
-						category.name === legacyCategory.name &&
-						category.type === legacyCategory.type,
-				)
-				.sort((a, b) => a.id - b.id)[0];
-
-			let databaseId = matchingCategory?.id;
-			if (databaseId === undefined) {
-				const [inserted] = await tx
-					.insert(schema.categories)
-					.values({
-						name: legacyCategory.name,
-						type: legacyCategory.type,
-						color: legacyCategory.color ?? null,
-						icon: legacyCategory.icon ?? null,
-					})
-					.returning({ id: schema.categories.id });
-				databaseId = inserted.id;
-				databaseCategories.push({
-					id: inserted.id,
-					name: legacyCategory.name,
-					type: legacyCategory.type,
-					color: legacyCategory.color ?? null,
-					icon: legacyCategory.icon ?? null,
-				});
-			}
-
-			if (databaseId !== legacyCategory.id) {
-				idMappings.push([legacyCategory.id, databaseId]);
-			}
-		}
-
-		if (idMappings.length > 0) {
-			// Apply the complete mapping in one CASE update so overlapping IDs
-			// cannot cascade through sequential updates.
-			const cases = sql.join(
-				idMappings.map(
-					([legacyId, databaseId]) =>
-						sql`WHEN ${legacyId} THEN ${databaseId}`,
-				),
-				sql` `,
-			);
-			const legacyIds = idMappings.map(([legacyId]) => legacyId);
-
-			await tx
-				.update(schema.plannedTransactions)
-				.set({
-					categoryId: sql`CASE ${schema.plannedTransactions.categoryId} ${cases} ELSE ${schema.plannedTransactions.categoryId} END`,
-				})
-				.where(
-					inArray(schema.plannedTransactions.categoryId, legacyIds),
-				);
-			await tx
-				.update(schema.realTransactions)
-				.set({
-					categoryId: sql`CASE ${schema.realTransactions.categoryId} ${cases} ELSE ${schema.realTransactions.categoryId} END`,
-				})
-				.where(inArray(schema.realTransactions.categoryId, legacyIds));
-		}
-
-		await tx
-			.insert(schema.appSettings)
-			.values({ key: CATEGORY_MIGRATION_KEY, value: 'true' })
-			.onConflictDoNothing();
-	});
-
-	// Keep the legacy copy until the database transaction has committed.
-	await AsyncStorage.removeItem(LEGACY_STORAGE_KEY);
-}
-
 export async function initializeCategoryStore(): Promise<void> {
 	const store = useCategoryStore;
 	store.setState({ loading: true, error: null });
@@ -262,15 +157,13 @@ export async function initializeCategoryStore(): Promise<void> {
 		if (Platform.OS === 'web') {
 			// The web database client is a stub, so web keeps AsyncStorage persistence.
 			const storedCategories =
-				await AsyncStorage.getItem(LEGACY_STORAGE_KEY);
+				await AsyncStorage.getItem(CATEGORY_STORAGE_KEY);
 			const categories = storedCategories
 				? parseStoredCategories(storedCategories)
 				: [];
 			store.setState({ categories, initialized: true });
 			return;
 		}
-
-		await migrateLegacyCategories();
 
 		const categories = (
 			await db

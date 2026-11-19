@@ -1,10 +1,3 @@
-CREATE TABLE `app_settings` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`key` text NOT NULL,
-	`value` text NOT NULL
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `app_settings_key_unique` ON `app_settings` (`key`);--> statement-breakpoint
 CREATE TABLE `categories` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
