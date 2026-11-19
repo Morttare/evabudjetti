@@ -18,6 +18,7 @@ import {
 import { useAddRealTransaction } from '../finance/hook/useAddRealTransaction';
 import { useUpdateRealTransaction } from '../finance/hook/useUpdateRealTransaction';
 import { useCategoryStore } from '../store/categoryStore';
+import { getCategoryDisplayName } from '../utils/categoryName';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type PlannedTransactionConfirmModalProps = {
@@ -31,7 +32,7 @@ const PlannedTransactionConfirmModal = ({
 	onClose,
 	onConfirmed,
 }: PlannedTransactionConfirmModalProps) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const categories = useCategoryStore((state) => state.categories);
 	const addRealTransaction = useAddRealTransaction();
 	const updateRealTransaction = useUpdateRealTransaction();
@@ -221,29 +222,30 @@ const PlannedTransactionConfirmModal = ({
 									{t('Category')}
 								</SizableText>
 								<XStack flexWrap="wrap">
-									{filteredCategories.map(
-										({ id, name: label }) => (
-											<Button
-												key={id}
-												onPress={() =>
-													setSelectedCategory(id)
-												}
-												size={28}
-												padding={14}
-												marginRight={8}
-												marginBottom={8}
-												backgroundColor={
-													id === selectedCategory
-														? '$primary200'
-														: '$white'
-												}
-											>
-												<SizableText size="$title3">
-													{label}
-												</SizableText>
-											</Button>
-										),
-									)}
+									{filteredCategories.map(({ id, name }) => (
+										<Button
+											key={id}
+											onPress={() =>
+												setSelectedCategory(id)
+											}
+											size={28}
+											padding={14}
+											marginRight={8}
+											marginBottom={8}
+											backgroundColor={
+												id === selectedCategory
+													? '$primary200'
+													: '$white'
+											}
+										>
+											<SizableText size="$title3">
+												{getCategoryDisplayName(
+													name,
+													i18n.language,
+												)}
+											</SizableText>
+										</Button>
+									))}
 								</XStack>
 							</YStack>
 						)}
