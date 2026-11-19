@@ -1,9 +1,9 @@
-import { Calendar, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
+import { Calendar, ChevronDown } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { Button, Card, SizableText, View, XStack, YStack } from 'tamagui';
+import { Button, SizableText, View, XStack, YStack } from 'tamagui';
 import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummaries';
 
 interface MonthMeta {
@@ -18,7 +18,7 @@ export default function YearsScreen() {
 	const currentYear = new Date().getFullYear();
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedYear, setSelectedYear] = useState<string>(
-			String(currentYear),
+		String(currentYear),
 	);
 
 	const yearNum = Number(selectedYear);
@@ -27,9 +27,9 @@ export default function YearsScreen() {
 	const endMonth = yearNum === currentYear ? currentMonth : 11;
 
 	const yearlySummaries = useTransactionSummaries(
-		yearNum, 
+		yearNum,
 		0,
-		yearNum, 
+		yearNum,
 		endMonth,
 	);
 
@@ -84,9 +84,8 @@ export default function YearsScreen() {
 
 			<ScrollView contentInsetAdjustmentBehavior="never">
 				<YStack padding="$4" gap="$3">
-
 					{/* Centered Year Dropdown Trigger Button */}
-					<XStack justifyContent="center" width="100%"> 
+					<XStack justifyContent="center" width="100%">
 						<Button
 							width="60%"
 							height={55}
@@ -100,7 +99,7 @@ export default function YearsScreen() {
 							iconAfter={
 								<ChevronDown size={18} color="$color10" />
 							}
-								>
+						>
 							<XStack gap="$3" alignItems="center">
 								<View
 									padding="$2"
@@ -119,9 +118,9 @@ export default function YearsScreen() {
 					{/* Months Grid (3x4 Layout) */}
 					<YStack gap="$3">
 						{monthRows.map((row) => (
-							<XStack 
+							<XStack
 								key={row.map((m) => m.translationKey).join('-')}
-								gap="$3" 
+								gap="$3"
 								justifyContent="space-between"
 								width="100%"
 							>
@@ -189,8 +188,8 @@ export default function YearsScreen() {
 														size="$5"
 													>
 														{change > 0
-														? `+${roundedChange}€`
-														: `${roundedChange}€`}
+															? `+${roundedChange}€`
+															: `${roundedChange}€`}
 													</SizableText>
 												</XStack>
 											</YStack>
