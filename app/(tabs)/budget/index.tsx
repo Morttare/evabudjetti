@@ -59,19 +59,20 @@ export default function YearsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView contentInsetAdjustmentBehavior="never">
-				<YStack padding="$4" gap="$4">
-					<Button
-						backgroundColor="$primary200"
-						borderRadius={40}
-						height={60}
-						onPress={() => router.push('/budget_wizard')}
-					>
-						<SizableText fontWeight="bold" color="$white">
-							{t('Edit Budget')}
-						</SizableText>
-					</Button>
+			<SizableText
+				width="100%"
+				paddingHorizontal="$4"
+				paddingTop="$4"
+				size="$9"
+				fontWeight="bold"
+				color="$primary100"
+				textAlign="center"
+			>
+				{t('Budget')}
+			</SizableText>
 
+			<ScrollView contentInsetAdjustmentBehavior="never">
+				<YStack padding="$4" gap="$3">
 					{/* Centered Year Dropdown Trigger Button */}
 					<XStack justifyContent="center" width="100%">
 						<Button
@@ -205,6 +206,20 @@ export default function YearsScreen() {
 							</XStack>
 						))}
 					</YStack>
+
+					<Button
+						width="60%"
+						backgroundColor="$primary200"
+						borderRadius={40}
+						height={50}
+						justifyContent="center"
+						alignSelf="center"
+						onPress={() => router.push('/budget_wizard')}
+					>
+						<SizableText fontWeight="bold" color="$white">
+							{t('Edit Budget')}
+						</SizableText>
+					</Button>
 				</YStack>
 			</ScrollView>
 
