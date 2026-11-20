@@ -1,6 +1,6 @@
 import {
 	ChartColumn,
-	DollarSign,
+	Euro,
 	Home,
 	Settings,
 	Wallet,
@@ -32,7 +32,7 @@ export default function TabLayout() {
 			route: 'funds',
 		},
 		{
-			icon: <DollarSign size={'$icons.md'} color={theme.white.val} />,
+			icon: <Euro size={'$icons.md'} color={theme.white.val} />,
 			name: t('Budget'),
 			route: 'budget',
 		},
