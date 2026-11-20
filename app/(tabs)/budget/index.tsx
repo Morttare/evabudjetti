@@ -62,8 +62,9 @@ export default function YearsScreen() {
 			<SizableText
 				width="100%"
 				paddingHorizontal="$4"
-				paddingTop="$4"
+				paddingTop="$3"
 				size="$9"
+				lineHeight="$11"
 				fontWeight="bold"
 				color="$primary100"
 				textAlign="center"
