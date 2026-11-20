@@ -313,6 +313,12 @@ const RealTransactionModal = ({
 					alignItems="center"
 					zIndex={1000}
 				>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						onPress={() => setCategoryModalVisible(false)}
+						accessibilityRole="button"
+						accessibilityLabel={t('Cancel')}
+					/>
 					<YStack
 						backgroundColor="$white"
 						borderColor="$primary100"
@@ -328,7 +334,7 @@ const RealTransactionModal = ({
 						width={'80%'}
 						gap={20}
 					>
-						<SizableText size={'$title1'} marginBottom={8}>
+						<SizableText size={'$title1'} marginBottom={8} color="$primary100">
 							{t('Add category')}
 						</SizableText>
 						<Input
@@ -366,7 +372,7 @@ const RealTransactionModal = ({
 								borderRadius={28}
 								style={styles.button}
 							>
-								<SizableText size={'$title2'} color={'$white'}>
+								<SizableText size={'$title3'} color={'$white'}>
 									{t('Save')}
 								</SizableText>
 							</Button>
