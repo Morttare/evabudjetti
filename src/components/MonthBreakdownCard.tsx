@@ -101,7 +101,7 @@ export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 							>
 								<SizableText
 									fontWeight="bold"
-									fontSize='$5'
+									fontSize="$5"
 									color="$primary100"
 								>
 									{cat.categoryName}
@@ -111,11 +111,20 @@ export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 										key={`${keyPrefix}-item-${item.id}`}
 										justifyContent="space-between"
 									>
-										<SizableText fontSize='$true' color="$primary100">
+										<SizableText
+											fontSize="$true"
+											color="$primary100"
+										>
 											{item.name}
 										</SizableText>
-										<SizableText fontSize={18} color="$primary100">
-											{Math.abs(item.totalAmount).toFixed(2)} €
+										<SizableText
+											fontSize={18}
+											color="$primary100"
+										>
+											{Math.abs(item.totalAmount).toFixed(
+												2,
+											)}{' '}
+											€
 										</SizableText>
 									</XStack>
 								))}

@@ -3,10 +3,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LayoutChangeEvent } from 'react-native';
 import { YStack } from 'tamagui';
-import { MonthBreakdownCard, type ProcessedItem } from '@/src/components/MonthBreakdownCard';
+import {
+	MonthBreakdownCard,
+	type ProcessedItem,
+} from '@/src/components/MonthBreakdownCard';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
-import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 import { allocateHeights, CARD_GAP } from '@/src/finance/logic/allocateHeights';
+import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
