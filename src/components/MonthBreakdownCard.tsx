@@ -78,7 +78,8 @@ export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 
 			<ScrollView style={{ flexGrow: 0, flexShrink: 1, minHeight: 0 }}>
 				<YStack
-					padding="$3"
+					paddingVertical="$2"
+					paddingHorizontal="$3"
 					onLayout={(e: LayoutChangeEvent) =>
 						setContentHeight(e.nativeEvent.layout.height)
 					}
@@ -92,14 +93,15 @@ export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 							{emptyText}
 						</SizableText>
 					) : (
-						breakdown.map((cat) => (
+						breakdown.map((cat, index) => (
 							<YStack
 								key={`${keyPrefix}-cat-${cat.categoryName}`}
-								gap="$2"
+								gap="$1"
+								marginTop={index > 0 ? '$2' : '$0'}
 							>
 								<SizableText
 									fontWeight="bold"
-									fontSize={15}
+									fontSize='$5'
 									color="$primary100"
 								>
 									{cat.categoryName}
@@ -109,7 +111,7 @@ export const MonthBreakdownCard = memo(function MonthBreakdownCard({
 										key={`${keyPrefix}-item-${item.id}`}
 										justifyContent="space-between"
 									>
-										<SizableText fontSize={18} color="$primary100">
+										<SizableText fontSize='$true' color="$primary100">
 											{item.name}
 										</SizableText>
 										<SizableText fontSize={18} color="$primary100">
