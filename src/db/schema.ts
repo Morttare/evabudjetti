@@ -98,9 +98,3 @@ export const categories = sqliteTable('categories', {
 	color: text('color'),
 	icon: text('icon'),
 });
-
-export const appSettings = sqliteTable('app_settings', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	key: text('key').notNull().unique(),
-	value: text('value').notNull(),
-});

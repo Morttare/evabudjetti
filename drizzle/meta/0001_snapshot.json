@@ -45,43 +45,6 @@
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
-		"app_settings": {
-			"name": "app_settings",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "integer",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
-				},
-				"key": {
-					"name": "key",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"value": {
-					"name": "value",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"app_settings_key_unique": {
-					"name": "app_settings_key_unique",
-					"columns": ["key"],
-					"isUnique": true
-				}
-			},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
 		"balance_reconciliations": {
 			"name": "balance_reconciliations",
 			"columns": {

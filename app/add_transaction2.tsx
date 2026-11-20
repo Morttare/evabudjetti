@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,9 +13,7 @@ import {
 	YStack,
 } from 'tamagui';
 import {
-	type Category,
 	DEFAULT_ACCOUNT_ID,
-	type Persisted,
 	type RealTransaction,
 	type TransactionOccurrence,
 } from '@/src/dataModel';
@@ -37,7 +35,6 @@ export default function AddTransaction() {
 	>('expense');
 	const [showSuccess, setShowSuccess] = useState(false);
 
-	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
 	const [selectedPlannedTxn, setSelectedPlannedTxn] =
 		useState<TransactionOccurrence | null>(null);
 	const [allocationAmount, setAllocationAmount] = useState('');
@@ -56,7 +53,7 @@ export default function AddTransaction() {
 	const addRealTransactionToDb = useAddRealTransaction();
 	const updateRealTransactionInDb = useUpdateRealTransaction();
 	const addCategory = useCategoryStore((state) => state.addCategory);
-	const storeCategories = useCategoryStore();
+	const categories = useCategoryStore((state) => state.categories);
 	const now = new Date();
 	const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, 1);
 	const twoYearsLater = new Date(now.getFullYear() + 2, now.getMonth(), 1);
@@ -100,15 +97,15 @@ export default function AddTransaction() {
 		[plannedTransactions],
 	);
 
-	useEffect(() => {
-		setCategories(storeCategories.categories);
-	}, [storeCategories.categories]);
-
-	const dynamicCategories = (categories || []).map((category) => ({
-		key: category.id,
-		label: getCategoryDisplayName(category.name, i18n.language),
-		type: category.type,
-	}));
+	const dynamicCategories = useMemo(
+		() =>
+			categories.map((category) => ({
+				key: category.id,
+				label: getCategoryDisplayName(category.name, i18n.language),
+				type: category.type,
+			})),
+		[categories, i18n.language],
+	);
 
 	const handleAddCategory = async (categoryName: string) => {
 		if (!categoryName.trim()) return;
