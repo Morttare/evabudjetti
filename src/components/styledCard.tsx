@@ -5,12 +5,8 @@ const StyledCard = Object.assign(
 		name: 'StyledCard',
 		backgroundColor: '$primary200',
 		borderRadius: '$2',
-		shadowColor: '$color.black',
-		shadowOffset: { width: 0, height: 3 },
-		shadowOpacity: 0.25,
-		shadowRadius: 3,
-		elevation: 3,
 		marginBottom: 15,
+		gap: '$1',
 
 		variants: {
 			size: {

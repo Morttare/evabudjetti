@@ -2,7 +2,11 @@ import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from 'react-native';
+import {
+	Modal,
+	type LayoutChangeEvent,
+	type TextLayoutEvent,
+} from 'react-native';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
 import { useAddRealTransaction } from '@/src/finance/hook/useAddRealTransaction';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
@@ -49,6 +53,9 @@ export default function DailyBalanceView({
 	>('expense');
 	const [confirmingPlannedTxn, setConfirmingPlannedTxn] =
 		useState<TransactionOccurrence | null>(null);
+	const [wrappedTimeframeLayoutKey, setWrappedTimeframeLayoutKey] =
+		useState('');
+	const [timeframeTextWidth, setTimeframeTextWidth] = useState(0);
 
 	const storeCategories = useCategoryStore();
 	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
@@ -182,6 +189,13 @@ export default function DailyBalanceView({
 		currentTimeframeEnd.getDate(),
 	);
 
+	const timeframeLabel = `${t('Usable funds timeframe')}:`;
+	const timeframeDates = `${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`;
+	const timeframeText = `${timeframeLabel} ${timeframeDates}`;
+	const timeframeLayoutKey = `${timeframeText}|${timeframeTextWidth}`;
+	const shouldBreakBeforeTimeframeDates =
+		wrappedTimeframeLayoutKey === timeframeLayoutKey;
+
 	const handlePrevDay = () => {
 		const newDate = new Date(selectedDate);
 		newDate.setDate(newDate.getDate() - 1);
@@ -207,9 +221,8 @@ export default function DailyBalanceView({
 			{/* --- Current Day Card (Static on top) --- */}
 			<StyledCard
 				style={{ borderWidth: 2 }}
-				paddingVertical="$2"
-				paddingHorizontal="$4"
-				borderRadius="$1"
+				paddingVertical="$3"
+				paddingHorizontal="$3"
 				borderColor="$primary100"
 				alignItems="center"
 				justifyContent="center"
@@ -224,8 +237,8 @@ export default function DailyBalanceView({
 				<XStack alignItems="center" justifyContent="center" gap={20}>
 					<Button
 						outlineColor="$black"
-						size="$buttons.md"
-						icon={ChevronLeft}
+						size="$buttons.xl"
+						icon={<ChevronLeft size={30} />}
 						onPress={handlePrevDay}
 						backgroundColor="$transparent"
 						circular
@@ -242,8 +255,8 @@ export default function DailyBalanceView({
 
 					<Button
 						outlineColor="$black"
-						size="$buttons.md"
-						icon={ChevronRight}
+						size="$buttons.xl"
+						icon={<ChevronRight size={30} />}
 						onPress={handleNextDay}
 						backgroundColor="$transparent"
 						circular
@@ -252,22 +265,38 @@ export default function DailyBalanceView({
 				</XStack>
 
 				{/* Daily Stats */}
-				<XStack>
-					<YStack alignItems="center" paddingRight={10}>
-						<Text color="$black" fontSize="$body" fontWeight="600">
+				<XStack width="100%" alignItems="center" gap={6}>
+					<YStack flex={1} alignItems="center">
+						<Text color="$black" fontSize="$3" fontWeight="600">
 							{t('Account balance')}:
 						</Text>
-						<Text color="$black" fontSize="$4" fontWeight="800">
+						<Text
+							width="100%"
+							textAlign="center"
+							numberOfLines={1}
+							adjustsFontSizeToFit
+							color="$black"
+							fontSize="$4"
+							fontWeight="800"
+						>
 							{dayBalance !== undefined
 								? formatCurrency(dayBalance)
 								: t('Unknown')}
 						</Text>
 					</YStack>
-					<YStack alignItems="center" paddingLeft={10}>
-						<Text color="$black" fontSize="$body" fontWeight="600">
+					<YStack flex={1} alignItems="center">
+						<Text color="$black" fontSize="$3" fontWeight="600">
 							{t('Usable funds')}:
 						</Text>
-						<Text color="$black" fontSize="$4" fontWeight="800">
+						<Text
+							width="100%"
+							textAlign="center"
+							numberOfLines={1}
+							adjustsFontSizeToFit
+							color="$black"
+							fontSize="$4"
+							fontWeight="800"
+						>
 							{dayBalance !== undefined
 								? `${formatCurrency(usableFunds)} ${t('/ day')}`
 								: '--'}
@@ -276,7 +305,7 @@ export default function DailyBalanceView({
 				</XStack>
 
 				{/* Add Buttons */}
-				<XStack gap={8} marginVertical={10}>
+				<XStack width="100%" gap={8} marginVertical={10}>
 					<Button
 						backgroundColor="$primary100"
 						borderRadius="$4"
@@ -318,9 +347,30 @@ export default function DailyBalanceView({
 						</Text>
 					</Button>
 				</XStack>
-				<Text color="$black" fontSize="$3" fontWeight="600">
-					{t('Usable funds timeframe')}:{' '}
-					{`${formatDate(currentTimeframeStart)} - ${formatDate(currentTimeframeEnd)}`}
+				<Text
+					width="100%"
+					textAlign="center"
+					color="$black"
+					fontSize="$3"
+					fontWeight="600"
+					onLayout={(event: LayoutChangeEvent) => { // In case the text doesn't fit in one line
+						const width = event.nativeEvent.layout.width;
+						setTimeframeTextWidth((currentWidth) =>
+							currentWidth === width ? currentWidth : width,
+						);
+					}}
+					onTextLayout={(event: TextLayoutEvent) => {
+						if (
+							!shouldBreakBeforeTimeframeDates &&
+							event.nativeEvent.lines.length > 1
+						) {
+							setWrappedTimeframeLayoutKey(timeframeLayoutKey);
+						}
+					}}
+				>
+					{timeframeLabel}
+					{shouldBreakBeforeTimeframeDates ? '\n' : ' '}
+					{timeframeDates}
 				</Text>
 			</StyledCard>
 
