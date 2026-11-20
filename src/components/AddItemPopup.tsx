@@ -23,12 +23,14 @@ import type {
 	Persisted,
 	PlannedTransaction,
 	RecurrenceBase,
+	TransactionType,
 } from '../dataModel';
 import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
 	item: Persisted<PlannedTransaction> | PlannedTransaction | null;
+	transactionType: TransactionType;
 	onSave: (item: PlannedTransaction) => Promise<unknown>;
 	onDelete: () => Promise<void>;
 	onClose: () => void;
@@ -36,6 +38,7 @@ type AddItemPopupProps = {
 
 const AddItemPopup = ({
 	item,
+	transactionType,
 	onSave,
 	onDelete,
 	onClose,
@@ -110,8 +113,12 @@ const AddItemPopup = ({
 					<XStack justifyContent="space-between">
 						<SizableText color="$primary100" size="$title1">
 							{item !== null
-								? t('Edit item')
-								: t('Add a new item')}
+								? item.type === 'expense'
+									? t('Edit expense')
+									: t('Edit income')
+								: transactionType === 'expense'
+									? t('Add expense')
+									: t('Add income')}
 						</SizableText>
 						{item !== null && (
 							<Button
@@ -130,7 +137,7 @@ const AddItemPopup = ({
 					</XStack>
 					<View style={styles.inputsContainer}>
 						<View style={styles.singleItemContainer}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Name')}
 							</SizableText>
 							<Input
@@ -143,7 +150,7 @@ const AddItemPopup = ({
 							/>
 						</View>
 						<View style={styles.singleItemContainer}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Amount')}
 							</SizableText>
 							<Input
@@ -166,7 +173,7 @@ const AddItemPopup = ({
 							/>
 						</View>
 						<View style={styles.singleItemContainer}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Start Date')}:
 							</SizableText>
 							<MultiPlatformDatePicker
@@ -184,7 +191,7 @@ const AddItemPopup = ({
 									marginBottom: 5,
 								}}
 							>
-								<SizableText color="$primary100" size="$title3">
+								<SizableText color="$primary100" size="$title2">
 									{t('Reoccurrence')}:
 								</SizableText>
 								<Checkbox
@@ -393,7 +400,7 @@ const AddItemPopup = ({
 										<SizableText
 											style={{ height: '100%' }}
 											color="$primary100"
-											size="$title3"
+											size="$title2"
 										>
 											{t('End Date')}:
 										</SizableText>

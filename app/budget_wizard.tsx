@@ -119,6 +119,11 @@ export default function BudgetWizard() {
 				>
 					<AddItemPopup
 						item={selectedItem ? selectedItem.item : null}
+						transactionType={
+							currentStep.header === 'Incomes'
+								? 'income'
+								: 'expense'
+						}
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)
@@ -172,7 +177,10 @@ export default function BudgetWizard() {
 								{t('Timeframe start info')}
 							</SizableText>
 							<XStack alignItems="center" gap="$2">
-								<SizableText color="$gray700">
+								<SizableText
+									color="$primary100"
+									fontWeight="bold"
+								>
 									{t('Start date')} *
 								</SizableText>
 								<MultiPlatformDatePicker
@@ -184,7 +192,7 @@ export default function BudgetWizard() {
 							<SizableText color="$gray700">
 								{t('Timeframe length info')}
 							</SizableText>
-							<SizableText color="$gray700">
+							<SizableText color="$primary100" fontWeight="bold">
 								{t('Timeframe length')}
 							</SizableText>
 							<XStack gap="$2" alignItems="unset">
@@ -341,7 +349,10 @@ export default function BudgetWizard() {
 											)
 										}
 									>
-										<SizableText color="$white">
+										<SizableText
+											color="$white"
+											size="$title2"
+										>
 											{t('Use suggestion')}
 										</SizableText>
 									</Button>
@@ -368,16 +379,21 @@ export default function BudgetWizard() {
 					{/* Empty Y-stack to get margin after last budget item*/}
 					<YStack marginTop="10" />
 				</ScrollView>
-				<View style={styles.addIconContainer}>
-					<Button
-						borderRadius={28}
-						backgroundColor="$primary200"
-						icon={Plus}
-						color="$white"
-						onPress={() => setPopupVisible(true)}
-						style={styles.addIcon}
-					/>
-				</View>
+				{stepIndex !== 2 && (
+					<View style={styles.addIconContainer}>
+						<Button
+							borderRadius={28}
+							backgroundColor="$primary200"
+							icon={Plus}
+							color="$white"
+							onPress={() => {
+								setSelectedItem(null);
+								setPopupVisible(true);
+							}}
+							style={styles.addIcon}
+						/>
+					</View>
+				)}
 				<View style={styles.buttonContainer}>
 					<Button
 						borderRadius={28}
