@@ -228,17 +228,22 @@ const RealTransactionModal = ({
 												onPress={() =>
 													setSelectedCategory(key)
 												}
-												size={28}
-												padding={14}
+												size={40}
+												paddingHorizontal={14}
 												marginRight={8}
 												marginBottom={8}
+												borderWidth={1}
+												borderColor="$primary200"
 												backgroundColor={
 													selected
-														? '$primary200'
+														? '$primary300'
 														: '$white'
 												}
 											>
-												<SizableText size={'$title3'}>
+												<SizableText
+													color="$primary100"
+													size="$title3"
+												>
 													{label}
 												</SizableText>
 											</Button>

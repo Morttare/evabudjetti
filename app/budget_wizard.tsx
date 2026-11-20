@@ -79,7 +79,6 @@ export default function BudgetWizard() {
 
 	async function addItem(newItem: PlannedTransaction) {
 		newItem.type = currentStep.header === 'Incomes' ? 'income' : 'expense';
-		newItem.categoryId = 0;
 		await addPlannedTransaction(newItem);
 	}
 
@@ -118,7 +117,13 @@ export default function BudgetWizard() {
 					transparent={true}
 				>
 					<AddItemPopup
+						key={`${currentStep.header}-${selectedItem?.index ?? 'new'}`}
 						item={selectedItem ? selectedItem.item : null}
+						transactionType={
+							currentStep.header === 'Incomes'
+								? 'income'
+								: 'expense'
+						}
 						onSave={
 							selectedItem === null
 								? (item) => addItem(item)

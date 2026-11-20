@@ -14,6 +14,7 @@ import { useTransactionSummaries } from '@/src/finance/hook/useTransactionSummar
 import { allocateHeights, CARD_GAP } from '@/src/finance/logic/allocateHeights';
 import { createMonthKey } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
 type CategoryGroup = { total: number; items: TransactionOccurrence[] };
 
@@ -34,7 +35,7 @@ const MONTH_KEYS = [
 
 export default function DetailedMonthScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const [yearStr, monthStr] = id.split('-');
 	const yearNum = Number(yearStr);
@@ -45,10 +46,13 @@ export default function DetailedMonthScreen() {
 	const categoryNameById = useMemo(() => {
 		const map = new Map<number, string>();
 		for (const category of categories) {
-			map.set(category.id, category.name);
+			map.set(
+				category.id,
+				getCategoryDisplayName(category.name, i18n.language),
+			);
 		}
 		return map;
-	}, [categories]);
+	}, [categories, i18n.language]);
 
 	const monthDataArray = useTransactionSummaries(
 		yearNum,

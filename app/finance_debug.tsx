@@ -2,7 +2,7 @@
  * AI-GENERATED DEBUG SCREEN
  */
 
-import { and, eq, gte, lt } from 'drizzle-orm';
+import { and, eq, gte, inArray, lt } from 'drizzle-orm';
 import { Stack } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -23,11 +23,13 @@ import type {
 	TransactionType,
 } from '@/src/dataModel';
 import { db, isDbReal } from '@/src/db/client';
+import { DEFAULT_CATEGORIES } from '@/src/db/defaultCategories';
 import * as schema from '@/src/db/schema';
 import { useOccurrencesAndBalances } from '@/src/finance/hook/useOccurrencesAndBalances';
 import { createMonthKey, decodeMonthKey } from '@/src/finance/logic/util';
 import { useBalanceVersioning } from '@/src/finance/versioning/balanceVersioning';
 import { useTransactionOccurrenceVersioning } from '@/src/finance/versioning/transactionOccurrenceVersioning';
+import { initializeCategoryStore } from '@/src/store/categoryStore';
 import { formatCurrency } from '@/src/utils/budgetUtils';
 
 interface DayGroup {
@@ -786,10 +788,41 @@ export default function FinanceDebugScreen() {
 			const reconciliationRows = await db
 				.select()
 				.from(schema.balanceReconciliations);
+			const categoryRows = await db
+				.select()
+				.from(schema.categories)
+				.orderBy(schema.categories.id);
+			const defaultCategoryKeys = new Set(
+				DEFAULT_CATEGORIES.map(
+					(category) => `${category.type}:${category.name}`,
+				),
+			);
+			const retainedDefaultCategoryKeys = new Set<string>();
+			const customCategoryRows = categoryRows.filter((category) => {
+				if (category.id === 0) return false;
 
-			await db.delete(schema.realTransactions);
-			await db.delete(schema.plannedTransactions);
-			await db.delete(schema.balanceReconciliations);
+				const key = `${category.type}:${category.name}`;
+				if (!defaultCategoryKeys.has(key)) return true;
+				if (retainedDefaultCategoryKeys.has(key)) return true;
+
+				retainedDefaultCategoryKeys.add(key);
+				return false;
+			});
+
+			await db.transaction(async (tx) => {
+				await tx.delete(schema.realTransactions);
+				await tx.delete(schema.plannedTransactions);
+				await tx.delete(schema.balanceReconciliations);
+				if (customCategoryRows.length > 0) {
+					await tx.delete(schema.categories).where(
+						inArray(
+							schema.categories.id,
+							customCategoryRows.map((category) => category.id),
+						),
+					);
+				}
+			});
+			await initializeCategoryStore();
 
 			const transactionOccurrenceVersioning =
 				useTransactionOccurrenceVersioning.getState();
@@ -853,18 +886,19 @@ export default function FinanceDebugScreen() {
 			const deletedCount =
 				realRows.length +
 				plannedRows.length +
-				reconciliationRows.length;
+				reconciliationRows.length +
+				customCategoryRows.length;
 
 			if (deletedCount === 0) {
 				setActionStatus(
-					'No planned, real, or reconciliation rows to clear.',
+					'No planned, real, reconciliation, or custom category rows to clear.',
 					'info',
 				);
 				return;
 			}
 
 			setActionStatus(
-				`Cleared DB rows: planned ${plannedRows.length}, real ${realRows.length}, reconciliations ${reconciliationRows.length}.`,
+				`Cleared DB rows: planned ${plannedRows.length}, real ${realRows.length}, reconciliations ${reconciliationRows.length}, custom categories ${customCategoryRows.length}.`,
 				'success',
 			);
 		} catch (error) {
