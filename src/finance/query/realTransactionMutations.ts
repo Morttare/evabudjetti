@@ -7,7 +7,7 @@ import {
 	BALANCE_CORRECTION_NAMES,
 	mergeBalanceCorrections,
 } from '../logic/balanceCorrection';
-import { getBalanceReconciliationDeltaCents } from '../logic/balanceReconciliationAdjustment';
+import { adjustBalanceReconciliations } from './balanceReconciliationMutations';
 
 export async function insertRealTransaction(
 	transaction: RealTransaction,
@@ -133,6 +133,7 @@ export async function updateRealTransaction(
 		const [updated] = await tx
 			.update(schema.realTransactions)
 			.set({
+				accountId: transaction.accountId,
 				name: transaction.name,
 				amount: transaction.amount,
 				date: transaction.date,
@@ -178,64 +179,4 @@ export async function excludePlannedTransactionOccurrence(
 		.insert(schema.plannedTransactionOccurrenceExceptions)
 		.values({ plannedTransactionId, occurrenceDate })
 		.onConflictDoNothing();
-}
-
-async function adjustBalanceReconciliations(
-	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
-	previousTransactions: readonly RealTransaction[],
-	nextTransactions: readonly RealTransaction[],
-): Promise<void> {
-	if (previousTransactions.length === 0 && nextTransactions.length === 0) {
-		return;
-	}
-
-	const accountIds = new Set([
-		...previousTransactions.map((transaction) => transaction.accountId),
-		...nextTransactions.map((transaction) => transaction.accountId),
-	]);
-
-	for (const accountId of accountIds) {
-		const affectedTransactions = [
-			...previousTransactions,
-			...nextTransactions,
-		].filter((transaction) => transaction.accountId === accountId);
-		const firstAffectedDate = new Date(
-			Math.min(
-				...affectedTransactions.map((transaction) =>
-					transaction.date.getTime(),
-				),
-			),
-		);
-		// Reconciliations are absolute anchors, so carry historical event changes into each later anchor.
-		const reconciliations = await tx
-			.select()
-			.from(schema.balanceReconciliations)
-			.where(
-				and(
-					eq(schema.balanceReconciliations.accountId, accountId),
-					gte(schema.balanceReconciliations.date, firstAffectedDate),
-				),
-			);
-
-		for (const reconciliation of reconciliations) {
-			const deltaCents = getBalanceReconciliationDeltaCents(
-				accountId,
-				reconciliation.date,
-				previousTransactions,
-				nextTransactions,
-			);
-			if (deltaCents === 0) {
-				continue;
-			}
-
-			await tx
-				.update(schema.balanceReconciliations)
-				.set({
-					amount:
-						(Math.round(reconciliation.amount * 100) + deltaCents) /
-						100,
-				})
-				.where(eq(schema.balanceReconciliations.id, reconciliation.id));
-		}
-	}
 }

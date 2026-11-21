@@ -1,14 +1,17 @@
 import { create } from 'zustand';
 import type {
-	MonthInstance,
 	TransactionOccurrence,
 	TransactionOccurrencesMonthData,
 } from '@/src/dataModel';
 import { generateTransactionOccurrences } from '../logic/transactionOccurrencesLogic';
-import { createMonthKey, dateToMonthKey, monthsInRange } from '../logic/util';
+import { createMonthKey } from '../logic/util';
 import { fetchPlannedTransactionOccurrenceExceptionsByDateRange } from '../query/plannedTransactionOccurrenceExceptionQueries';
 import { fetchPlannedTransactionsInRange as fetchPlannedTransactionsActiveInRange } from '../query/plannedTransactionQueries';
 import { fetchRealTransactionsByDateRange } from '../query/realTransactionQueries';
+import {
+	findTransactionOccurrenceMonthRange,
+	groupTransactionOccurrencesByMonth,
+} from './transactionOccurrenceCacheLogic';
 
 export interface TransactionOccurrencesMonthCacheData {
 	/**
@@ -93,6 +96,10 @@ export const useTransactionOccurrencesCache =
 		},
 	}));
 
+/**
+ * Finds stale months and recalculates a contiguous cache range that includes
+ * the first and last stale month. The result is empty when all months are fresh.
+ */
 async function updateTransactionOccurrencesCacheForMonths(
 	startYear: number,
 	startMonth: number,
@@ -101,132 +108,67 @@ async function updateTransactionOccurrencesCacheForMonths(
 	monthVersions: Map<string, number>,
 	oldCacheState: TransactionOccurrencesCacheState,
 ): Promise<TransactionOccurrencesMonthCacheData[]> {
-	let firstMonthToUpdate: MonthInstance | undefined;
-	let lastMonthToUpdate: MonthInstance | undefined;
-
 	const start = performance.now();
-
-	console.debug(
-		`[TransactionOccurrencesCache] updateTransactionOccurrencesCacheForMonths called for ${createMonthKey(startYear, startMonth)} to ${createMonthKey(endYear, endMonth)}`,
-		{
-			monthVersionsSize: monthVersions.size,
-			monthVersionsArray: Array.from(monthVersions.entries()),
-			cacheSize: oldCacheState.dataByMonth.size,
-		},
-	);
-
-	for (const { year, month } of monthsInRange(
+	const updateRange = findTransactionOccurrenceMonthRange(
 		startYear,
 		startMonth,
 		endYear,
 		endMonth,
-	)) {
-		const monthKey = createMonthKey(year, month);
-		const monthData = oldCacheState.dataByMonth.get(monthKey);
-		const requiredVersion = monthVersions.get(monthKey) ?? 0;
+		monthVersions,
+		oldCacheState.dataByMonth,
+	);
 
-		console.debug(
-			`[TransactionOccurrencesCache] Checking month ${monthKey}: cacheVersion=${monthData?.version}, requiredVersion=${requiredVersion}, needsUpdate=${monthData === undefined || monthData.version < requiredVersion}`,
-		);
-
-		if (monthData === undefined || monthData.version < requiredVersion) {
-			if (firstMonthToUpdate === undefined) {
-				firstMonthToUpdate = { year, month };
-			}
-
-			lastMonthToUpdate = { year, month };
-		}
-	}
-
-	if (firstMonthToUpdate === undefined || lastMonthToUpdate === undefined) {
-		// No months need updating, return an empty update to avoid unnecessary state updates
-		console.debug(
-			`[TransactionOccurrencesCache] No months need updating (firstMonthToUpdate=${firstMonthToUpdate}, lastMonthToUpdate=${lastMonthToUpdate})`,
-		);
+	if (updateRange === undefined) {
 		return [];
 	}
 
 	console.debug(
 		`[TransactionOccurrencesCache] Updating transaction occurrences cache for months ${createMonthKey(
-			firstMonthToUpdate.year,
-			firstMonthToUpdate.month,
-		)} to ${createMonthKey(lastMonthToUpdate.year, lastMonthToUpdate.month)}`,
+			updateRange.first.year,
+			updateRange.first.month,
+		)} to ${createMonthKey(updateRange.last.year, updateRange.last.month)}`,
 	);
 
 	const relevantPlannedTransactions =
 		await fetchPlannedTransactionsActiveInRange(
-			firstMonthToUpdate,
-			lastMonthToUpdate,
+			updateRange.first,
+			updateRange.last,
 		);
 
 	const relevantRealTransactions = await fetchRealTransactionsByDateRange(
-		firstMonthToUpdate,
-		lastMonthToUpdate,
+		updateRange.first,
+		updateRange.last,
 	);
 	// Exceptions are queried by scheduled date, which may differ from a moved transaction's current date.
 	const excludedPlannedOccurrences =
 		await fetchPlannedTransactionOccurrenceExceptionsByDateRange(
-			firstMonthToUpdate,
-			lastMonthToUpdate,
+			updateRange.first,
+			updateRange.last,
 		);
 
 	const generatedOccurrences = generateTransactionOccurrences(
-		firstMonthToUpdate.year,
-		firstMonthToUpdate.month,
-		lastMonthToUpdate.year,
-		lastMonthToUpdate.month,
+		updateRange.first.year,
+		updateRange.first.month,
+		updateRange.last.year,
+		updateRange.last.month,
 		relevantPlannedTransactions,
 		relevantRealTransactions,
 		excludedPlannedOccurrences,
 	);
-
-	const generatedOccurrencesByMonthKey: Map<string, TransactionOccurrence[]> =
-		new Map();
-
-	// Pre-populate all months in the update range with empty arrays so that
-	// months with no transactions are still marked fresh after this update.
-	for (const { year, month } of monthsInRange(
-		firstMonthToUpdate.year,
-		firstMonthToUpdate.month,
-		lastMonthToUpdate.year,
-		lastMonthToUpdate.month,
-	)) {
-		generatedOccurrencesByMonthKey.set(createMonthKey(year, month), []);
-	}
-
-	for (const occurrence of generatedOccurrences) {
-		const occurrenceMonthKey = dateToMonthKey(occurrence.date);
-		const monthOccurrences =
-			generatedOccurrencesByMonthKey.get(occurrenceMonthKey);
-
-		if (monthOccurrences === undefined) {
-			throw new Error(
-				`Generated occurrence with date ${occurrence.date.toISOString()} has month key ${occurrenceMonthKey} which is outside of the expected range`,
-			);
-		}
-
-		monthOccurrences.push(occurrence);
-	}
-
-	const updates = [];
-
-	for (const [
-		monthKey,
-		transactionOccurrences,
-	] of generatedOccurrencesByMonthKey.entries()) {
-		const version = monthVersions.get(monthKey) ?? 0;
-		updates.push({
-			monthKey,
-			transactionOccurrences,
-			version,
-		});
-	}
+	const updates = groupTransactionOccurrencesByMonth(
+		generatedOccurrences,
+		updateRange,
+		monthVersions,
+	);
 
 	console.debug(
 		`[TransactionOccurrencesCache] Calculated transaction occurrences cache updates for months ${createMonthKey(
-			firstMonthToUpdate.year,
-			firstMonthToUpdate.month,
-		)} to ${createMonthKey(lastMonthToUpdate.year, lastMonthToUpdate.month)} in ${performance.now() - start} ms`,
+			updateRange.first.year,
+			updateRange.first.month,
+		)} to ${createMonthKey(
+			updateRange.last.year,
+			updateRange.last.month,
+		)} in ${performance.now() - start} ms`,
 	);
 
 	return updates;
