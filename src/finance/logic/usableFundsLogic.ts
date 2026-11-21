@@ -2,6 +2,8 @@ import { getDaysInMonth } from 'date-fns';
 import type { AccountBalanceMonthData } from '@/src/dataModel';
 import { createMonthKey, monthsInRange } from './util';
 
+// For the given date range, calculate the maximum amount of money
+// the user can spend per day (assuming maximum amount is spent each day)
 export function calculateUsableFundsPerDayForDateRange(
 	startYear: number,
 	startMonth: number,

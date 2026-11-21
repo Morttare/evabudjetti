@@ -47,6 +47,13 @@ describe('getTransactionOccurrenceCount', () => {
 		expect(getTransactionOccurrenceCount(rent, 2027, 5)).toBe(1);
 	});
 
+	it('preserves monthly counting when a legacy interval is zero', () => {
+		const rent = planned({ recurrenceInterval: 0 });
+
+		expect(getTransactionOccurrenceCount(rent, 2026, 10)).toBe(1);
+		expect(getTransactionOccurrenceCount(rent, 2027, 5)).toBe(1);
+	});
+
 	it('counts a transaction every second month', () => {
 		// Electricity transfer every other month from November
 		const electricity = planned({ recurrenceInterval: 2 });
