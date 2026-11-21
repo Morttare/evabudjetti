@@ -1,0 +1,5 @@
+appId: com.anonymous.evabudjetti
+---
+- launchApp:
+    clearState: true
+- assertVisible: "EVA OmaBudjetti"

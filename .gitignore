@@ -48,7 +48,6 @@ tamagui-web.css
 app-example
 
 test-results/
-playwright-report/
 coverage/
 
 #IDEs / Editors
