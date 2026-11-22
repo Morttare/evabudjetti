@@ -384,7 +384,7 @@ export default function BudgetWizard() {
 						<Button
 							borderRadius={28}
 							backgroundColor="$primary200"
-							icon={Plus}
+							icon={<Plus size={24} />}
 							color="$white"
 							onPress={() => {
 								setSelectedItem(null);
@@ -397,16 +397,16 @@ export default function BudgetWizard() {
 				<View style={styles.buttonContainer}>
 					<Button
 						borderRadius={28}
-						style={styles.footerButton}
-						backgroundColor={
-							stepIndex === 0 ? '$primary300' : '$primary200'
-						}
+						width="45%"
+						height={50}
+						borderColor={stepIndex === 0 ? '#9999' : '$primary200'}
+						backgroundColor={stepIndex === 0 ? '#F2F2F2' : '$white'}
 						disabled={stepIndex === 0}
 						onPress={() => setStepIndex(stepIndex - 1)}
 					>
 						<SizableText
 							adjustsFontSizeToFit
-							color="$white"
+							color={stepIndex === 0 ? '#9999' : '$primary100'}
 							size="$title1"
 						>
 							{t('Previous')}
@@ -415,7 +415,8 @@ export default function BudgetWizard() {
 					{stepIndex === wizardData.length - 1 ? (
 						<Button
 							borderRadius={28}
-							style={styles.footerButton}
+							width="45%"
+							height={50}
 							backgroundColor="$primary200"
 							onPress={handleFinish}
 						>
@@ -426,13 +427,15 @@ export default function BudgetWizard() {
 					) : (
 						<Button
 							borderRadius={28}
-							backgroundColor="$primary200"
-							style={styles.footerButton}
+							backgroundColor="$white"
+							borderColor="$primary200"
+							width="45%"
+							height={50}
 							onPress={() => setStepIndex(stepIndex + 1)}
 						>
 							<SizableText
 								adjustsFontSizeToFit
-								color="$white"
+								color="$primary100"
 								size="$title1"
 							>
 								{t('Next')}
@@ -467,8 +470,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		marginTop: 5,
 		height: '60%',
-		borderTopWidth: 2,
-		borderBottomWidth: 2,
+		borderTopWidth: 1,
+		borderBottomWidth: 1,
 	},
 	itemContainer: {
 		flexDirection: 'row',
