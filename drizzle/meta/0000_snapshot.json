@@ -4,43 +4,6 @@
 	"id": "e366b970-8db1-4a03-bd44-2ba428d86149",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
-		"app_settings": {
-			"name": "app_settings",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "integer",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
-				},
-				"key": {
-					"name": "key",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"value": {
-					"name": "value",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"app_settings_key_unique": {
-					"name": "app_settings_key_unique",
-					"columns": ["key"],
-					"isUnique": true
-				}
-			},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
 		"categories": {
 			"name": "categories",
 			"columns": {
