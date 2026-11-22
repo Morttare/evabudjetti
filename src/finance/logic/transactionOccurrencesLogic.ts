@@ -147,65 +147,130 @@ function generatePlannedTransactionOccurrencesForMonths(
 	relevantPlannedTransactions: Persisted<PlannedTransaction>[],
 	overriddenOccurrenceDates: Map<number, Set<string>>,
 ): TransactionOccurrence[] {
-	let date = new Date(startYear, startMonth, 1);
+	const date = new Date(startYear, startMonth, 1);
 	const afterEndMonth = new Date(endYear, endMonth + 1, 1);
 	const occurrences: TransactionOccurrence[] = [];
 
 	type PendingEntry = {
 		planned: Persisted<PlannedTransaction>;
 		nextDate: Date;
+		// Preserves the previous input-order tie-break for matching dates.
+		order: number;
 	};
-	const pending: PendingEntry[] = relevantPlannedTransactions
-		.map((t) => {
-			const nextDate = firstPlannedOccurrenceAfter(t, date);
-			return nextDate !== undefined
-				? { planned: t, nextDate }
-				: undefined;
-		})
-		.filter((entry) => entry !== undefined);
+	const pending: PendingEntry[] = [];
 
-	while (date < afterEndMonth) {
-		let nearestIndex = -1;
-		let nearestDate: Date | undefined;
-
-		for (let i = 0; i < pending.length; i++) {
-			const { nextDate } = pending[i];
-
-			if (nearestDate === undefined || nextDate < nearestDate) {
-				nearestDate = nextDate;
-				nearestIndex = i;
-			}
+	for (let order = 0; order < relevantPlannedTransactions.length; order++) {
+		const planned = relevantPlannedTransactions[order];
+		const nextDate = firstPlannedOccurrenceAfter(planned, date);
+		if (nextDate !== undefined) {
+			pushPendingOccurrence(pending, { planned, nextDate, order });
 		}
+	}
 
-		if (nearestDate === undefined || nearestDate >= afterEndMonth) {
+	while (pending.length > 0) {
+		const nearest = popPendingOccurrence(pending);
+		if (nearest === undefined || nearest.nextDate >= afterEndMonth) {
 			break;
 		}
 
-		const { planned } = pending[nearestIndex];
+		const { planned, nextDate } = nearest;
 		const overriddenDatesForPlanned = overriddenOccurrenceDates.get(
 			planned.id,
 		);
 
-		const nearestOccurrenceDateKey = dateToDateKey(nearestDate);
+		const nearestOccurrenceDateKey = dateToDateKey(nextDate);
 
 		if (!overriddenDatesForPlanned?.has(nearestOccurrenceDateKey)) {
-			occurrences.push(
-				plannedTransactionToOccurrence(planned, nearestDate),
-			);
+			occurrences.push(plannedTransactionToOccurrence(planned, nextDate));
 		}
 
-		const nextOccurrence = nextPlannedOccurrence(planned, nearestDate);
+		const nextOccurrence = nextPlannedOccurrence(planned, nextDate);
 
-		if (nextOccurrence === undefined) {
-			pending.splice(nearestIndex, 1);
-		} else {
-			pending[nearestIndex].nextDate = nextOccurrence;
+		if (nextOccurrence !== undefined) {
+			pushPendingOccurrence(pending, {
+				planned,
+				nextDate: nextOccurrence,
+				order: nearest.order,
+			});
 		}
-
-		date = nearestDate;
 	}
 
 	return occurrences;
+}
+
+function pushPendingOccurrence<T extends { nextDate: Date; order: number }>(
+	heap: T[],
+	entry: T,
+): void {
+	let index = heap.length;
+	heap.push(entry);
+
+	while (index > 0) {
+		const parentIndex = Math.floor((index - 1) / 2);
+		const parent = heap[parentIndex];
+		if (parent === undefined || !comesBefore(entry, parent)) {
+			break;
+		}
+		heap[index] = parent;
+		index = parentIndex;
+	}
+
+	heap[index] = entry;
+}
+
+function popPendingOccurrence<T extends { nextDate: Date; order: number }>(
+	heap: T[],
+): T | undefined {
+	const first = heap[0];
+	if (first === undefined) {
+		return undefined;
+	}
+
+	const last = heap.pop();
+	if (last === undefined) {
+		throw new Error('Pending occurrence heap became empty unexpectedly');
+	}
+
+	if (heap.length === 0) {
+		return first;
+	}
+
+	let index = 0;
+	while (true) {
+		const leftIndex = index * 2 + 1;
+		if (leftIndex >= heap.length) {
+			break;
+		}
+		const rightIndex = leftIndex + 1;
+		const left = heap[leftIndex];
+		const right = heap[rightIndex];
+		const childIndex =
+			right !== undefined &&
+			left !== undefined &&
+			comesBefore(right, left)
+				? rightIndex
+				: leftIndex;
+		const child = heap[childIndex];
+		if (child === undefined || !comesBefore(child, last)) {
+			break;
+		}
+		heap[index] = child;
+		index = childIndex;
+	}
+
+	heap[index] = last;
+	return first;
+}
+
+function comesBefore(
+	left: { nextDate: Date; order: number },
+	right: { nextDate: Date; order: number },
+): boolean {
+	return (
+		left.nextDate.getTime() < right.nextDate.getTime() ||
+		(left.nextDate.getTime() === right.nextDate.getTime() &&
+			left.order < right.order)
+	);
 }
 
 export function realTransactionToOccurrence(
