@@ -62,7 +62,7 @@ export default function RootLayout() {
 				<PortalProvider>
 					<Theme name="light">
 						<SafeAreaProvider>
-							<StatusBar style="dark" translucent={false} />
+							<StatusBar style="dark" />
 							<Stack
 								screenOptions={{
 									headerBackButtonDisplayMode: 'minimal',
@@ -175,7 +175,7 @@ export default function RootLayout() {
 			<PortalProvider>
 				<Theme name={'light'}>
 					<SafeAreaProvider>
-						<StatusBar style="dark" translucent={false} />
+						<StatusBar style="dark" />
 						<Stack
 							screenOptions={{
 								headerBackButtonDisplayMode: 'minimal',
