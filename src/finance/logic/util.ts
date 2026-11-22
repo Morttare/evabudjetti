@@ -4,6 +4,10 @@ import type {
 	PlannedTransaction,
 	TransactionOccurrence,
 } from '@/src/dataModel';
+import {
+	firstPlannedOccurrenceAfter,
+	nextPlannedOccurrence,
+} from './recurrence';
 
 export function dateToMonthKey(date: Date): string {
 	return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -138,17 +142,59 @@ function getDaysDiff(d1: Date, d2: Date) {
 	return Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24));
 }
 
-/**
- * Counts occurrences in a month.
- * Frequent income recurrences are represented by a monthly average; other recurrences use actual dates.
- */
+/** Counts scheduled occurrences that fall within the requested calendar month. */
 export function getTransactionOccurrenceCount(
 	txn: PlannedTransaction,
 	targetYear: number,
 	targetMonth: number,
 ): number {
-	if (!txn.startDate) return 0;
+	const start = safeParseDate(txn.startDate);
+	if (Number.isNaN(start.getTime())) return 0;
 
+	const parsedEndDate =
+		txn.endDate == null ? null : safeParseDate(txn.endDate);
+	const endDate =
+		parsedEndDate !== null && !Number.isNaN(parsedEndDate.getTime())
+			? parsedEndDate
+			: null;
+	const planned: PlannedTransaction = {
+		...txn,
+		startDate: start,
+		endDate,
+		recurrenceInterval: getRecurrenceInterval(txn),
+	};
+	const monthStart = new Date(targetYear, targetMonth, 1);
+	const nextMonthStart = new Date(targetYear, targetMonth + 1, 1);
+
+	if (
+		isMonthBefore(targetYear, targetMonth, start) ||
+		(endDate !== null && isMonthAfter(targetYear, targetMonth, endDate))
+	) {
+		return 0;
+	}
+
+	let count = 0;
+	let occurrence = firstPlannedOccurrenceAfter(planned, monthStart);
+	while (
+		occurrence !== undefined &&
+		occurrence < nextMonthStart &&
+		(endDate === null || occurrence <= endDate)
+	) {
+		count++;
+		occurrence = nextPlannedOccurrence(planned, occurrence);
+	}
+	return count;
+}
+
+/**
+ * Returns the budget's monthly count estimate. Frequent income recurrences
+ * use an annualized monthly average; other recurrences preserve month-based counting.
+ */
+export function getMonthlyOccurrenceEstimate(
+	txn: PlannedTransaction,
+	targetYear: number,
+	targetMonth: number,
+): number {
 	const start = safeParseDate(txn.startDate);
 	if (Number.isNaN(start.getTime())) return 0;
 
@@ -275,5 +321,6 @@ function countDatesMatchingRecurrence(
 }
 
 function getRecurrenceInterval(txn: PlannedTransaction): number {
+	// Legacy budget records with a zero interval have historically meant every unit.
 	return txn.recurrenceInterval || 1;
 }

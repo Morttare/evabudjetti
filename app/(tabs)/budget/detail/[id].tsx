@@ -9,7 +9,7 @@ import {
 } from '@/src/components/MonthBreakdownCard';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
 import { allocateHeights, CARD_GAP } from '@/src/finance/logic/allocateHeights';
-import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
+import { getMonthlyOccurrenceEstimate } from '@/src/finance/logic/util';
 import { useCategoryStore } from '@/src/store/categoryStore';
 import { getCategoryDisplayName } from '@/src/utils/categoryName';
 
@@ -66,7 +66,7 @@ export default function BudgetDetailedMonthScreen() {
 			> = {};
 
 			for (const evt of plannedTransactions) {
-				const count = getTransactionOccurrenceCount(
+				const count = getMonthlyOccurrenceEstimate(
 					evt,
 					yearNum,
 					monthNum,
