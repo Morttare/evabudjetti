@@ -9,7 +9,7 @@ const StyledTab = styled(Tabs.Tab, {
 	shadowOpacity: 0.25,
 	shadowRadius: 3,
 	elevation: 2,
-	size: '$buttons.lg' * 2,
+	size: '$buttons.xl',
 	pressStyle: { backgroundColor: '$primary300' },
 	focusStyle: { backgroundColor: '$primary200' },
 	justifyContent: 'center',

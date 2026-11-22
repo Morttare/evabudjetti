@@ -1,4 +1,4 @@
-import { Bold, ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
+import { ChevronDown, ChevronUp, Pencil } from '@tamagui/lucide-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
@@ -38,7 +38,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 						<SizableText
 							color="$primary100"
 							fontSize="$5"
-							fontStyle={{ Bold }}
+							fontWeight="bold"
 							textAlign="left"
 							width="40%"
 							adjustsFontSizeToFit
@@ -48,7 +48,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 						<SizableText
 							color="$primary100"
 							fontSize="$5"
-							fontStyle={{ Bold }}
+							fontWeight="bold"
 							textAlign="left"
 							width="35%"
 							adjustsFontSizeToFit
@@ -57,7 +57,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 						</SizableText>
 					</XStack>
 
-					<XStack height="35" gap="5" alignItems="left">
+					<XStack height="35" gap="5" alignItems="flex-start">
 						<Button
 							backgroundColor="$primary200"
 							color="$white"
@@ -73,7 +73,7 @@ const BudgetWizardItem: React.FC<Props> = ({ item, onEdit }) => {
 							<ChevronUp
 								size={20}
 								color="$primary100"
-								alignSelf="left"
+								alignSelf="flex-start"
 							/>
 						) : (
 							<ChevronDown size={20} color="$primary100" />
