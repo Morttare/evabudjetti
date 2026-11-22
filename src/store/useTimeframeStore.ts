@@ -89,7 +89,7 @@ const getTimeframeRange = (
 
 	let currentTimeframeEnd = addLength(currentTimeframeStart, timeframeLength);
 
-	while (date > addDays(currentTimeframeEnd, 1)) {
+	while (date >= addDays(currentTimeframeEnd, 1)) {
 		currentTimeframeStart = addDays(currentTimeframeEnd, 1);
 		currentTimeframeEnd = addLength(currentTimeframeStart, timeframeLength);
 	}

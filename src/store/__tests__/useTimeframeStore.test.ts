@@ -30,3 +30,33 @@ describe('current timeframe boundaries before the configured start', () => {
 		expect(getCurrentTimeframeEnd(date)).toEqual(new Date(2026, 3, 14));
 	});
 });
+
+describe('current timeframe at the boundary of the next timeframe', () => {
+	beforeEach(() => {
+		// Monthly timeframe from 15 November: 15.11.–14.12., next 15.12.–14.1.
+		useTimeframeStore.getState().setStartDate(new Date(2026, 10, 15));
+		useTimeframeStore.getState().setLength(1, 'months');
+	});
+
+	it('moves to the next timeframe at midnight on its first day', () => {
+		const midnight = new Date(2026, 11, 15, 0, 0);
+		const { getCurrentTimeframeStart, getCurrentTimeframeEnd } =
+			useTimeframeStore.getState();
+
+		expect(getCurrentTimeframeStart(midnight)).toEqual(
+			new Date(2026, 11, 15),
+		);
+		expect(getCurrentTimeframeEnd(midnight)).toEqual(new Date(2027, 0, 14));
+	});
+
+	it('stays in the current timeframe on its last day', () => {
+		const lastDay = new Date(2026, 11, 14, 23, 59);
+		const { getCurrentTimeframeStart, getCurrentTimeframeEnd } =
+			useTimeframeStore.getState();
+
+		expect(getCurrentTimeframeStart(lastDay)).toEqual(
+			new Date(2026, 10, 15),
+		);
+		expect(getCurrentTimeframeEnd(lastDay)).toEqual(new Date(2026, 11, 14));
+	});
+});
