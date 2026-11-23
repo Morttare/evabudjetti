@@ -52,13 +52,20 @@ const PlannedTransactionConfirmModal = ({
 		() => categories.filter((cat) => cat.type === occurrence.type),
 		[categories, occurrence.type],
 	);
+	const displayCategories = useMemo(
+		() => [
+			{ id: 0, name: t('Uncategorized default') },
+			...filteredCategories.filter((category) => category.id !== 0),
+		],
+		[filteredCategories, t],
+	);
 
 	useEffect(() => {
-		const hasSelected = filteredCategories.some(
-			(cat) => cat.id === selectedCategory,
+		const hasSelected = displayCategories.some(
+			(category) => category.id === selectedCategory,
 		);
 		if (!hasSelected) setSelectedCategory(0);
-	}, [filteredCategories, selectedCategory]);
+	}, [displayCategories, selectedCategory]);
 
 	const handleAmountChange = (text: string) => {
 		const numeric = text.replace(/[^0-9.,]/g, '');
@@ -216,39 +223,47 @@ const PlannedTransactionConfirmModal = ({
 						</YStack>
 
 						{/* Category */}
-						{filteredCategories.length > 0 && (
-							<YStack gap={8}>
-								<SizableText color="$primary100" size="$title3">
-									{t('Category')}
-								</SizableText>
-								<XStack flexWrap="wrap">
-									{filteredCategories.map(({ id, name }) => (
+						<YStack gap={8}>
+							<SizableText color="$primary100" size="$title3">
+								{t('Category')}
+							</SizableText>
+							<XStack flexWrap="wrap">
+								{displayCategories.map(({ id, name }) => {
+									const selected = id === selectedCategory;
+									return (
 										<Button
 											key={id}
 											onPress={() =>
 												setSelectedCategory(id)
 											}
-											size={28}
-											padding={14}
+											size={40}
+											paddingHorizontal={14}
 											marginRight={8}
 											marginBottom={8}
+											borderWidth={1}
+											borderColor="$primary200"
 											backgroundColor={
-												id === selectedCategory
-													? '$primary200'
+												selected
+													? '$primary300'
 													: '$white'
 											}
 										>
-											<SizableText size="$title3">
-												{getCategoryDisplayName(
-													name,
-													i18n.language,
-												)}
+											<SizableText
+												color="$primary100"
+												size="$title3"
+											>
+												{id === 0
+													? name
+													: getCategoryDisplayName(
+															name,
+															i18n.language,
+														)}
 											</SizableText>
 										</Button>
-									))}
-								</XStack>
-							</YStack>
-						)}
+									);
+								})}
+							</XStack>
+						</YStack>
 					</YStack>
 				</ScrollView>
 
