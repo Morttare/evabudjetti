@@ -59,7 +59,10 @@ export default function YearsScreen() {
 
 	return (
 		<YStack flex={1} backgroundColor="$background">
-			<ScrollView contentInsetAdjustmentBehavior="never">
+			<ScrollView 
+				contentInsetAdjustmentBehavior="never"
+				contentContainerStyle={{ paddingBottom: 64 }}
+			>
 				<YStack padding="$4" gap="$3">
 					{/* Centered Year Dropdown Trigger Button */}
 					<XStack justifyContent="center" width="100%">
@@ -194,8 +197,18 @@ export default function YearsScreen() {
 							</XStack>
 						))}
 					</YStack>
+				</YStack>
+			</ScrollView>
 
-					<Button
+			<XStack
+				position="absolute"
+				bottom={16}
+				left={0}
+				right={0}
+				justifyContent="center"
+				pointerEvents="box-none"
+			>
+				<Button
 						width="60%"
 						backgroundColor="$primary200"
 						borderRadius={40}
@@ -208,8 +221,7 @@ export default function YearsScreen() {
 							{t('Edit Budget')}
 						</SizableText>
 					</Button>
-				</YStack>
-			</ScrollView>
+			</XStack>
 
 			{/* Native Modal to ensure backdrop covers root window (including top/bottom bars) */}
 			<Modal
