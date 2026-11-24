@@ -224,7 +224,7 @@ const PlannedTransactionConfirmModal = ({
 
 						{/* Category */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title3">
+							<SizableText color="$primary100" size="$title2">
 								{t('Category')}
 							</SizableText>
 							<XStack flexWrap="wrap">
