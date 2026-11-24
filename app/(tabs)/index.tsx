@@ -425,7 +425,7 @@ export default function Landing() {
 								color="$gray700"
 								maxFontSizeMultiplier={1.3}
 							>
-								{t('Help')}
+								{t('Instructions')}
 							</SizableText>
 							{t('Help Homepage')
 								.split('\n')
