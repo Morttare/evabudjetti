@@ -200,14 +200,8 @@ const configDefinition = {
 		pb: 'paddingBottom',
 	} as const,
 
-	// Allow font scaling for accessibility, but cap it to prevent layout breakage.
-	// Users with larger font preferences will see text scale up to 120% of base size.
-	// Font scaling blocked from buttons own internal text rendering
-
-	settings: {
-		allowFontScaling: true,
-	},
-
+	// Allow text scaling for accessibility, capped to avoid layout breakage.
+	// Button text remains fixed to preserve the established button layout.
 	defaultProps: {
 		Text: {
 			allowFontScaling: true,

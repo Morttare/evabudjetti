@@ -4,6 +4,10 @@ import type {
 	PlannedTransaction,
 	TransactionOccurrence,
 } from '@/src/dataModel';
+import {
+	firstPlannedOccurrenceAfter,
+	nextPlannedOccurrence,
+} from './recurrence';
 
 export function dateToMonthKey(date: Date): string {
 	return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -138,95 +142,185 @@ function getDaysDiff(d1: Date, d2: Date) {
 	return Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24));
 }
 
+/** Counts scheduled occurrences that fall within the requested calendar month. */
 export function getTransactionOccurrenceCount(
 	txn: PlannedTransaction,
 	targetYear: number,
 	targetMonth: number,
 ): number {
-	if (!txn.startDate) return 0;
-
 	const start = safeParseDate(txn.startDate);
 	if (Number.isNaN(start.getTime())) return 0;
 
-	const startYear = start.getFullYear();
-	const startMonth = start.getMonth();
+	const parsedEndDate =
+		txn.endDate == null ? null : safeParseDate(txn.endDate);
+	const endDate =
+		parsedEndDate !== null && !Number.isNaN(parsedEndDate.getTime())
+			? parsedEndDate
+			: null;
+	const planned: PlannedTransaction = {
+		...txn,
+		startDate: start,
+		endDate,
+		recurrenceInterval: getRecurrenceInterval(txn),
+	};
+	const monthStart = new Date(targetYear, targetMonth, 1);
+	const nextMonthStart = new Date(targetYear, targetMonth + 1, 1);
 
 	if (
-		targetYear < startYear ||
-		(targetYear === startYear && targetMonth < startMonth)
+		isMonthBefore(targetYear, targetMonth, start) ||
+		(endDate !== null && isMonthAfter(targetYear, targetMonth, endDate))
 	) {
+		return 0;
+	}
+
+	let count = 0;
+	let occurrence = firstPlannedOccurrenceAfter(planned, monthStart);
+	while (
+		occurrence !== undefined &&
+		occurrence < nextMonthStart &&
+		(endDate === null || occurrence <= endDate)
+	) {
+		count++;
+		occurrence = nextPlannedOccurrence(planned, occurrence);
+	}
+	return count;
+}
+
+/**
+ * Returns the budget's monthly count estimate. Frequent income recurrences
+ * use an annualized monthly average; other recurrences preserve month-based counting.
+ */
+export function getMonthlyOccurrenceEstimate(
+	txn: PlannedTransaction,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	const start = safeParseDate(txn.startDate);
+	if (Number.isNaN(start.getTime())) return 0;
+
+	if (isMonthBefore(targetYear, targetMonth, start)) {
 		return 0;
 	}
 
 	if (txn.endDate) {
 		const end = safeParseDate(txn.endDate);
 		if (!Number.isNaN(end.getTime())) {
-			const endYear = end.getFullYear();
-			const endMonth = end.getMonth();
-			if (
-				targetYear > endYear ||
-				(targetYear === endYear && targetMonth > endMonth)
-			) {
+			if (isMonthAfter(targetYear, targetMonth, end)) {
 				return 0;
 			}
 		}
 	}
 
 	if (txn.recurrenceBase == null) {
-		return targetYear === startYear && targetMonth === startMonth ? 1 : 0;
+		return targetYear === start.getFullYear() &&
+			targetMonth === start.getMonth()
+			? 1
+			: 0;
 	}
 
-	const base = txn.recurrenceBase;
-	const interval = txn.recurrenceInterval || 1;
+	switch (txn.recurrenceBase) {
+		case 'month':
+			return countMonthlyOccurrences(txn, start, targetYear, targetMonth);
+		case 'year':
+			return countYearlyOccurrences(txn, start, targetYear, targetMonth);
+		case 'week':
+			return countWeeklyOccurrences(txn, start, targetYear, targetMonth);
+		case 'day':
+			return countDailyOccurrences(txn, start, targetYear, targetMonth);
+		case null:
+			return 0;
+	}
+}
 
-	if (base === 'month') {
-		const monthDiff =
-			(targetYear - startYear) * 12 + (targetMonth - startMonth);
-		return monthDiff % interval === 0 ? 1 : 0;
+function isMonthBefore(year: number, month: number, date: Date): boolean {
+	return (
+		year < date.getFullYear() ||
+		(year === date.getFullYear() && month < date.getMonth())
+	);
+}
+
+function isMonthAfter(year: number, month: number, date: Date): boolean {
+	return (
+		year > date.getFullYear() ||
+		(year === date.getFullYear() && month > date.getMonth())
+	);
+}
+
+function countMonthlyOccurrences(
+	txn: PlannedTransaction,
+	start: Date,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	const monthDiff =
+		(targetYear - start.getFullYear()) * 12 +
+		targetMonth -
+		start.getMonth();
+	return monthDiff % getRecurrenceInterval(txn) === 0 ? 1 : 0;
+}
+
+function countYearlyOccurrences(
+	txn: PlannedTransaction,
+	start: Date,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	const yearDiff = targetYear - start.getFullYear();
+	return targetMonth === start.getMonth() &&
+		yearDiff % getRecurrenceInterval(txn) === 0
+		? 1
+		: 0;
+}
+
+function countWeeklyOccurrences(
+	txn: PlannedTransaction,
+	start: Date,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	const interval = getRecurrenceInterval(txn);
+	if (txn.type === 'income' && interval < 4) {
+		return 365 / (7 * interval) / 12;
 	}
 
-	if (base === 'year') {
-		const yearDiff = targetYear - startYear;
-		if (targetMonth === startMonth && yearDiff % interval === 0) return 1;
-		return 0;
+	return countDatesMatchingRecurrence(txn, start, targetYear, targetMonth, 7);
+}
+
+function countDailyOccurrences(
+	txn: PlannedTransaction,
+	start: Date,
+	targetYear: number,
+	targetMonth: number,
+): number {
+	const interval = getRecurrenceInterval(txn);
+	if (txn.type === 'income' && interval <= 30) {
+		return 365 / interval / 12;
 	}
 
-	if (base === 'week') {
-		if (txn.type === 'income' && interval < 4) {
-			return 365 / (7 * interval) / 12;
+	return countDatesMatchingRecurrence(txn, start, targetYear, targetMonth, 1);
+}
+
+function countDatesMatchingRecurrence(
+	txn: PlannedTransaction,
+	start: Date,
+	targetYear: number,
+	targetMonth: number,
+	daysPerUnit: number,
+): number {
+	let count = 0;
+	const interval = getRecurrenceInterval(txn);
+	const targetDate = new Date(targetYear, targetMonth, 1);
+	while (targetDate.getMonth() === targetMonth) {
+		const daysDiff = getDaysDiff(start, targetDate);
+		if (daysDiff >= 0 && daysDiff % (daysPerUnit * interval) === 0) {
+			count++;
 		}
-
-		let count = 0;
-		const d = new Date(targetYear, targetMonth, 1);
-		while (d.getMonth() === targetMonth) {
-			const daysDiff = getDaysDiff(start, d);
-			if (daysDiff >= 0 && daysDiff % 7 === 0) {
-				const weeksSinceStart = Math.floor(daysDiff / 7);
-				if (weeksSinceStart % interval === 0) {
-					count++;
-				}
-			}
-			d.setDate(d.getDate() + 1);
-		}
-		return count;
+		targetDate.setDate(targetDate.getDate() + 1);
 	}
+	return count;
+}
 
-	if (base === 'day') {
-		if (txn.type === 'income' && interval <= 30) {
-			return 365 / (1 * interval) / 12;
-		}
-
-		let count = 0;
-		const d = new Date(targetYear, targetMonth, 1);
-		while (d.getMonth() === targetMonth) {
-			const daysDiff = getDaysDiff(start, d);
-			if (daysDiff >= 0 && daysDiff % interval === 0) {
-				count++;
-			}
-			d.setDate(d.getDate() + 1);
-		}
-		return count;
-	}
-
-	return 0;
+function getRecurrenceInterval(txn: PlannedTransaction): number {
+	// Legacy budget records with a zero interval have historically meant every unit.
+	return txn.recurrenceInterval || 1;
 }

@@ -1,5 +1,9 @@
 import type { RealTransaction } from '@/src/dataModel';
-import { getBalanceReconciliationDeltaCents } from '../balanceReconciliationAdjustment';
+import {
+	getAffectedAccountIds,
+	getBalanceReconciliationDeltaCents,
+	getFirstAffectedDate,
+} from '../balanceReconciliationAdjustment';
 
 function transaction(
 	amount: number,
@@ -74,5 +78,56 @@ describe('getBalanceReconciliationDeltaCents', () => {
 				[updated],
 			),
 		).toBe(-10);
+	});
+
+	it('includes transactions on the reconciliation calendar day', () => {
+		const reconciliationDate = new Date(2026, 10, 4, 12, 0);
+		const previous = transaction(
+			10,
+			'expense',
+			new Date(2026, 10, 4, 9, 0),
+		);
+		const updated = { ...previous, amount: 15 };
+
+		expect(
+			getBalanceReconciliationDeltaCents(
+				1,
+				reconciliationDate,
+				[previous],
+				[updated],
+			),
+		).toBe(-500);
+	});
+});
+
+describe('affected reconciliation transactions', () => {
+	it('returns each affected account once', () => {
+		const previous = [
+			transaction(10, 'expense', new Date(2026, 10, 2)),
+			{
+				...transaction(20, 'income', new Date(2026, 10, 3)),
+				accountId: 2,
+			},
+		];
+		const next = [
+			{
+				...transaction(15, 'expense', new Date(2026, 10, 4)),
+				accountId: 3,
+			},
+		];
+
+		expect(getAffectedAccountIds(previous, next)).toEqual([1, 2, 3]);
+	});
+
+	it('finds the earliest affected date across account changes', () => {
+		const transactions = [
+			transaction(10, 'expense', new Date(2026, 10, 8)),
+			transaction(20, 'income', new Date(2026, 10, 3)),
+		];
+
+		expect(getFirstAffectedDate(transactions)).toEqual(
+			new Date(2026, 10, 3),
+		);
+		expect(getFirstAffectedDate([])).toBeUndefined();
 	});
 });

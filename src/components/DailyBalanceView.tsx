@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from '@tamagui/lucide-icons';
 import { addMonths, startOfMonth, subMonths } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Modal,
@@ -15,7 +15,6 @@ import { useCategoryStore } from '@/src/store/categoryStore';
 import { useTimeframeStore } from '@/src/store/useTimeframeStore';
 import { LOCALE } from '../constants/index';
 import type {
-	Category,
 	Persisted,
 	RealTransaction,
 	TransactionOccurrence,
@@ -57,12 +56,7 @@ export default function DailyBalanceView({
 		useState('');
 	const [timeframeTextWidth, setTimeframeTextWidth] = useState(0);
 
-	const storeCategories = useCategoryStore();
-	const [categories, setCategories] = useState<Persisted<Category>[]>([]);
-	useEffect(() => {
-		setCategories(storeCategories.categories);
-	}, [storeCategories.categories]);
-
+	const categories = useCategoryStore((state) => state.categories);
 	const addCategory = useCategoryStore((state) => state.addCategory);
 	const addRealTransactionToDb = useAddRealTransaction();
 

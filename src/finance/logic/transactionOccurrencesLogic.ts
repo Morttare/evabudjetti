@@ -1,19 +1,18 @@
-import {
-	differenceInDays,
-	intervalToDuration,
-	startOfDay,
-	yearsToMonths,
-} from 'date-fns';
-import { add } from 'date-fns/add';
 import type {
 	Persisted,
 	PlannedTransaction,
 	PlannedTransactionOccurrenceException,
 	RealTransaction,
-	RecurrenceBase,
 	TransactionOccurrence,
 } from '@/src/dataModel';
+import {
+	addRecurrence,
+	firstPlannedOccurrenceAfter,
+	nextPlannedOccurrence,
+} from './recurrence';
 import { dateToDateKey } from './util';
+
+export { addRecurrence, firstPlannedOccurrenceAfter, nextPlannedOccurrence };
 
 /**
  * Generates a list of all transaction occurrences (both planned and real) within the specified month range, sorted by date
@@ -23,6 +22,7 @@ import { dateToDateKey } from './util';
  * @param endMonth The last month (0-11) for which to generate occurrences
  * @param relevantPlannedTransactions Transactions that have occurrences within the given month range
  * @param relevantRealTransactions Sorted-by-date transactions that occur within the given month range
+ * @param excludedPlannedOccurrences Planned occurrences suppressed by deletion or moved to a real transaction
  * @returns A list of all transaction occurrences (both planned and real) within the specified month range, sorted by date
  */
 export function generateTransactionOccurrences(
@@ -34,26 +34,10 @@ export function generateTransactionOccurrences(
 	relevantRealTransactions: Persisted<RealTransaction>[],
 	excludedPlannedOccurrences: PlannedTransactionOccurrenceException[] = [],
 ): TransactionOccurrence[] {
-	const overriddenOccurrenceDates: Map<number, Set<string>> = new Map();
-	// Exceptions suppress deleted dates; linked real transactions also suppress their source and current dates.
-	for (const exception of excludedPlannedOccurrences) {
-		const dateSet =
-			overriddenOccurrenceDates.get(exception.plannedTransactionId) ??
-			new Set();
-		dateSet.add(dateToDateKey(exception.occurrenceDate));
-		overriddenOccurrenceDates.set(exception.plannedTransactionId, dateSet);
-	}
-
-	for (const real of relevantRealTransactions) {
-		if (real.plannedTransactionId) {
-			const dateSet =
-				overriddenOccurrenceDates.get(real.plannedTransactionId) ??
-				new Set();
-			dateSet.add(dateToDateKey(real.plannedOccurrenceDate ?? real.date));
-			dateSet.add(dateToDateKey(real.date));
-			overriddenOccurrenceDates.set(real.plannedTransactionId, dateSet);
-		}
-	}
+	const overriddenOccurrenceDates = indexOverriddenOccurrenceDates(
+		excludedPlannedOccurrences,
+		relevantRealTransactions,
+	);
 
 	const plannedOccurrences = generatePlannedTransactionOccurrencesForMonths(
 		startYear,
@@ -101,6 +85,50 @@ export function generateTransactionOccurrences(
 	return occurrences;
 }
 
+function indexOverriddenOccurrenceDates(
+	exceptions: PlannedTransactionOccurrenceException[],
+	realTransactions: Persisted<RealTransaction>[],
+): Map<number, Set<string>> {
+	const overriddenDates = new Map<number, Set<string>>();
+
+	for (const exception of exceptions) {
+		addOverriddenDate(
+			overriddenDates,
+			exception.plannedTransactionId,
+			exception.occurrenceDate,
+		);
+	}
+
+	for (const transaction of realTransactions) {
+		if (transaction.plannedTransactionId == null) {
+			continue;
+		}
+		addOverriddenDate(
+			overriddenDates,
+			transaction.plannedTransactionId,
+			transaction.plannedOccurrenceDate ?? transaction.date,
+		);
+		addOverriddenDate(
+			overriddenDates,
+			transaction.plannedTransactionId,
+			transaction.date,
+		);
+	}
+
+	return overriddenDates;
+}
+
+function addOverriddenDate(
+	overriddenDates: Map<number, Set<string>>,
+	plannedTransactionId: number,
+	date: Date,
+): void {
+	const dates =
+		overriddenDates.get(plannedTransactionId) ?? new Set<string>();
+	dates.add(dateToDateKey(date));
+	overriddenDates.set(plannedTransactionId, dates);
+}
+
 /**
  * Generates all occurrences for the given month range based on the relevant planned transactions and overridden occurrence dates
  * @param startYear The year of the first month for which to generate occurrences
@@ -119,220 +147,130 @@ function generatePlannedTransactionOccurrencesForMonths(
 	relevantPlannedTransactions: Persisted<PlannedTransaction>[],
 	overriddenOccurrenceDates: Map<number, Set<string>>,
 ): TransactionOccurrence[] {
-	let date = new Date(startYear, startMonth, 1);
+	const date = new Date(startYear, startMonth, 1);
 	const afterEndMonth = new Date(endYear, endMonth + 1, 1);
 	const occurrences: TransactionOccurrence[] = [];
 
 	type PendingEntry = {
 		planned: Persisted<PlannedTransaction>;
 		nextDate: Date;
+		// Preserves the previous input-order tie-break for matching dates.
+		order: number;
 	};
-	const pending: PendingEntry[] = relevantPlannedTransactions
-		.map((t) => {
-			const nextDate = firstPlannedOccurrenceAfter(t, date);
-			return nextDate !== undefined
-				? { planned: t, nextDate }
-				: undefined;
-		})
-		.filter((entry) => entry !== undefined);
+	const pending: PendingEntry[] = [];
 
-	while (date < afterEndMonth) {
-		let nearestIndex = -1;
-		let nearestDate: Date | undefined;
-
-		for (let i = 0; i < pending.length; i++) {
-			const { nextDate } = pending[i];
-
-			if (nearestDate === undefined || nextDate < nearestDate) {
-				nearestDate = nextDate;
-				nearestIndex = i;
-			}
+	for (let order = 0; order < relevantPlannedTransactions.length; order++) {
+		const planned = relevantPlannedTransactions[order];
+		const nextDate = firstPlannedOccurrenceAfter(planned, date);
+		if (nextDate !== undefined) {
+			pushPendingOccurrence(pending, { planned, nextDate, order });
 		}
+	}
 
-		if (nearestDate === undefined || nearestDate >= afterEndMonth) {
+	while (pending.length > 0) {
+		const nearest = popPendingOccurrence(pending);
+		if (nearest === undefined || nearest.nextDate >= afterEndMonth) {
 			break;
 		}
 
-		const { planned } = pending[nearestIndex];
+		const { planned, nextDate } = nearest;
 		const overriddenDatesForPlanned = overriddenOccurrenceDates.get(
 			planned.id,
 		);
 
-		const nearestOccurrenceDateKey = dateToDateKey(nearestDate);
+		const nearestOccurrenceDateKey = dateToDateKey(nextDate);
 
 		if (!overriddenDatesForPlanned?.has(nearestOccurrenceDateKey)) {
-			occurrences.push(
-				plannedTransactionToOccurrence(planned, nearestDate),
-			);
+			occurrences.push(plannedTransactionToOccurrence(planned, nextDate));
 		}
 
-		const nextOccurrence = nextPlannedOccurrence(planned, nearestDate);
+		const nextOccurrence = nextPlannedOccurrence(planned, nextDate);
 
-		if (nextOccurrence === undefined) {
-			pending.splice(nearestIndex, 1);
-		} else {
-			pending[nearestIndex].nextDate = nextOccurrence;
+		if (nextOccurrence !== undefined) {
+			pushPendingOccurrence(pending, {
+				planned,
+				nextDate: nextOccurrence,
+				order: nearest.order,
+			});
 		}
-
-		date = nearestDate;
 	}
 
 	return occurrences;
 }
 
-/**
- * Finds the first planned occurrence of a transaction after a given date
- * @param planned The planned transaction for which to find an occurrence
- * @param afterDate The date after which to search for occurrences
- * @returns The date of the first occurrence after the specified date, or undefined if none exists
- */
-export function firstPlannedOccurrenceAfter(
-	planned: PlannedTransaction,
-	afterDate: Date,
-): Date | undefined {
-	const plannedStartDate = startOfDay(planned.startDate);
-	const plannedEndDate = planned.endDate ? startOfDay(planned.endDate) : null;
-	afterDate = startOfDay(afterDate);
+function pushPendingOccurrence<T extends { nextDate: Date; order: number }>(
+	heap: T[],
+	entry: T,
+): void {
+	let index = heap.length;
+	heap.push(entry);
 
-	if (plannedStartDate >= afterDate) {
-		return planned.startDate;
-	}
-
-	var firstOccurrenceAfter: Date | undefined;
-
-	if (planned.recurrenceBase !== null && planned.recurrenceInterval <= 0) {
-		throw new Error(
-			`Invalid recurrence interval: ${planned.recurrenceInterval} for planned transaction`,
-		);
-	}
-
-	switch (planned.recurrenceBase) {
-		case null:
-			firstOccurrenceAfter =
-				plannedStartDate >= afterDate ? plannedStartDate : undefined;
-			break;
-		case 'day': {
-			const daysDiff = differenceInDays(afterDate, plannedStartDate);
-			const intervalsToAdd = Math.ceil(
-				daysDiff / planned.recurrenceInterval,
-			);
-			firstOccurrenceAfter = add(planned.startDate, {
-				days: intervalsToAdd * planned.recurrenceInterval,
-			});
+	while (index > 0) {
+		const parentIndex = Math.floor((index - 1) / 2);
+		const parent = heap[parentIndex];
+		if (parent === undefined || !comesBefore(entry, parent)) {
 			break;
 		}
-		case 'week': {
-			const daysDiff = differenceInDays(afterDate, plannedStartDate);
-			const intervalsToAdd = Math.ceil(
-				daysDiff / (7 * planned.recurrenceInterval),
-			);
-			firstOccurrenceAfter = add(planned.startDate, {
-				weeks: intervalsToAdd * planned.recurrenceInterval,
-			});
-			break;
-		}
-		case 'month': {
-			const diff = intervalToDuration({
-				start: plannedStartDate,
-				end: afterDate,
-			});
-			const hasSubMonthRemainder = (diff.days ?? 0) > 0;
-			const monthsDiff =
-				yearsToMonths(diff.years ?? 0) +
-				(diff.months ?? 0) +
-				(hasSubMonthRemainder ? 1 : 0);
-			const intervalsToAdd = Math.ceil(
-				monthsDiff / planned.recurrenceInterval,
-			);
-			firstOccurrenceAfter = add(planned.startDate, {
-				months: intervalsToAdd * planned.recurrenceInterval,
-			});
-			break;
-		}
-		case 'year': {
-			const diff = intervalToDuration({
-				start: plannedStartDate,
-				end: afterDate,
-			});
-			const hasSubYearRemainder =
-				(diff.months ?? 0) > 0 || (diff.days ?? 0) > 0;
-			const yearsDiff = (diff.years ?? 0) + (hasSubYearRemainder ? 1 : 0);
-			const intervalsToAdd = Math.ceil(
-				yearsDiff / planned.recurrenceInterval,
-			);
-			firstOccurrenceAfter = add(planned.startDate, {
-				years: intervalsToAdd * planned.recurrenceInterval,
-			});
-			break;
-		}
-		default:
-			throw new Error(
-				`Invalid recurrence base: ${planned.recurrenceBase}`,
-			);
+		heap[index] = parent;
+		index = parentIndex;
 	}
 
-	if (
-		firstOccurrenceAfter != null &&
-		plannedEndDate != null &&
-		firstOccurrenceAfter > plannedEndDate
-	) {
-		return undefined;
-	}
-
-	return firstOccurrenceAfter;
+	heap[index] = entry;
 }
 
-/**
- * Finds the next occurrence of a planned transaction after a given occurrence date
- * @param planned The planned transaction for which to find the next occurrence
- * @param currentOccurrence The date of the current occurrence
- * @returns The date of the next occurrence after the specified date, or undefined if none exists
- */
-export function nextPlannedOccurrence(
-	planned: PlannedTransaction,
-	currentOccurrence: Date,
-): Date | undefined {
-	if (planned.recurrenceBase == null || planned.recurrenceInterval <= 0) {
+function popPendingOccurrence<T extends { nextDate: Date; order: number }>(
+	heap: T[],
+): T | undefined {
+	const first = heap[0];
+	if (first === undefined) {
 		return undefined;
 	}
 
-	const nextOccurrence = addRecurrence(
-		currentOccurrence,
-		planned.recurrenceBase,
-		planned.recurrenceInterval,
+	const last = heap.pop();
+	if (last === undefined) {
+		throw new Error('Pending occurrence heap became empty unexpectedly');
+	}
+
+	if (heap.length === 0) {
+		return first;
+	}
+
+	let index = 0;
+	while (true) {
+		const leftIndex = index * 2 + 1;
+		if (leftIndex >= heap.length) {
+			break;
+		}
+		const rightIndex = leftIndex + 1;
+		const left = heap[leftIndex];
+		const right = heap[rightIndex];
+		const childIndex =
+			right !== undefined &&
+			left !== undefined &&
+			comesBefore(right, left)
+				? rightIndex
+				: leftIndex;
+		const child = heap[childIndex];
+		if (child === undefined || !comesBefore(child, last)) {
+			break;
+		}
+		heap[index] = child;
+		index = childIndex;
+	}
+
+	heap[index] = last;
+	return first;
+}
+
+function comesBefore(
+	left: { nextDate: Date; order: number },
+	right: { nextDate: Date; order: number },
+): boolean {
+	return (
+		left.nextDate.getTime() < right.nextDate.getTime() ||
+		(left.nextDate.getTime() === right.nextDate.getTime() &&
+			left.order < right.order)
 	);
-
-	if (planned.endDate && nextOccurrence > planned.endDate) {
-		return undefined;
-	}
-
-	return nextOccurrence;
-}
-
-/**
- * Adds the specified recurrence interval to a date based on the given recurrence base
- * @param date The date to which to add the recurrence interval
- * @param recurrenceBase The base unit of the recurrence (day, week, month, or year)
- * @param recurrenceInterval The number of recurrence units to add
- * @returns The new date after adding the specified recurrence interval
- */
-export function addRecurrence(
-	date: Date,
-	recurrenceBase: RecurrenceBase,
-	recurrenceInterval: number,
-): Date {
-	switch (recurrenceBase) {
-		case 'day':
-			return add(date, { days: recurrenceInterval });
-		case 'week':
-			return add(date, { weeks: recurrenceInterval });
-		case 'month':
-			return add(date, { months: recurrenceInterval });
-		case 'year':
-			return add(date, { years: recurrenceInterval });
-		default:
-			throw new Error(`Invalid recurrence base: ${recurrenceBase}`);
-	}
 }
 
 export function realTransactionToOccurrence(

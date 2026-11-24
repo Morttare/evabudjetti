@@ -190,7 +190,7 @@ const AddItemPopup = ({
 							placeholderTextColor="#a3a3a3"
 							style={styles.input}
 							maxLength={12}
-							defaultValue={amount ? String(amount) : null}
+							defaultValue={amount ? String(amount) : undefined}
 							keyboardType="numeric"
 							onChangeText={(text: string) => {
 								text = `${text.replace(',', '.')}`;

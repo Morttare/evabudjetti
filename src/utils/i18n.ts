@@ -462,6 +462,8 @@ i18next
 				'Year view': 'Vuosinäkymä',
 				'No income records': 'Ei näytettäviä tuloja',
 				'No expense records': 'Ei näytettäviä menoja',
+				'No income planned': 'Ei suunniteltuja tuloja',
+				'No expenses planned': 'Ei suunniteltuja menoja',
 
 				// FUNDS
 				'Daily situation': 'Päivän rahatilanne',
@@ -543,7 +545,7 @@ i18next
 				'Planned': 'Suunniteltu',
 				'No expenses this month': 'Ei menoja tässä kuussa',
 				'No income this month': 'Ei tuloja tässä kuussa',
-				'Uncategorized': 'muu',
+				'Uncategorized': 'Muu',
 				'Planned Incomes': 'Suunnitellut Tulot',
 				'Planned Expenses': 'Suunnitellut Menot',
 

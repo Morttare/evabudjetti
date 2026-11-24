@@ -37,12 +37,9 @@ export function calculateBalanceDatasForMonths(
 	endMonth: MonthInstance,
 ): AccountBalanceMonthData[] {
 	const monthyBalances: AccountBalanceMonthData[] = [];
-
-	const reconciliationsByDateKey = new Map<string, BalanceReconciliation>();
-	for (const reconciliation of relevantBalanceReconciliations) {
-		const dateKey = dateToDateKey(reconciliation.date);
-		reconciliationsByDateKey.set(dateKey, reconciliation);
-	}
+	const reconciliationsByDateKey = indexReconciliationsByDate(
+		relevantBalanceReconciliations,
+	);
 
 	let currentBalance = startBalance;
 
@@ -75,7 +72,7 @@ export function calculateBalanceDatasForMonths(
 			day++;
 		}
 
-		// The occurrences should be sorted by date
+		// Callers provide occurrences sorted by date within the month.
 		const occurrences = occurrencesData?.transactionOccurrences ?? [];
 		let occurrenceIndex = 0;
 
@@ -124,6 +121,19 @@ export function calculateBalanceDatasForMonths(
 	}
 
 	return monthyBalances;
+}
+
+function indexReconciliationsByDate(
+	reconciliations: BalanceReconciliation[],
+): Map<string, BalanceReconciliation> {
+	const reconciliationsByDateKey = new Map<string, BalanceReconciliation>();
+	for (const reconciliation of reconciliations) {
+		reconciliationsByDateKey.set(
+			dateToDateKey(reconciliation.date),
+			reconciliation,
+		);
+	}
+	return reconciliationsByDateKey;
 }
 
 /**

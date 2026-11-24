@@ -36,8 +36,6 @@ export default function RootLayout() {
 		) {
 			void (async () => {
 				await seedDefaultBudgetAndAccount();
-				// Reconcile legacy IDs before renaming old seeded category labels.
-				await initializeCategoryStore();
 				await seedCategories();
 				await initializeCategoryStore();
 			})().catch((initializationError) => {
@@ -64,7 +62,7 @@ export default function RootLayout() {
 				<PortalProvider>
 					<Theme name="light">
 						<SafeAreaProvider>
-							<StatusBar style="dark" translucent={false} />
+							<StatusBar style="dark" />
 							<Stack
 								screenOptions={{
 									headerBackButtonDisplayMode: 'minimal',
@@ -177,7 +175,7 @@ export default function RootLayout() {
 			<PortalProvider>
 				<Theme name={'light'}>
 					<SafeAreaProvider>
-						<StatusBar style="dark" translucent={false} />
+						<StatusBar style="dark" />
 						<Stack
 							screenOptions={{
 								headerBackButtonDisplayMode: 'minimal',

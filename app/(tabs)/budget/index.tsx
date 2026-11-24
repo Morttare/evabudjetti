@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, SizableText, View, XStack, YStack } from 'tamagui';
 import { usePlannedTransactions } from '@/src/finance/hook/usePlannedTransactions';
-import { getTransactionOccurrenceCount } from '@/src/finance/logic/util';
+import { getMonthlyOccurrenceEstimate } from '@/src/finance/logic/util';
 
 interface MonthMeta {
 	monthNumber: number; // 0-indexed for calculation (0 = Jan, 11 = Dec)
@@ -62,8 +62,9 @@ export default function YearsScreen() {
 			<SizableText
 				width="100%"
 				paddingHorizontal="$4"
-				paddingTop="$4"
+				paddingTop="$3"
 				size="$9"
+				lineHeight="$11"
 				fontWeight="bold"
 				color="$primary100"
 				textAlign="center"
@@ -117,7 +118,7 @@ export default function YearsScreen() {
 									let monthlyPlannedCashFlow = 0;
 									for (const txn of plannedTransactions) {
 										const count =
-											getTransactionOccurrenceCount(
+											getMonthlyOccurrenceEstimate(
 												txn,
 												yearNum,
 												item.monthNumber,

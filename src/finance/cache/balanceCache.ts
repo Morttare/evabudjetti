@@ -3,6 +3,7 @@ import type {
 	AccountBalanceMonthData,
 	BalanceReconciliation,
 	MonthInstance,
+	TransactionOccurrencesMonthData,
 } from '@/src/dataModel';
 import {
 	calculateBalanceDatasForMonths,
@@ -78,6 +79,10 @@ export const useBalanceCache = create<BalanceCacheState>((set, get) => ({
 	},
 }));
 
+/**
+ * Recalculates the oldest stale month and every later month in the requested range.
+ * Returns no updates when the existing cache is already current.
+ */
 export async function updateBalanceCacheForMonths(
 	startYear: number,
 	startMonth: number,
@@ -86,29 +91,15 @@ export async function updateBalanceCacheForMonths(
 	monthVersions: Map<string, number>,
 	oldCacheState: BalanceCacheState,
 ): Promise<AccountBalanceMonthCacheData[]> {
-	let firstMonthToUpdate: MonthInstance | undefined;
-
 	const start = performance.now();
-
-	for (const { year, month } of monthsInRange(
+	const firstMonthToUpdate = findFirstMonthNeedingUpdate(
 		startYear,
 		startMonth,
 		endYear,
 		endMonth,
-	)) {
-		const monthKey = createMonthKey(year, month);
-		const monthData = oldCacheState.dataByMonth.get(monthKey);
-		const requiredVersion = monthVersions.get(monthKey) ?? 0;
-
-		if (monthData === undefined || monthData.version < requiredVersion) {
-			if (firstMonthToUpdate === undefined) {
-				firstMonthToUpdate = { year, month };
-				// The balance update need will always also affect subsequent months,
-				// so we can stop looking for more months to update after finding the first one that needs updating
-				break;
-			}
-		}
-	}
+		monthVersions,
+		oldCacheState,
+	);
 
 	if (firstMonthToUpdate === undefined) {
 		// No months need updating, return an empty update to avoid unnecessary state updates
@@ -143,25 +134,12 @@ export async function updateBalanceCacheForMonths(
 		endYear,
 		endMonth,
 	);
-
-	// Find the reconciliation just before the needed update range
-	let relevantReconciliationsStart = balanceReconciliations.findLastIndex(
-		(r) =>
-			r.date <=
-			new Date(firstMonthToUpdate.year, firstMonthToUpdate.month, 1),
+	const relevantReconciliations = findRelevantReconciliations(
+		balanceReconciliations,
+		firstMonthToUpdate,
 	);
 
-	// If there are no such reconciliations, take the first reconciliation in the range
-	if (relevantReconciliationsStart === -1) {
-		relevantReconciliationsStart = balanceReconciliations.findIndex(
-			(r) =>
-				r.date >=
-				new Date(firstMonthToUpdate.year, firstMonthToUpdate.month, 1),
-		);
-	}
-
-	// If there are no reconciliations in or before the range, we cannot calculate any meaningful balances
-	if (relevantReconciliationsStart === -1) {
+	if (relevantReconciliations === undefined) {
 		// Cache empty data for the months in the range to avoid trying to update them again before we have a reconciliation
 		return getEmptyDataFillingMonthUpdates(
 			firstMonthToUpdate.year,
@@ -172,15 +150,11 @@ export async function updateBalanceCacheForMonths(
 		);
 	}
 
-	const relevantReconciliations = balanceReconciliations.slice(
-		relevantReconciliationsStart,
-	);
-
 	let anchorReconciliation: BalanceReconciliation | undefined;
 	let adjustedStartYear = firstMonthToUpdate.year;
 	let adjustedStartMonth = firstMonthToUpdate.month;
 
-	// It the starting balance is not fresh, find the extended range of transaction occurrences we need
+	// If the starting balance is stale, extend the occurrence range back to an anchor reconciliation.
 	if (!startingBalanceIsFresh) {
 		anchorReconciliation = relevantReconciliations[0];
 		const anchorReconciliationStartDate = relevantReconciliations[0].date;
@@ -222,52 +196,18 @@ export async function updateBalanceCacheForMonths(
 			neededOccurrencesVersions,
 		);
 
-	let startingBalance: number;
-	let startingBalanceMonth = firstMonthToUpdate;
-	let startingBalanceDayOfMonth: number;
-
-	if (
-		startingBalanceIsFresh &&
-		monthBeforeFirstToUpdateData.endBalance !== undefined
-	) {
-		startingBalance = monthBeforeFirstToUpdateData.endBalance;
-		startingBalanceDayOfMonth = 1;
-	} else {
-		if (anchorReconciliation === undefined) {
-			throw new Error(
-				'This should not happen: anchor reconciliation is undefined',
-			);
-		}
-
-		// We need to calculate the starting balance based on reconciliations,
-		// or if the only reconciliation is in the range, the start balance
-		// must be consider to be mid range
-
-		if (
-			anchorReconciliation.date.getFullYear() > firstMonthToUpdate.year ||
-			(anchorReconciliation.date.getFullYear() ===
-				firstMonthToUpdate.year &&
-				anchorReconciliation.date.getMonth() >=
-					firstMonthToUpdate.month)
-		) {
-			// The only reconciliation is in the calculation range, consider the starting balance to be mid range
-			startingBalance = anchorReconciliation.amount;
-			startingBalanceMonth = {
-				year: anchorReconciliation.date.getFullYear(),
-				month: anchorReconciliation.date.getMonth(),
-			};
-			startingBalanceDayOfMonth = anchorReconciliation.date.getDate();
-		} else {
-			// The starting balance is based on a reconciliation before the starting month,
-			// so we can calculate and use the real starting balance at the start of the month
-			startingBalance = calculateStartingBalanceForMonth(
-				transactionOccurrencesData.dataByMonth,
-				anchorReconciliation,
-				firstMonthToUpdate,
-			);
-			startingBalanceDayOfMonth = 1;
-		}
-	}
+	const startingBalanceData = resolveStartingBalance(
+		startingBalanceIsFresh,
+		monthBeforeFirstToUpdateData,
+		anchorReconciliation,
+		firstMonthToUpdate,
+		transactionOccurrencesData.dataByMonth,
+	);
+	const {
+		amount: startingBalance,
+		month: startingBalanceMonth,
+		dayOfMonth: startingBalanceDayOfMonth,
+	} = startingBalanceData;
 
 	const monthUpdates = [];
 
@@ -316,6 +256,106 @@ export async function updateBalanceCacheForMonths(
 		...monthData,
 		version: monthVersions.get(monthData.monthKey) ?? 0,
 	}));
+}
+
+function findFirstMonthNeedingUpdate(
+	startYear: number,
+	startMonth: number,
+	endYear: number,
+	endMonth: number,
+	monthVersions: Map<string, number>,
+	oldCacheState: BalanceCacheState,
+): MonthInstance | undefined {
+	for (const month of monthsInRange(
+		startYear,
+		startMonth,
+		endYear,
+		endMonth,
+	)) {
+		const monthKey = createMonthKey(month.year, month.month);
+		const monthData = oldCacheState.dataByMonth.get(monthKey);
+		const requiredVersion = monthVersions.get(monthKey) ?? 0;
+
+		if (monthData === undefined || monthData.version < requiredVersion) {
+			return month;
+		}
+	}
+	return undefined;
+}
+
+function findRelevantReconciliations(
+	reconciliations: BalanceReconciliation[],
+	firstMonthToUpdate: MonthInstance,
+): BalanceReconciliation[] | undefined {
+	const firstDate = new Date(
+		firstMonthToUpdate.year,
+		firstMonthToUpdate.month,
+		1,
+	);
+	let startIndex = reconciliations.findLastIndex(
+		(reconciliation) => reconciliation.date <= firstDate,
+	);
+
+	if (startIndex === -1) {
+		startIndex = reconciliations.findIndex(
+			(reconciliation) => reconciliation.date >= firstDate,
+		);
+	}
+
+	return startIndex === -1 ? undefined : reconciliations.slice(startIndex);
+}
+
+function resolveStartingBalance(
+	startingBalanceIsFresh: boolean,
+	previousMonthData: AccountBalanceMonthCacheData | undefined,
+	anchorReconciliation: BalanceReconciliation | undefined,
+	firstMonthToUpdate: MonthInstance,
+	transactionOccurrencesByMonth: Map<string, TransactionOccurrencesMonthData>,
+): {
+	amount: number;
+	month: MonthInstance;
+	dayOfMonth: number;
+} {
+	if (startingBalanceIsFresh && previousMonthData?.endBalance !== undefined) {
+		return {
+			amount: previousMonthData.endBalance,
+			month: firstMonthToUpdate,
+			dayOfMonth: 1,
+		};
+	}
+
+	if (anchorReconciliation === undefined) {
+		throw new Error(
+			'Cannot resolve a starting balance without an anchor reconciliation',
+		);
+	}
+
+	const reconciliationMonth = {
+		year: anchorReconciliation.date.getFullYear(),
+		month: anchorReconciliation.date.getMonth(),
+	};
+	const reconciliationIsInOrAfterFirstMonth =
+		reconciliationMonth.year > firstMonthToUpdate.year ||
+		(reconciliationMonth.year === firstMonthToUpdate.year &&
+			reconciliationMonth.month >= firstMonthToUpdate.month);
+
+	if (reconciliationIsInOrAfterFirstMonth) {
+		return {
+			amount: anchorReconciliation.amount,
+			month: reconciliationMonth,
+			dayOfMonth: anchorReconciliation.date.getDate(),
+		};
+	}
+
+	return {
+		amount: calculateStartingBalanceForMonth(
+			transactionOccurrencesByMonth,
+			anchorReconciliation,
+			firstMonthToUpdate,
+		),
+		month: firstMonthToUpdate,
+		dayOfMonth: 1,
+	};
 }
 
 export function updateMonthsBalances(
