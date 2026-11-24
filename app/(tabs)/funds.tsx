@@ -8,7 +8,7 @@ export default function Funds() {
 	const [selectedDate, setselectedDate] = useState(new Date());
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
 			<YStack
 				backgroundColor={'$color.white'}
 				paddingTop={'$paddingmd'}
