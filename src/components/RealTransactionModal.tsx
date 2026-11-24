@@ -333,7 +333,11 @@ const RealTransactionModal = ({
 						width={'80%'}
 						gap={20}
 					>
-						<SizableText size={'$title1'} marginBottom={8} color="$primary100">
+						<SizableText
+							size={'$title1'}
+							marginBottom={8}
+							color="$primary100"
+						>
 							{t('Add category')}
 						</SizableText>
 						<Input

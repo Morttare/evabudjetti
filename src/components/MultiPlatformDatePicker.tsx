@@ -122,7 +122,12 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	}
 
 	return (
-		<XStack style={{ transform: [{ translateX: 8 }] }} f={1} ai={'center'} maxWidth={'25%'}>
+		<XStack
+			style={{ transform: [{ translateX: 8 }] }}
+			f={1}
+			ai={'center'}
+			maxWidth={'25%'}
+		>
 			{/* Display selected date */}
 			<SizableText size="$body" color={`$${color}`}>
 				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}

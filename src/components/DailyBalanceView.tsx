@@ -3,8 +3,8 @@ import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Modal,
 	type LayoutChangeEvent,
+	Modal,
 	type TextLayoutEvent,
 } from 'react-native';
 import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
@@ -264,11 +264,12 @@ export default function DailyBalanceView({
 				</XStack>
 
 				{/* Daily Stats */}
-				<XStack 
-					width="100%" 
-					alignItems="center" 
+				<XStack
+					width="100%"
+					alignItems="center"
 					gap={6}
-					marginBottom="$-1">
+					marginBottom="$-1"
+				>
 					<YStack flex={1} alignItems="center">
 						<Text color="$black" fontSize="$3" fontWeight="600">
 							{t('Account balance')}:
@@ -356,7 +357,8 @@ export default function DailyBalanceView({
 					color="$black"
 					fontSize="$3"
 					fontWeight="600"
-					onLayout={(event: LayoutChangeEvent) => { // In case the text doesn't fit in one line
+					onLayout={(event: LayoutChangeEvent) => {
+						// In case the text doesn't fit in one line
 						const width = event.nativeEvent.layout.width;
 						setTimeframeTextWidth((currentWidth) =>
 							currentWidth === width ? currentWidth : width,
