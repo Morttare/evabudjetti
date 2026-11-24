@@ -145,7 +145,7 @@ i18next
 				'Help Usable funds':
 					'Usable funds is the daily amount left over after planned expenses, available for other spending or saving.',
 				'Help Homepage': 
-					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the spending allowance stays up to date.\n' +
+					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the usable funds stays up to date.\n' +
 					'Funds: record your income and expenses as they happen. You can edit and delete them in the same place.\n' +
 					'Budget: add recurring items and larger one-off items. You can edit and delete them later.\n' +
 					'Bookkeeping: view actual monthly income and expenses.',

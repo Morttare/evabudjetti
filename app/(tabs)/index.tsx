@@ -100,7 +100,7 @@ export default function Landing() {
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
 								fontSize={'$7'}
-								fontWeight={'500'}
+								fontWeight={'700'}
 								numberOfLines={1}
 								adjustsFontSizeToFit
 								color="$primary100"
@@ -111,7 +111,7 @@ export default function Landing() {
 							<Text
 								numberOfLines={1}
 								adjustsFontSizeToFit
-								fontSize={'$3'}
+								fontSize={'$4'}
 								color="$primary100"
 							>
 								{t('Supporting your financial well-being')}

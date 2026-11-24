@@ -1,8 +1,9 @@
-import { PiggyBank } from '@tamagui/lucide-icons';
+import { Globe, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, SizableText, Text, YStack } from 'tamagui';
+import LanguagePickerDialog from '@/src/components/LanguagePickerDialog';
 
 export default function Landing() {
 	const { t } = useTranslation();
@@ -55,6 +56,21 @@ export default function Landing() {
 					</SizableText>
 				</Button>
 			</YStack>
+
+			<LanguagePickerDialog
+				trigger={
+					<Button
+						position="absolute"
+						top={52}
+						right={32}
+						size={50}
+						circular
+						chromeless
+						accessibilityLabel={t('Language')}
+						icon={<Globe size={35} color="$primary100" />}
+					/>
+				}
+			/>
 		</SafeAreaView>
 	);
 }

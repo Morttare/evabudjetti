@@ -11,7 +11,7 @@ export default function Introduction() {
 
 	const showApp = () => {
 		setInstructionShown(true);
-		router.push('/');
+		router.replace('/');
 	};
 
 	return (
