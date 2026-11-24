@@ -3,7 +3,7 @@ import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
@@ -87,6 +87,8 @@ export default function Landing() {
 				style={{ flex: 1, backgroundColor: '#fff' }}
 				contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
 				keyboardShouldPersistTaps="handled"
+				keyboardDismissMode="interactive"
+				automaticallyAdjustKeyboardInsets
 			>
 				<YStack f={1} backgroundColor="$background">
 					<YStack
