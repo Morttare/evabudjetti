@@ -129,7 +129,6 @@ const AddItemPopup = ({
 	};
 	return (
 		<View style={styles.container}>
-			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 			<YStack
 				backgroundColor="$background"
 				borderColor="$primary100"

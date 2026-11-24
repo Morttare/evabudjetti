@@ -137,7 +137,6 @@ const RealTransactionModal = ({
 
 	return (
 		<View style={styles.container}>
-			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 			<View pointerEvents="box-none" style={styles.cardContainer}>
 				<YStack
 					backgroundColor="$background"

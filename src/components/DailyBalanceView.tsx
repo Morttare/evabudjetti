@@ -230,11 +230,16 @@ export default function DailyBalanceView({
 				marginBottom="0"
 			>
 				{/* Date Header with Navigation */}
-				<Text fontSize="$4" fontWeight="600">
+				<Text fontSize="$4" fontWeight="600" marginBottom="$-2">
 					{' '}
 					{t('Daily situation')}{' '}
 				</Text>
-				<XStack alignItems="center" justifyContent="center" gap={20}>
+				<XStack
+					alignItems="center"
+					justifyContent="center"
+					gap={20}
+					marginBottom="$-1"
+				>
 					<Button
 						outlineColor="$black"
 						size="$buttons.xl"
@@ -265,7 +270,11 @@ export default function DailyBalanceView({
 				</XStack>
 
 				{/* Daily Stats */}
-				<XStack width="100%" alignItems="center" gap={6}>
+				<XStack 
+					width="100%" 
+					alignItems="center" 
+					gap={6}
+					marginBottom="$-1">
 					<YStack flex={1} alignItems="center">
 						<Text color="$black" fontSize="$3" fontWeight="600">
 							{t('Account balance')}:
