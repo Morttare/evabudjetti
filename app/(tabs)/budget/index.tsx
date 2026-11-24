@@ -65,7 +65,7 @@ export default function YearsScreen() {
 					<XStack justifyContent="center" width="100%">
 						<Button
 							width="60%"
-							height={55}
+							height={50}
 							backgroundColor="white"
 							borderColor="$primary100"
 							borderWidth={1}
