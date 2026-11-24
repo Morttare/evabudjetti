@@ -53,6 +53,15 @@ export default function TabLayout() {
 				tabBarStyle: { backgroundColor: theme.primary100.val },
 				tabBarActiveBackgroundColor: theme.primary200.val,
 				tabBarLabelStyle: { color: theme.white.val },
+
+				headerTitleStyle: {
+					color: theme.primary100.val,
+					fontFamily: 'FiraSans_400Regular',
+					fontSize: 26,
+					fontWeight: 'bold',
+					paddingBottom: 5,
+				},
+				
 			}}
 		>
 			{bottomNavOptions.map((page) => (
@@ -62,7 +71,7 @@ export default function TabLayout() {
 					options={{
 						title: page.name,
 						tabBarIcon: () => page.icon,
-						headerTitle: '',
+						headerTitle: page.name,
 					}}
 				/>
 			))}
