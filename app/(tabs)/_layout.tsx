@@ -54,6 +54,7 @@ export default function TabLayout() {
 				tabBarActiveBackgroundColor: theme.primary200.val,
 				tabBarLabelStyle: { color: theme.white.val },
 
+				headerTitleAlign: 'center',
 				headerTitleStyle: {
 					color: theme.primary100.val,
 					fontFamily: 'FiraSans_400Regular',
