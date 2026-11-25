@@ -267,6 +267,15 @@ i18next
 				// SETTINGS
 				'Language': 'Language',
 				'Timeframe': 'Timeframe',
+				'Category manager': 'Category manager',
+				'Delete category': 'Delete category',
+				'Delete category confirmation':
+					'Delete {{category}}?',
+				'Category transactions will move to Other':
+					'Transactions in this category will be moved to Other.',
+				'No categories yet': 'No categories yet',
+				'Failed to delete category': 'Failed to delete category',
+				'Deleting': 'Deleting...',
 				'Start date': 'Start date',
 				'Timeframe length': 'Timeframe length',
 				'days': 'days',
@@ -552,6 +561,15 @@ i18next
 				// SETTINGS
 				'Language': 'Kieli',
 				'Timeframe': 'Jakso',
+				'Category manager': 'Kategorioiden hallinta',
+				'Delete category': 'Poista kategoria',
+				'Delete category confirmation':
+					'Poista {{category}}?',
+				'Category transactions will move to Other':
+					'Tämän kategorian tapahtumat siirretään Muu-kategoriaan.',
+				'No categories yet': 'Ei kategorioita',
+				'Failed to delete category': 'Kategorian poistaminen epäonnistui',
+				'Deleting': 'Poistetaan...',
 				'Start date': 'Jakson alku',
 				'Timeframe length': 'Jakson pituus',
 				'days': 'päivää',

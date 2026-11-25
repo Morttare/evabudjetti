@@ -598,7 +598,7 @@ const AddItemPopup = ({
 								}}
 							>
 								<SizableText color="$white" size="$title3">
-									{t('Save')}
+									{t('Add')}
 								</SizableText>
 							</Button>
 						</XStack>

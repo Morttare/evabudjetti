@@ -295,7 +295,7 @@ const RealTransactionModal = ({
 							disabled={isDisabled}
 						>
 							<SizableText color="$white" size="$title3">
-								{t('Add')}
+								{t('Save')}
 							</SizableText>
 						</Button>
 					</XStack>
@@ -369,7 +369,7 @@ const RealTransactionModal = ({
 								style={styles.button}
 							>
 								<SizableText size={'$title2'} color={'$white'}>
-									{t('Save')}
+									{t('Add')}
 								</SizableText>
 							</Button>
 						</XStack>
