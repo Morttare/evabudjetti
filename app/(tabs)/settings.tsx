@@ -357,7 +357,10 @@ export default function Settings() {
 					paddingVertical={14}
 					paddingHorizontal={0}
 					color="$black"
-					onPress={() => setInstructionShown(false)}
+					onPress={() => {
+						setInstructionShown(false);
+						router.replace('/landing');
+					}}
 				>
 					<XStack
 						width="100%"

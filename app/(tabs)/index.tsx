@@ -3,7 +3,7 @@ import { addDays } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet } from 'react-native';
+import { Modal, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
@@ -291,7 +291,7 @@ export default function Landing() {
 										const numericBalance =
 											Number(initialBalance);
 										await saveBalanceToDb(numericBalance);
-										router.push('/budget_wizard');
+										router.replace('/budget_wizard');
 									}}
 								>
 									<SizableText

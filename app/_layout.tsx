@@ -190,6 +190,12 @@ export default function RootLayout() {
 									headerTitle: '',
 								}}
 							/>
+							<Stack.Screen
+								name="budget_wizard"
+								options={{
+									gestureEnabled: false,
+								}}
+							/>
 						</Stack>
 					</SafeAreaProvider>
 				</Theme>

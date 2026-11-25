@@ -49,6 +49,7 @@ export default function TabLayout() {
 	];
 	return (
 		<Tabs
+			backBehavior="none"
 			screenOptions={{
 				tabBarStyle: { backgroundColor: theme.primary100.val },
 				tabBarActiveBackgroundColor: theme.primary200.val,

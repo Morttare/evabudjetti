@@ -49,7 +49,7 @@ export default function Landing() {
 					backgroundColor="$primary100"
 					alignSelf="center"
 					borderRadius={40}
-					onPress={() => router.push('/introduction')}
+					onPress={() => router.replace('/introduction')}
 				>
 					<SizableText size="$title1" color="$white">
 						{t("Let's start!")}

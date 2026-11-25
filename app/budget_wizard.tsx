@@ -104,7 +104,7 @@ export default function BudgetWizard() {
 	const handleFinish = () => {
 		timeframeDraft.save();
 		invalidateFinanceCaches();
-		router.push('/');
+		router.replace('/');
 	};
 
 	return (
