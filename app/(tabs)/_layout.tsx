@@ -5,9 +5,10 @@ import {
 	Settings,
 	Wallet,
 } from '@tamagui/lucide-icons';
-import { Tabs } from 'expo-router';
-import type { ReactElement } from 'react';
+import { Tabs, useSegments } from 'expo-router';
+import { type ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BackHandler } from 'react-native';
 import { useTheme } from 'tamagui';
 
 interface BottomNavOption {
@@ -19,6 +20,15 @@ interface BottomNavOption {
 export default function TabLayout() {
 	const theme = useTheme();
 	const { t } = useTranslation();
+	const segments = useSegments();
+
+	useEffect(() => {
+		const subscription = BackHandler.addEventListener(
+			'hardwareBackPress',
+			() => segments[0] === '(tabs)',
+		);
+		return () => subscription.remove();
+	}, [segments]);
 
 	const bottomNavOptions: BottomNavOption[] = [
 		{

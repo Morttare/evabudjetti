@@ -291,7 +291,7 @@ export default function Landing() {
 										const numericBalance =
 											Number(initialBalance);
 										await saveBalanceToDb(numericBalance);
-										router.replace('/budget_wizard');
+										router.push('/budget_wizard');
 									}}
 								>
 									<SizableText

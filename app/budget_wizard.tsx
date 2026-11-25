@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Plus } from '@tamagui/lucide-icons';
+import { ArrowLeft, Check, ChevronDown, Plus } from '@tamagui/lucide-icons';
 import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -101,6 +101,14 @@ export default function BudgetWizard() {
 		setPopupVisible(false);
 	};
 
+	const handleBack = () => {
+		if (router.canGoBack()) {
+			router.back();
+			return;
+		}
+		router.replace('/');
+	};
+
 	const handleFinish = () => {
 		timeframeDraft.save();
 		invalidateFinanceCaches();
@@ -110,6 +118,15 @@ export default function BudgetWizard() {
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<View style={styles.container}>
+				<Button
+					circular
+					chromeless
+					size="$5"
+					icon={<ArrowLeft size="$icons.md" color="$primary100" />}
+					accessibilityLabel={t('Previous')}
+					onPress={handleBack}
+					style={styles.backButton}
+				/>
 				{/* -- Add Item PopUp -- */}
 				<Modal
 					visible={popupVisible}
@@ -435,6 +452,12 @@ export default function BudgetWizard() {
 }
 
 const styles = StyleSheet.create({
+	backButton: {
+		position: 'absolute',
+		top: 8,
+		left: 8,
+		zIndex: 10,
+	},
 	topContent: {
 		height: '20%',
 	},

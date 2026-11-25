@@ -215,7 +215,7 @@ export default function YearsScreen() {
 						height={50}
 						justifyContent="center"
 						alignSelf="center"
-						onPress={() => router.replace('/budget_wizard')}
+						onPress={() => router.push('/budget_wizard')}
 					>
 						<SizableText fontWeight="bold" color="$white">
 							{t('Edit Budget')}

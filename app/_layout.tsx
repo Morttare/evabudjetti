@@ -188,11 +188,6 @@ export default function RootLayout() {
 									headerShown: false,
 									headerBackButtonDisplayMode: 'minimal',
 									headerTitle: '',
-								}}
-							/>
-							<Stack.Screen
-								name="budget_wizard"
-								options={{
 									gestureEnabled: false,
 								}}
 							/>
