@@ -1,3 +1,4 @@
+import { Plus } from '@tamagui/lucide-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -34,6 +35,7 @@ const PlannedTransactionConfirmModal = ({
 }: PlannedTransactionConfirmModalProps) => {
 	const { t, i18n } = useTranslation();
 	const categories = useCategoryStore((state) => state.categories);
+	const addCategory = useCategoryStore((state) => state.addCategory);
 	const addRealTransaction = useAddRealTransaction();
 	const updateRealTransaction = useUpdateRealTransaction();
 
@@ -47,6 +49,9 @@ const PlannedTransactionConfirmModal = ({
 	);
 	const [saving, setSaving] = useState(false);
 	const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+	const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+	const [newCategoryName, setNewCategoryName] = useState('');
+	const [categoryError, setCategoryError] = useState<string | null>(null);
 
 	const filteredCategories = useMemo(
 		() => categories.filter((cat) => cat.type === occurrence.type),
@@ -66,6 +71,27 @@ const PlannedTransactionConfirmModal = ({
 		);
 		if (!hasSelected) setSelectedCategory(0);
 	}, [displayCategories, selectedCategory]);
+
+	const handleAddCategory = async () => {
+		const categoryName = newCategoryName.trim();
+		if (!categoryName) return;
+
+		try {
+			const createdCategory = await addCategory({
+				name: categoryName,
+				type: occurrence.type,
+				color: '#000000',
+				icon: 'circle',
+			});
+			setSelectedCategory(createdCategory.id);
+			setNewCategoryName('');
+			setCategoryError(null);
+			setCategoryModalVisible(false);
+		} catch (error) {
+			console.error('Failed to add category:', error);
+			setCategoryError(t('Failed to save changes'));
+		}
+	};
 
 	const handleAmountChange = (text: string) => {
 		const numeric = text.replace(/[^0-9.,]/g, '');
@@ -228,6 +254,19 @@ const PlannedTransactionConfirmModal = ({
 								{t('Category')}
 							</SizableText>
 							<XStack flexWrap="wrap">
+								<Button
+									onPress={() => {
+										setCategoryError(null);
+										setCategoryModalVisible(true);
+									}}
+									icon={Plus}
+									size={40}
+									marginRight={8}
+									marginBottom={8}
+									borderWidth={1}
+									borderColor="$primary200"
+									backgroundColor="$white"
+								/>
 								{displayCategories.map(({ id, name }) => {
 									const selected = id === selectedCategory;
 									return (
@@ -300,6 +339,79 @@ const PlannedTransactionConfirmModal = ({
 					</Button>
 				</XStack>
 			</YStack>
+			{categoryModalVisible && (
+				<View style={styles.categoryOverlay}>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						onPress={() => setCategoryModalVisible(false)}
+					/>
+					<YStack
+						backgroundColor="$white"
+						borderColor="$primary100"
+						borderWidth={2}
+						borderRadius={16}
+						shadowColor="$black"
+						shadowOffset={{ width: 0, height: 5 }}
+						shadowOpacity={0.3}
+						shadowRadius={10}
+						elevation={12}
+						padding={24}
+						width="90%"
+						gap={16}
+					>
+						<SizableText color="$primary100" size="$title1">
+							{t('Add category')}
+						</SizableText>
+						<Input
+							color="$primary100"
+							value={newCategoryName}
+							onChangeText={setNewCategoryName}
+							placeholder={t('Enter category')}
+							placeholderTextColor="#a3a3a3"
+							height={40}
+							borderRadius={6}
+							px="10px"
+							fontSize="$title3"
+							focusStyle={{ outlineColor: 'transparent' }}
+						/>
+						{categoryError && (
+							<SizableText color="$danger500">
+								{categoryError}
+							</SizableText>
+						)}
+						<XStack width="100%" justifyContent="space-between">
+							<Button
+								borderColor="$primary200"
+								backgroundColor="transparent"
+								borderRadius={28}
+								style={styles.button}
+								onPress={() => {
+									setNewCategoryName('');
+									setCategoryError(null);
+									setCategoryModalVisible(false);
+								}}
+							>
+								<SizableText color="$primary100" size="$title3">
+									{t('Cancel')}
+								</SizableText>
+							</Button>
+							<Button
+								backgroundColor="$primary200"
+								borderRadius={28}
+								style={styles.button}
+								disabled={!newCategoryName.trim()}
+								onPress={() => {
+									void handleAddCategory();
+								}}
+							>
+								<SizableText color="$white" size="$title3">
+									{t('Save')}
+								</SizableText>
+							</Button>
+						</XStack>
+					</YStack>
+				</View>
+			)}
 		</View>
 	);
 };
@@ -310,6 +422,13 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'rgba(0, 0, 0, 0.4)',
+	},
+	categoryOverlay: {
+		...StyleSheet.absoluteFill,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.4)',
+		zIndex: 10,
 	},
 	card: {
 		width: '90%',

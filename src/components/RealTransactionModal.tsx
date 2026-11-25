@@ -213,10 +213,12 @@ const RealTransactionModal = ({
 											setCategoryModalVisible(true)
 										}
 										icon={Plus}
-										size={26}
-										padding={14}
+										size={40}
 										marginRight={8}
 										marginBottom={8}
+										borderWidth={1}
+										borderColor="$primary200"
+										backgroundColor="$white"
 									/>
 
 									{displayCategories.map(({ key, label }) => {
