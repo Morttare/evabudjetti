@@ -42,18 +42,18 @@ export default function BudgetSetupIntro() {
 
 				<Button
 					size={52}
-					width={280}
+					width={200}
 					backgroundColor="$primary200"
 					borderRadius={40}
 					onPress={() => router.replace('/budget_wizard')}
 				>
 					<SizableText
-						size="$title1"
+						size="$title2"
 						color="$white"
 						numberOfLines={1}
 						adjustsFontSizeToFit
 					>
-						{t('Continue to budget')}
+						{t('Continue')}
 					</SizableText>
 				</Button>
 			</YStack>

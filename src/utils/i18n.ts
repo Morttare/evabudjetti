@@ -259,7 +259,6 @@ i18next
 				'Continue': 'Continue',
 				'Balance saved!': 'Balance saved!',
 				'Budget setup next': 'Next, add your budgeted incomes and expenses, and set the usable funds timeframe.',
-				'Continue to budget': 'Continue to budget',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
@@ -545,7 +544,6 @@ i18next
 				'Continue': 'Jatka',
 				'Balance saved!': 'Saldo tallennettu!',
 				'Budget setup next': 'Seuraavaksi lisätään budjetoituja tuloja ja menoja sekä asetetaan jakson pituus.',
-				'Continue to budget': 'Jatka budjetin luomiseen',
 
 				// BUDGET & SUMMARY
 
