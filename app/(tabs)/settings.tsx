@@ -170,7 +170,7 @@ export default function Settings() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
 			<YStack
 				backgroundColor={'$white'}
 				paddingTop={'$paddingmd'}

@@ -8,11 +8,19 @@ import React, {
 	type CSSProperties,
 	createElement,
 	useEffect,
+	useRef,
 	useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleSheet, View } from 'react-native';
-import { Button, SizableText, XStack } from 'tamagui';
+import {
+	Animated,
+	Modal,
+	Platform,
+	Pressable,
+	StyleSheet,
+	View,
+} from 'react-native';
+import { Button, SizableText, XStack, YStack } from 'tamagui';
 
 type Props = {
 	value?: Date | null;
@@ -25,28 +33,68 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	color,
 	onChange,
 }) => {
+	// Android: native dialog open state
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
+	// iOS: custom modal visibility
+	const [iosModalVisible, setIosModalVisible] = useState(false);
 	const [date, setDate] = useState<Date | null>(value || null);
+	// Holds the selection until the user confirms (iOS) / initial value (Android)
+	const [tempDate, setTempDate] = useState<Date>(value || new Date());
+	// 0 = hidden, 1 = shown
+	const progress = useRef(new Animated.Value(0)).current;
 	const { t } = useTranslation();
 
 	useEffect(() => {
 		setDate(value || null);
 	}, [value]);
 
-	const handleDateChange = (
+	const openPicker = () => {
+		setTempDate(date ?? new Date());
+
+		if (Platform.OS === 'ios') {
+			setIosModalVisible(true);
+			Animated.timing(progress, {
+				toValue: 1,
+				duration: 250,
+				useNativeDriver: true,
+			}).start();
+		} else {
+			setDatePickerOpen(true);
+		}
+	};
+
+	// Android: dialog closes itself, so we commit immediately
+	const handleAndroidChange = (
 		event: DateTimePickerEvent,
 		selectedDate?: Date,
 	) => {
-		// On Android, picker closes automatically on any action
-		// On iOS, we need to handle it differently
-		if (Platform.OS === 'android') {
-			setDatePickerOpen(false);
-		}
+		setDatePickerOpen(false);
 
 		if (event.type === 'set' && selectedDate) {
 			setDate(selectedDate);
 			onChange(selectedDate);
 		}
+	};
+
+	// iOS: only track the selection, commit on "Done"
+	const handleIosChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
+		if (selectedDate) {
+			setTempDate(selectedDate);
+		}
+	};
+
+	const closeIos = () => {
+		Animated.timing(progress, {
+			toValue: 0,
+			duration: 200,
+			useNativeDriver: true,
+		}).start(() => setIosModalVisible(false));
+	};
+
+	const confirmIos = () => {
+		setDate(tempDate);
+		onChange(tempDate);
+		closeIos();
 	};
 
 	const handleWebDateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +122,12 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 	}
 
 	return (
-		<XStack f={1} ai={'center'} maxWidth={'25%'}>
+		<XStack
+			style={{ transform: [{ translateX: 8 }] }}
+			f={1}
+			ai={'center'}
+			maxWidth={'25%'}
+		>
 			{/* Display selected date */}
 			<SizableText size="$body" color={`$${color}`}>
 				{date ? format(date, 'd.MM.yy') : 'd.mm.yy'}
@@ -82,21 +135,106 @@ export const MultiPlatformDatePicker: React.FC<Props> = ({
 
 			{/* Calendar button */}
 			<Button
+				marginLeft={-4}
 				size="$3"
 				icon={Calendar}
 				color={`$${color}`}
-				onPress={() => setDatePickerOpen(true)}
+				onPress={openPicker}
 				chromeless
 			/>
 
-			{/* Date Picker - only rendered when open */}
-			{datePickerOpen && (
+			{/* Android: native dialog, only rendered when open */}
+			{Platform.OS === 'android' && datePickerOpen && (
 				<DateTimePicker
-					value={date instanceof Date ? date : new Date()}
+					value={tempDate}
 					mode="date"
-					display={Platform.OS === 'ios' ? 'compact' : 'default'}
-					onChange={handleDateChange}
+					display="default"
+					onChange={handleAndroidChange}
 				/>
+			)}
+
+			{/* iOS: backdrop fades, sheet slides */}
+			{Platform.OS === 'ios' && (
+				<Modal
+					visible={iosModalVisible}
+					transparent
+					animationType="none"
+					onRequestClose={closeIos}
+				>
+					<View style={styles.modalRoot}>
+						{/* Backdrop: fades only */}
+						<Animated.View
+							style={[styles.backdrop, { opacity: progress }]}
+						>
+							<Pressable
+								style={StyleSheet.absoluteFill}
+								onPress={closeIos}
+							/>
+						</Animated.View>
+
+						{/* Sheet: slides only */}
+						<Animated.View
+							style={{
+								transform: [
+									{
+										translateY: progress.interpolate({
+											inputRange: [0, 1],
+											outputRange: [400, 0],
+										}),
+									},
+								],
+							}}
+						>
+							<YStack
+								backgroundColor="$background"
+								paddingBottom="$6"
+							>
+								<DateTimePicker
+									accentColor="#3AA18D"
+									themeVariant="light"
+									value={tempDate}
+									mode="date"
+									display="inline"
+									onChange={handleIosChange}
+									style={styles.iosPicker}
+								/>
+								<XStack
+									jc="space-between"
+									paddingHorizontal={44}
+								>
+									<Button
+										borderRadius="$4"
+										borderColor="$primary200"
+										backgroundColor="$transparent"
+										style={styles.button}
+										onPress={closeIos}
+									>
+										<SizableText
+											color="$primary100"
+											size="$title2"
+										>
+											{t('Cancel')}
+										</SizableText>
+									</Button>
+									<Button
+										onPress={confirmIos}
+										borderRadius="$4"
+										borderColor="$primary200"
+										backgroundColor="$primary200"
+										style={styles.button}
+									>
+										<SizableText
+											color="$white"
+											size="$title2"
+										>
+											{t('Finish')}
+										</SizableText>
+									</Button>
+								</XStack>
+							</YStack>
+						</Animated.View>
+					</View>
+				</Modal>
 			)}
 		</XStack>
 	);
@@ -109,6 +247,21 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 10,
 		width: 180,
+	},
+	modalRoot: {
+		flex: 1,
+		justifyContent: 'flex-end',
+	},
+	backdrop: {
+		...StyleSheet.absoluteFill,
+		backgroundColor: 'rgba(0,0,0,0.4)',
+	},
+	iosPicker: {
+		alignSelf: 'center',
+	},
+	button: {
+		width: '40%',
+		height: 44,
 	},
 });
 

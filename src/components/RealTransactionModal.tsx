@@ -138,7 +138,6 @@ const RealTransactionModal = ({
 
 	return (
 		<View style={styles.container}>
-			<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 			<View pointerEvents="box-none" style={styles.cardContainer}>
 				<YStack
 					backgroundColor="$background"
@@ -326,6 +325,12 @@ const RealTransactionModal = ({
 					alignItems="center"
 					zIndex={1000}
 				>
+					<Pressable
+						style={StyleSheet.absoluteFill}
+						onPress={() => setCategoryModalVisible(false)}
+						accessibilityRole="button"
+						accessibilityLabel={t('Cancel')}
+					/>
 					<YStack
 						backgroundColor="$white"
 						borderColor="$primary100"
@@ -341,7 +346,11 @@ const RealTransactionModal = ({
 						width={'80%'}
 						gap={20}
 					>
-						<SizableText size={'$title1'} marginBottom={8}>
+						<SizableText
+							size={'$title1'}
+							marginBottom={8}
+							color="$primary100"
+						>
 							{t('Add category')}
 						</SizableText>
 						<Input
