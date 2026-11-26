@@ -5,6 +5,8 @@ import { create } from 'zustand';
 import type { Category, Persisted } from '../dataModel';
 import { db } from '../db/client';
 import * as schema from '../db/schema';
+import { useBalanceVersioning } from '../finance/versioning/balanceVersioning';
+import { useTransactionOccurrenceVersioning } from '../finance/versioning/transactionOccurrenceVersioning';
 
 const CATEGORY_STORAGE_KEY = 'categories-storage';
 
@@ -129,9 +131,23 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 			}
 
 			if (Platform.OS !== 'web') {
-				await db
-					.delete(schema.categories)
-					.where(eq(schema.categories.id, id));
+				await db.transaction(async (tx) => {
+					await tx
+						.update(schema.plannedTransactions)
+						.set({ categoryId: 0 })
+						.where(eq(schema.plannedTransactions.categoryId, id));
+					await tx
+						.update(schema.realTransactions)
+						.set({ categoryId: 0 })
+						.where(eq(schema.realTransactions.categoryId, id));
+					await tx
+						.delete(schema.categories)
+						.where(eq(schema.categories.id, id));
+				});
+				useTransactionOccurrenceVersioning
+					.getState()
+					.invalidateTrackedMonths();
+				useBalanceVersioning.getState().invalidateTrackedMonths();
 			}
 
 			const categories = get().categories.filter(

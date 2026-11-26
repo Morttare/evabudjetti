@@ -1,8 +1,13 @@
-import { Check, ChevronDown, ChevronRight } from '@tamagui/lucide-icons';
+import {
+	Check,
+	ChevronDown,
+	ChevronRight,
+	Trash2,
+} from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { type PropsWithChildren, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Button,
@@ -16,11 +21,15 @@ import {
 	YStack,
 } from 'tamagui';
 import { MultiPlatformDatePicker } from '@/src/components/MultiPlatformDatePicker';
+import type { Category, Persisted } from '@/src/dataModel';
+import { DEFAULT_CATEGORIES } from '@/src/db/defaultCategories';
+import { useCategoryStore } from '@/src/store/categoryStore';
 import { useInstructionStore } from '@/src/store/useInstructionStore';
 import {
 	type LengthOptions,
 	useTimeframeStore,
 } from '@/src/store/useTimeframeStore';
+import { getCategoryDisplayName } from '@/src/utils/categoryName';
 import { useLanguageStore } from '../../src/store/useLanguageStore';
 
 interface Language {
@@ -32,8 +41,17 @@ export default function Settings() {
 	const { t, i18n } = useTranslation();
 	const router = useRouter();
 	const { language, setLanguage } = useLanguageStore();
+	const categories = useCategoryStore((state) => state.categories);
+	const removeCategory = useCategoryStore((state) => state.removeCategory);
 	const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
 	const [timeframeDialogOpen, setTimeframeDialogOpen] = useState(false);
+	const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
+	const [categoryPendingDelete, setCategoryPendingDelete] =
+		useState<Persisted<Category> | null>(null);
+	const [categoryDeleteError, setCategoryDeleteError] = useState<
+		string | null
+	>(null);
+	const [deletingCategory, setDeletingCategory] = useState(false);
 	const [timeframeLengthInput, setTimeframeLengthInput] = useState('1');
 	const [selectOpen, setSelectOpen] = useState(false);
 	const [timeframeOption, setTimeframeOption] =
@@ -123,6 +141,32 @@ export default function Settings() {
 	const handleCancelButtonPressed = () => {
 		resetTimeframeDraft();
 		setTimeframeDialogOpen(false);
+	};
+
+	const categoriesByType = useMemo(
+		() => ({
+			expense: categories.filter(
+				(category) => category.type === 'expense',
+			),
+			income: categories.filter((category) => category.type === 'income'),
+		}),
+		[categories],
+	);
+
+	const handleDeleteCategory = async () => {
+		if (!categoryPendingDelete) return;
+
+		setDeletingCategory(true);
+		setCategoryDeleteError(null);
+		try {
+			await removeCategory(categoryPendingDelete.id);
+			setCategoryPendingDelete(null);
+		} catch (error) {
+			console.error('Failed to delete category:', error);
+			setCategoryDeleteError(t('Failed to delete category'));
+		} finally {
+			setDeletingCategory(false);
+		}
 	};
 
 	return (
@@ -351,6 +395,193 @@ export default function Settings() {
 					</YStack>
 				</SettingsPopup>
 
+				<SettingsPopup
+					title={t('Category manager')}
+					open={categoryManagerOpen}
+					onOpenChange={(open) => {
+						setCategoryManagerOpen(open);
+						if (!open) {
+							setCategoryPendingDelete(null);
+							setCategoryDeleteError(null);
+						}
+					}}
+				>
+					<YStack gap={10}>
+						{categoryPendingDelete && (
+							<YStack
+								gap={10}
+								padding={12}
+								borderWidth={1}
+								borderColor="$danger500"
+								borderRadius={8}
+							>
+								<SizableText color="$black">
+									{t('Delete category confirmation', {
+										category: getCategoryDisplayName(
+											categoryPendingDelete.name,
+											i18n.language,
+										),
+									})}
+								</SizableText>
+								<SizableText color="$gray700">
+									{t(
+										'Category transactions will move to Other',
+									)}
+								</SizableText>
+								{categoryDeleteError && (
+									<SizableText color="$danger500">
+										{categoryDeleteError}
+									</SizableText>
+								)}
+								<XStack
+									width="100%"
+									justifyContent="space-between"
+								>
+									<Button
+										width="45%"
+										borderRadius={28}
+										borderColor="$primary200"
+										backgroundColor="transparent"
+										disabled={deletingCategory}
+										onPress={() =>
+											setCategoryPendingDelete(null)
+										}
+									>
+										<SizableText
+											color="$primary100"
+											size="$title3"
+										>
+											{t('Cancel')}
+										</SizableText>
+									</Button>
+									<Button
+										width="45%"
+										borderRadius={28}
+										backgroundColor="$danger500"
+										disabled={deletingCategory}
+										onPress={() => {
+											void handleDeleteCategory();
+										}}
+									>
+										<SizableText
+											color="$white"
+											size="$title3"
+										>
+											{deletingCategory
+												? t('Deleting')
+												: t('Delete')}
+										</SizableText>
+									</Button>
+								</XStack>
+							</YStack>
+						)}
+
+						<ScrollView
+							style={{
+								height: categoryPendingDelete ? 320 : 480,
+							}}
+						>
+							<YStack
+								gap={20}
+								paddingHorizontal={10}
+								paddingTop={10}
+							>
+								{(['expense', 'income'] as const).map(
+									(type) => {
+										const typeCategories =
+											categoriesByType[type];
+										return (
+											<YStack key={type} gap={8}>
+												<SizableText
+													color="$primary100"
+													size="$title2"
+												>
+													{t(
+														type === 'expense'
+															? 'Expense'
+															: 'Income',
+													)}
+												</SizableText>
+												{typeCategories.length === 0 ? (
+													<SizableText color="$gray700">
+														{t('No categories yet')}
+													</SizableText>
+												) : (
+													typeCategories.map(
+														(category) => {
+															const isDefault =
+																DEFAULT_CATEGORIES.some(
+																	(
+																		defaultCategory,
+																	) =>
+																		defaultCategory.name ===
+																			category.name &&
+																		defaultCategory.type ===
+																			category.type,
+																);
+															return (
+																<XStack
+																	key={
+																		category.id
+																	}
+																	alignItems="center"
+																	justifyContent="space-between"
+																	paddingVertical={
+																		6
+																	}
+																>
+																	<SizableText
+																		color="$black"
+																		size="$title3"
+																	>
+																		{getCategoryDisplayName(
+																			category.name,
+																			i18n.language,
+																		)}
+																	</SizableText>
+																	{!isDefault && (
+																		<Button
+																			size="$buttons.md"
+																			circular
+																			backgroundColor="$white"
+																			borderWidth={
+																				1
+																			}
+																			borderColor="$danger500"
+																			color="$danger500"
+																			icon={
+																				Trash2
+																			}
+																			disabled={
+																				deletingCategory
+																			}
+																			onPress={() => {
+																				setCategoryPendingDelete(
+																					category,
+																				);
+																				setCategoryDeleteError(
+																					null,
+																				);
+																			}}
+																			accessibilityLabel={t(
+																				'Delete category',
+																			)}
+																		/>
+																	)}
+																</XStack>
+															);
+														},
+													)
+												)}
+											</YStack>
+										);
+									},
+								)}
+							</YStack>
+						</ScrollView>
+					</YStack>
+				</SettingsPopup>
+
 				<Button
 					unstyled
 					width="100%"
@@ -484,16 +715,18 @@ function SettingsPopup({
 				>
 					<Dialog.Title padding={8}>{title}</Dialog.Title>
 					{/* Necessary to close keyboard when tapping outside of input */}
-					<TouchableWithoutFeedback
-						onPress={() => {
-							if (closeKeyboard) {
+					{closeKeyboard ? (
+						<TouchableWithoutFeedback
+							onPress={() => {
 								Keyboard.dismiss();
 								onKeyboardClose();
-							}
-						}}
-					>
-						{children}
-					</TouchableWithoutFeedback>
+							}}
+						>
+							{children}
+						</TouchableWithoutFeedback>
+					) : (
+						children
+					)}
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog>
