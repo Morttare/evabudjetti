@@ -251,6 +251,7 @@ export default function Landing() {
 							</YStack>
 						)}
 
+						{/* If no budget is created, show the initial balance input and create budget button */}
 						{!budgetCreated && (
 							<YStack
 								gap={5}
@@ -291,7 +292,7 @@ export default function Landing() {
 										const numericBalance =
 											Number(initialBalance);
 										await saveBalanceToDb(numericBalance);
-										router.push('/budget_wizard');
+										router.replace('/budget_setup_intro');
 									}}
 								>
 									<SizableText

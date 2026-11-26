@@ -257,6 +257,9 @@ i18next
 				'2. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget.',
 				'I have read the terms and conditions': 'I have read the terms and conditions',
 				'Continue': 'Continue',
+				'Balance saved!': 'Balance saved!',
+				'Budget setup next': 'Next, add your budgeted incomes and expenses, and set the usable funds timeframe.',
+				'Continue to budget': 'Continue to budget',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
@@ -540,6 +543,9 @@ i18next
 				'2. instruction': 'Budjetin asettamisen jälkeen voit tarkastella käyttövaraa, kuukausittaista ja vuosittaista budjettia sekä muokata olemassa olevaa budjettia.',
 				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 				'Continue': 'Jatka',
+				'Balance saved!': 'Saldo tallennettu!',
+				'Budget setup next': 'Seuraavaksi lisätään budjetoituja tuloja ja menoja sekä asetetaan jakson pituus.',
+				'Continue to budget': 'Jatka budjetin luomiseen',
 
 				// BUDGET & SUMMARY
 
