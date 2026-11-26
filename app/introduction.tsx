@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ListItem, SizableText, Text, YGroup, YStack } from 'tamagui';
 import { useInstructionStore } from '@/src/store/useInstructionStore';
 
@@ -15,7 +14,10 @@ export default function Introduction() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff'  }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView
+			style={{ flex: 1, backgroundColor: '#fff' }}
+			edges={['top', 'left', 'right', 'bottom']}
+		>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={10}

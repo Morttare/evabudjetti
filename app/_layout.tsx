@@ -69,8 +69,8 @@ export default function RootLayout() {
 									headerTitle: '',
 								}}
 							>
-								<Stack.Screen name="landing" />
-								<Stack.Screen name="introduction" />
+								<Stack.Screen name="landing" options={{ headerShown: false }}/>
+								<Stack.Screen name="introduction" options={{ headerShown: false }}/>
 								<Stack.Screen name="budget_setup_intro" />
 								<Stack.Screen name="budget_wizard" />
 							</Stack>

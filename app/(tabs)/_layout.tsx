@@ -74,6 +74,7 @@ export default function TabLayout() {
 						title: page.name,
 						tabBarIcon: () => page.icon,
 						headerTitle: '',
+						headerShown: page.route !== 'index',
 					}}
 				/>
 			))}

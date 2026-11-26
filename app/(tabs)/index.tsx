@@ -81,7 +81,7 @@ export default function Landing() {
 	return (
 		<SafeAreaView
 			style={{ flex: 1, backgroundColor: '#fff' }}
-			edges={['left', 'right', 'bottom']}
+			edges={['top', 'left', 'right']}
 		>
 			<ScrollView
 				style={{ flex: 1, backgroundColor: '#fff' }}
@@ -95,6 +95,7 @@ export default function Landing() {
 						f={1}
 						paddingHorizontal={10}
 						justifyContent="center"
+						gap={20}
 					>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">

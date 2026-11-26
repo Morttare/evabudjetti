@@ -1,23 +1,26 @@
 import { Globe, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, SizableText, Text, YStack } from 'tamagui';
 import LanguagePickerDialog from '@/src/components/LanguagePickerDialog';
 
 export default function Landing() {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const insets = useSafeAreaInsets();
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff'  }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView
+			style={{ flex: 1, backgroundColor: '#fff' }}
+		>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={10}
 				alignItems="center"
 				justifyContent="center"
 				flex={1}
-				gap={70}
+				gap={60}
 			>
 				<YStack alignItems="center" gap={5}>
 					<Text
@@ -61,8 +64,8 @@ export default function Landing() {
 				trigger={
 					<Button
 						position="absolute"
-						top={52}
-						right={32}
+						top={insets.top + 12}
+						right={12}
 						size={50}
 						circular
 						chromeless
