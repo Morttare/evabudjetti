@@ -28,6 +28,7 @@ import type {
 import { DEFAULT_ACCOUNT_ID } from '../dataModel';
 import { useCategoryStore } from '../store/categoryStore';
 import { getCategoryDisplayName } from '../utils/categoryName';
+import CategoryInfoButton from './CategoryInfoButton';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type AddItemPopupProps = {
@@ -205,9 +206,16 @@ const AddItemPopup = ({
 						/>
 					</View>
 					<View style={styles.categoryContainer}>
-						<SizableText color="$primary100" size="$title3">
-							{t('Category')}
-						</SizableText>
+						<XStack
+							alignItems="center"
+							justifyContent="flex-start"
+							gap="$2"
+						>
+							<SizableText color="$primary100" size="$title3">
+								{t('Category')}
+							</SizableText>
+							<CategoryInfoButton />
+						</XStack>
 						<XStack flexWrap="wrap">
 							<Button
 								onPress={() => {

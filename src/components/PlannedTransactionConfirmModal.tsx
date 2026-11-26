@@ -20,6 +20,7 @@ import { useAddRealTransaction } from '../finance/hook/useAddRealTransaction';
 import { useUpdateRealTransaction } from '../finance/hook/useUpdateRealTransaction';
 import { useCategoryStore } from '../store/categoryStore';
 import { getCategoryDisplayName } from '../utils/categoryName';
+import CategoryInfoButton from './CategoryInfoButton';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type PlannedTransactionConfirmModalProps = {
@@ -250,9 +251,16 @@ const PlannedTransactionConfirmModal = ({
 
 						{/* Category */}
 						<YStack gap={8}>
-							<SizableText color="$primary100" size="$title2">
-								{t('Category')}
-							</SizableText>
+							<XStack
+								alignItems="center"
+								justifyContent="flex-start"
+								gap="$2"
+							>
+								<SizableText color="$primary100" size="$title2">
+									{t('Category')}
+								</SizableText>
+								<CategoryInfoButton />
+							</XStack>
 							<XStack flexWrap="wrap">
 								<Button
 									onPress={() => {

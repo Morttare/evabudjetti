@@ -12,6 +12,7 @@ import {
 	YStack,
 } from 'tamagui';
 import { DEFAULT_ACCOUNT_ID, type RealTransaction } from '../dataModel';
+import CategoryInfoButton from './CategoryInfoButton';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type RealTransactionModalProps = {
@@ -204,9 +205,19 @@ const RealTransactionModal = ({
 
 							{/* Category Selection */}
 							<YStack gap={8}>
-								<SizableText color="$primary100" size="$title2">
-									{t('Category')}
-								</SizableText>
+								<XStack
+									alignItems="center"
+									justifyContent="flex-start"
+									gap="$2"
+								>
+									<SizableText
+										color="$primary100"
+										size="$title2"
+									>
+										{t('Category')}
+									</SizableText>
+									<CategoryInfoButton />
+								</XStack>
 								<XStack flexWrap="wrap">
 									<Button
 										onPress={() =>
