@@ -9,14 +9,14 @@ export default function BudgetSetupIntro() {
 	const router = useRouter();
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff'  }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={24}
 				alignItems="center"
 				justifyContent="center"
 				flex={1}
-				gap="$7"
+				gap="$8"
 			>
 				<PiggyBank size={150} color="$primary100" />
 

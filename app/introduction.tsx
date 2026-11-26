@@ -15,7 +15,7 @@ export default function Introduction() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff'  }} edges={['left', 'right', 'bottom']}>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={10}
