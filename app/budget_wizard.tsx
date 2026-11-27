@@ -164,17 +164,11 @@ export default function BudgetWizard() {
 						{t(currentStep.header)}
 					</SizableText>
 				</View>
-				<ScrollView
-					contentContainerStyle={{ flexGrow: 1 }}
-					style={styles.content}
-				>
+				<View style={styles.content}>
 					{currentStep.header === 'Timeframe' ? (
-						<YStack gap="$3" padding="$3">
+						<YStack gap="$2" padding="$3">
 							<SizableText color="$gray700">
 								{t('Timeframe info')}
-							</SizableText>
-							<SizableText color="$gray700">
-								{t('Timeframe start info')}
 							</SizableText>
 							<XStack alignItems="center" gap="$2">
 								<SizableText
@@ -189,9 +183,7 @@ export default function BudgetWizard() {
 									onChange={timeframeDraft.setStartDate}
 								/>
 							</XStack>
-							<SizableText color="$gray700">
-								{t('Timeframe length info')}
-							</SizableText>
+
 							<SizableText color="$primary100" fontWeight="bold">
 								{t('Timeframe length')}
 							</SizableText>
@@ -341,7 +333,7 @@ export default function BudgetWizard() {
 									</SizableText>
 									<Button
 										borderRadius={40}
-										height={50}
+										height={45}
 										backgroundColor="$primary200"
 										onPress={() =>
 											timeframeDraft.applySuggestion(
@@ -378,7 +370,7 @@ export default function BudgetWizard() {
 					)}
 					{/* Empty Y-stack to get margin after last budget item*/}
 					<YStack marginTop="10" />
-				</ScrollView>
+				</View>
 				{stepIndex !== 2 && (
 					<View style={styles.addIconContainer}>
 						<Button
