@@ -12,6 +12,7 @@ import {
 	YStack,
 } from 'tamagui';
 import { DEFAULT_ACCOUNT_ID, type RealTransaction } from '../dataModel';
+import CategoryInfoButton from './CategoryInfoButton';
 import { MultiPlatformDatePicker } from './MultiPlatformDatePicker';
 
 type RealTransactionModalProps = {
@@ -203,19 +204,31 @@ const RealTransactionModal = ({
 
 							{/* Category Selection */}
 							<YStack gap={8}>
-								<SizableText color="$primary100" size="$title2">
-									{t('Category')}
-								</SizableText>
+								<XStack
+									alignItems="center"
+									justifyContent="flex-start"
+									gap="$2"
+								>
+									<SizableText
+										color="$primary100"
+										size="$title2"
+									>
+										{t('Category')}
+									</SizableText>
+									<CategoryInfoButton />
+								</XStack>
 								<XStack flexWrap="wrap">
 									<Button
 										onPress={() =>
 											setCategoryModalVisible(true)
 										}
 										icon={Plus}
-										size={26}
-										padding={14}
+										size={40}
 										marginRight={8}
 										marginBottom={8}
+										borderWidth={1}
+										borderColor="$primary200"
+										backgroundColor="$white"
 									/>
 
 									{displayCategories.map(({ key, label }) => {
@@ -292,7 +305,7 @@ const RealTransactionModal = ({
 							disabled={isDisabled}
 						>
 							<SizableText color="$white" size="$title3">
-								{t('Add')}
+								{t('Save')}
 							</SizableText>
 						</Button>
 					</XStack>
@@ -375,8 +388,8 @@ const RealTransactionModal = ({
 								borderRadius={28}
 								style={styles.button}
 							>
-								<SizableText size={'$title3'} color={'$white'}>
-									{t('Save')}
+								<SizableText size={'$title2'} color={'$white'}>
+									{t('Add')}
 								</SizableText>
 							</Button>
 						</XStack>

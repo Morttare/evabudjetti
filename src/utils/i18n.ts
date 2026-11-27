@@ -46,6 +46,8 @@ i18next
 					'Enter correct date in the format dd.mm.yyyy',
 				'Add new': 'Add new',
 				'Category': 'Category',
+				'Category info title': 'Category guide',
+				'Category info text': 'With categories you can organize your income and expenses into different groups and see where your money is going. This makes it easier to manage your budget and track your finances. You can add, edit, and delete categories as needed. To add a category, press the + button, and to delete a category, go to settings.',
 				'Add category': 'Add category',
 				'Enter category': 'Enter category',
 				'Cancel': 'Cancel',
@@ -270,6 +272,15 @@ i18next
 				// SETTINGS
 				'Language': 'Language',
 				'Timeframe': 'Timeframe',
+				'Category manager': 'Category manager',
+				'Delete category': 'Delete category',
+				'Delete category confirmation':
+					'Delete {{category}}?',
+				'Category transactions will move to Other':
+					'Transactions in this category will be moved to Other.',
+				'No categories yet': 'No categories yet',
+				'Failed to delete category': 'Failed to delete category',
+				'Deleting': 'Deleting...',
 				'Start date': 'Start date',
 				'Timeframe length': 'Timeframe length',
 				'days': 'days',
@@ -320,6 +331,8 @@ i18next
 					'Anna oikea päivämäärä muodossa pp.kk.vvvv',
 				'Add new': 'Lisää uusi',
 				'Category': 'Kategoria',
+				'Category info title': 'Ohjeet kategoroiden käyttöön',
+				'Category info text': 'Kategorioiden avulla voit jaotella tuloja ja menoja eri ryhmiin ja nähdä mihin rahaa kuluu. Tämä helpottaa budjetin hallintaa ja talouden seurantaa. Voit lisätä, muokata ja poistaa kategorioita tarpeidesi mukaan. Kategorioiden lisääminen onnistuu + -nappia painamalla, ja poistaminen tapahtuu asetuksista.',
 				'Add category': 'Lisää kategoria',
 				'Enter category': 'Kirjoita kategoria',
 				'Cancel': 'Peruuta',
@@ -557,6 +570,15 @@ i18next
 				// SETTINGS
 				'Language': 'Kieli',
 				'Timeframe': 'Jakso',
+				'Category manager': 'Kategorioiden hallinta',
+				'Delete category': 'Poista kategoria',
+				'Delete category confirmation':
+					'Poista {{category}}?',
+				'Category transactions will move to Other':
+					'Tämän kategorian tapahtumat siirretään Muu-kategoriaan.',
+				'No categories yet': 'Ei kategorioita',
+				'Failed to delete category': 'Kategorian poistaminen epäonnistui',
+				'Deleting': 'Poistetaan...',
 				'Start date': 'Jakson alku',
 				'Timeframe length': 'Jakson pituus',
 				'days': 'päivää',

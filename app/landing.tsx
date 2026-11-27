@@ -1,7 +1,10 @@
 import { Globe, PiggyBank } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Button, SizableText, Text, YStack } from 'tamagui';
 import LanguagePickerDialog from '@/src/components/LanguagePickerDialog';
 
@@ -11,9 +14,7 @@ export default function Landing() {
 	const insets = useSafeAreaInsets();
 
 	return (
-		<SafeAreaView
-			style={{ flex: 1, backgroundColor: '#fff' }}
-		>
+		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={10}
