@@ -142,13 +142,14 @@ i18next
 				'Expenses': 'Expenses',
 				'Balance': 'Balance',
 				'Available': 'Available',
+				'Instructions': 'Instructions',
 				'What are usable funds?': 'What are usable funds?',
 				'Help Usable funds':
-					'Usable funds are the money left after planned expenses, available for other spending or saving during the month.',
+					'Usable funds is the daily amount left over after planned expenses, available for other spending or saving.',
 				'Help Homepage': 
-					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the spending allowance stays up to date.\n' +
-					'Funds: record your income and expenses on the Funds page. You can edit and delete them in the same place.\n' +
-					'Budget: add planned income and expenses on the Budget page. You can edit and delete them later.\n' +
+					'Homepage: once you have created a budget and added your account balance, the homepage shows your usable funds and account balance. You can edit the balance directly on the homepage. Remember to check your balance regularly so that the usable funds stays up to date.\n' +
+					'Funds: record your income and expenses as they happen. You can edit and delete them in the same place.\n' +
+					'Budget: add recurring items and larger one-off items. You can edit and delete them later.\n' +
 					'Bookkeeping: view actual monthly income and expenses.',
 				'Close': 'Close',
 				'Future events': 'Future events',
@@ -258,6 +259,8 @@ i18next
 				'2. instruction': 'When you have set your budget, you can see your usable funds as well as your monthly and yearly budget and you can edit your existing budget.',
 				'I have read the terms and conditions': 'I have read the terms and conditions',
 				'Continue': 'Continue',
+				'Balance saved!': 'Balance saved!',
+				'Budget setup next': 'Next, add your budgeted incomes and expenses, and set the usable funds timeframe.',
 
 				// SUMMARY
 				'Choose a year': 'Choose a year',
@@ -453,15 +456,15 @@ i18next
 				'Balance': 'Tilillä rahaa',
 				'Available': 'Käytettävissä',
 				'Help': 'Ohjeet',
-				'Instructions': 'Ohjeet',
+				'Instructions': 'Käyttöohjeet',
 				'What are usable funds?': 'Mitä tarkoittaa käyttövara?',
 				'Help Usable funds':
-					'Käyttövara on kuukauden suunniteltujen menojen jälkeen jäljelle jäävä raha, joka on käytettävissä muuhun kulutukseen tai säästämiseen.',
+					'Käyttövara on suunniteltujen menojen jälkeen jäljelle jäävä päivittäinen rahamäärä, joka on käytettävissä muuhun kulutukseen tai säästämiseen.',
 				'Help Homepage':
 					'Kotisivu: kun olet luonut budjetin ja lisännyt tilin saldon, kotisivulla näkyvät käyttövara ja tilin saldo. Voit muokata saldoa suoraan kotisivulla. Muista tarkistaa saldo säännöllisesti, jotta käyttövara pysyy ajan tasalla.\n' +
-					'Käyttövara: merkitse tulot ja menot Käyttövara-sivulle. Voit muokata ja poistaa niitä samassa paikassa.\n' +
-					'Budjetti: lisää suunnitellut tulot ja menot Budjetti-sivulle. Voit muokata ja poistaa niitä myöhemmin.\n' +
-					'Kirjanpito: näet toteutuneet, kuukausittaiset tulot ja menot.',
+					'Käyttövara: kirjaa tulot ja menot sitä mukaa, kun ne tapahtuvat. Voit muokata ja poistaa niitä samassa paikassa.\n' +
+					'Budjetti: lisää toistuvat erät sekä kertaluonteiset, isommat tapahtumat. Voit muokata ja poistaa niitä myöhemmin.\n' +
+					'Kirjanpito: näet toteutuneet tulot ja menot kuukausittain.',
 				'Close': 'Sulje',
 				'CLOSE': 'SULJE',
 				'SAVE': 'TALLENNA',
@@ -552,6 +555,8 @@ i18next
 				'2. instruction': 'Budjetin asettamisen jälkeen voit tarkastella käyttövaraa, kuukausittaista ja vuosittaista budjettia sekä muokata olemassa olevaa budjettia.',
 				'I have read the terms and conditions': 'Olen lukenut ja hyväksynyt käyttöehdot',
 				'Continue': 'Jatka',
+				'Balance saved!': 'Saldo tallennettu!',
+				'Budget setup next': 'Seuraavaksi lisätään budjetoituja tuloja ja menoja sekä asetetaan jakson pituus.',
 
 				// BUDGET & SUMMARY
 

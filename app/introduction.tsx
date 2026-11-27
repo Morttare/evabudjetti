@@ -11,11 +11,14 @@ export default function Introduction() {
 
 	const showApp = () => {
 		setInstructionShown(true);
-		router.push('/');
+		router.replace('/');
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+		<SafeAreaView
+			style={{ flex: 1, backgroundColor: '#fff' }}
+			edges={['top', 'left', 'right', 'bottom']}
+		>
 			<YStack
 				backgroundColor="$white"
 				paddingHorizontal={10}

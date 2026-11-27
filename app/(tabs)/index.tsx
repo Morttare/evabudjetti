@@ -81,24 +81,27 @@ export default function Landing() {
 	return (
 		<SafeAreaView
 			style={{ flex: 1, backgroundColor: '#fff' }}
-			edges={['left', 'right', 'bottom']}
+			edges={['top', 'left', 'right']}
 		>
 			<ScrollView
 				style={{ flex: 1, backgroundColor: '#fff' }}
 				contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
 				keyboardShouldPersistTaps="handled"
+				keyboardDismissMode="interactive"
+				automaticallyAdjustKeyboardInsets
 			>
 				<YStack f={1} backgroundColor="$background">
 					<YStack
 						f={1}
 						paddingHorizontal={10}
 						justifyContent="center"
+						gap={20}
 					>
 						{/* Header */}
 						<YStack gap="5" marginTop={10} alignItems="center">
 							<Text
 								fontSize={'$7'}
-								fontWeight={'500'}
+								fontWeight={'700'}
 								numberOfLines={1}
 								adjustsFontSizeToFit
 								color="$primary100"
@@ -109,7 +112,7 @@ export default function Landing() {
 							<Text
 								numberOfLines={1}
 								adjustsFontSizeToFit
-								fontSize={'$3'}
+								fontSize={'$4'}
 								color="$primary100"
 							>
 								{t('Supporting your financial well-being')}
@@ -249,6 +252,7 @@ export default function Landing() {
 							</YStack>
 						)}
 
+						{/* If no budget is created, show the initial balance input and create budget button */}
 						{!budgetCreated && (
 							<YStack
 								gap={5}
@@ -289,7 +293,7 @@ export default function Landing() {
 										const numericBalance =
 											Number(initialBalance);
 										await saveBalanceToDb(numericBalance);
-										router.push('/budget_wizard');
+										router.replace('/budget_setup_intro');
 									}}
 								>
 									<SizableText
@@ -423,7 +427,7 @@ export default function Landing() {
 								color="$gray700"
 								maxFontSizeMultiplier={1.3}
 							>
-								{t('Help')}
+								{t('Instructions')}
 							</SizableText>
 							{t('Help Homepage')
 								.split('\n')
